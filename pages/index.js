@@ -12,9 +12,9 @@ import { useState } from "react"
 const MAIN_PROCESS_ID = "4WxCo_-ieXMemQ9eByvSyeowC1MNZnHIDK4xkAuxCy0"
 
 export default function Home() {
-  const [title, setTitle] = useState("")
-  const [duration, setDuration] = useState("")
-  const [tokenTxId, setTokenTxId] = useState("")
+  const [title, setTitle] = useState("sample title")
+  const [duration, setDuration] = useState("11")
+  const [tokenTxId, setTokenTxId] = useState("0xtest12345")
   const toast = useToast()
 
   const handleMessageResultError = (_result) => {

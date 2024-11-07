@@ -42,6 +42,21 @@ Handlers.add("Create", Handlers.utils.hasMatchingTag("Action", "Create"), functi
             return
         end
 
+        if type(msg.Tags.Title) ~= 'string' or msg.Tags.Title:match("^%s*$") then
+            sendErrorMessage(msg, 'Title is required and must be a non-empty string!')
+            return
+        end
+
+        if type(msg.Tags.Duration) ~= 'string' or msg.Tags.Duration:match("^%s*$") then
+            sendErrorMessage(msg, 'Duration is required and must be a non-empty string!')
+            return
+        end
+
+        if type(msg.Tags.TokenTxId) ~= 'string' or msg.Tags.TokenTxId:match("^%s*$") then
+            sendErrorMessage(msg, 'TokenTxId is required and must be a non-empty string!')
+            return
+        end
+
         -- Prevent multiple creations while waiting for a response
         WaitFor[msg.From] = true
 
@@ -112,8 +127,14 @@ Handlers.add("Create", Handlers.utils.hasMatchingTag("Action", "Create"), functi
             )
         })
 
+ 
         Records[msg.From] = Records[msg.From] or {}
-        Records[msg.From][#Records[msg.From] + 1] = childProcessId
+        Records[msg.From][#Records[msg.From] + 1] = {
+            Title = msg.Tags.Title,
+            Duration = msg.Tags.Duration,
+            TokenTxId = msg.Tags.TokenTxId,
+            ProcessId = childProcessId
+        }
 
         ao.send({ Target = msg.From, Data = "Market Created!" })
 
