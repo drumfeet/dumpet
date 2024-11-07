@@ -1,4 +1,6 @@
 Creator = Creator or ""
+TotalDeposit = TotalDeposit or "0"
+MarketInfo = MarketInfo or {}
 
 Handlers.add("GetProcessOwner", Handlers.utils.hasMatchingTag("Action", "GetProcessOwner"), function(msg)
     print("GetProcessOwner")
@@ -24,6 +26,15 @@ Handlers.add("GetCreator", Handlers.utils.hasMatchingTag("Action", "GetCreator")
     ao.send({
         Target = msg.From,
         Data = Creator
+    })
+end)
+
+Handlers.add("GetTotalDeposit", Handlers.utils.hasMatchingTag("Action", "GetTotalDeposit"), function(msg)
+    print("GetTotalDeposit")
+    print("TotalDeposit: " .. TotalDeposit)
+    ao.send({
+        Target = msg.From,
+        Data = TotalDeposit
     })
 end)
 

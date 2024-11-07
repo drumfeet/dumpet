@@ -127,14 +127,17 @@ Handlers.add("Create", Handlers.utils.hasMatchingTag("Action", "Create"), functi
             )
         })
 
- 
-        Records[msg.From] = Records[msg.From] or {}
-        Records[msg.From][#Records[msg.From] + 1] = {
+        Records[childProcessId] = Records[childProcessId] or {}
+        Records[childProcessId] = {
             Title = msg.Tags.Title,
             Duration = msg.Tags.Duration,
             TokenTxId = msg.Tags.TokenTxId,
-            ProcessId = childProcessId
+            ProcessId = childProcessId,
+            Creator = msg.From,
+            BlockHeight = msg["Block-Height"],
+            Timestamp = msg["Timestamp"],
         }
+        printData("Records[childProcessId]", Records[childProcessId])
 
         ao.send({ Target = msg.From, Data = "Market Created!" })
 
@@ -146,9 +149,65 @@ Handlers.add("Create", Handlers.utils.hasMatchingTag("Action", "Create"), functi
     end
 end)
 
-
 Handlers.add("List", Handlers.utils.hasMatchingTag("Action", "List"), function(msg)
-    print("List")
+    local success, err = pcall(function()
+        local order = msg.Tags.Order or "asc"
+        local limit = tonumber(msg.Tags.Limit) or 10
+        local page = tonumber(msg.Tags.Page) or 1
+
+        -- Validate 'Order' parameter
+        local validOrders = { asc = true, desc = true }
+        if not validOrders[order] then
+            sendErrorMessage(msg, 'Invalid Order parameter. Must be "asc" or "desc".')
+            return
+        end
+
+        -- Validate 'Limit' and 'Page' parameters
+        if limit < 1 or page < 1 then
+            sendErrorMessage(msg, 'Limit and Page must be positive integers.')
+            return
+        end
+
+        -- Calculate skip based on page and limit
+        local skip = (page - 1) * limit
+
+        local sortedRecords = {}
+        for k, v in pairs(Records) do
+            table.insert(sortedRecords, v)
+        end
+
+        table.sort(sortedRecords, function(a, b)
+            if order == "asc" then
+                return a.BlockHeight < b.BlockHeight
+            else
+                return a.BlockHeight > b.BlockHeight
+            end
+        end)
+
+        -- Extract the requested subset of records
+        local result = {}
+        for i = skip + 1, math.min(#sortedRecords, skip + limit) do
+            table.insert(result, sortedRecords[i])
+        end
+
+        -- Calculate pagination metadata
+        local hasMore = (skip + limit) < #sortedRecords
+        local nextPage = hasMore and (page + 1) or nil
+
+        local response = {
+            CurrentPage = page,
+            NextPage = nextPage,
+            HasMore = hasMore,
+            Records = result,
+            TotalRecords = #sortedRecords
+        }
+
+        ao.send({ Target = msg.From, Data = json.encode(response) })
+    end)
+
+    if not success then
+        sendErrorMessage(msg, 'An unexpected error occurred: ' .. tostring(err))
+    end
 end)
 
 Handlers.add("Get", Handlers.utils.hasMatchingTag("Action", "Get"), function(msg)

@@ -35,7 +35,7 @@ export default function Home() {
     return false
   }
 
-  const createMarket2 = async () => {
+  const createMarket = async () => {
     try {
       const messageId = await message({
         process: MAIN_PROCESS_ID,
@@ -73,7 +73,20 @@ export default function Home() {
     }
   }
 
-  const createMarket = async () => {}
+  const fetchRecords = async () => {
+    try {
+      const result = await dryrun({
+        process: MAIN_PROCESS_ID,
+        tags: [{ name: "Action", value: "List" }],
+      })
+
+      console.log(result.Messages[0])
+      const jsonData = JSON.parse(result.Messages[0].Data)
+      console.log(jsonData)
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
   return (
     <>
@@ -88,12 +101,13 @@ export default function Home() {
             onClick={async (event) => {
               const button = event.target
               button.disabled = true
-              await createMarket2()
+              await createMarket()
               button.disabled = false
             }}
           >
             Create
           </Button>
+          <Button onClick={fetchRecords}>Fetch Records</Button>
         </Flex>
       </ChakraProvider>
     </>
