@@ -1,22 +1,29 @@
-import { Link, ssr } from "arnext"
-import { useEffect, useState } from "react"
+import { Button, ChakraProvider, Flex, Input } from "@chakra-ui/react"
+import {
+  createDataItemSigner,
+  spawn,
+  message,
+  result,
+  dryrun,
+} from "@permaweb/aoconnect"
 
-const getDate = async date => date ?? Date.now()
-
-export const getStaticProps = ssr(async ({}) => {
-  return { props: { _date: Date.now() }, revalidate: 100 }
-})
-
-export default function Home({ _date = null }) {
-  const [date, setDate] = useState(_date)
-  useEffect(() => {
-    ;(async () => _date ?? setDate(await getDate()))()
-  }, [])
+export default function Home() {
+  const createMarket = async () => {
+    console.log("createMarket")
+  }
 
   return (
     <>
-      home: {date} | <Link href="/post/a">post-a</Link> |{" "}
-      <Link href="/abc">404</Link>
+      <ChakraProvider>
+        <Flex flexDirection="column">
+          <Input placeholder="Title" />
+          <Input placeholder="Duration" />
+          <Input placeholder="Token txid" />
+          {/* Profile Image */}
+          {/* Links to Socials */}
+          <Button onClick={createMarket}>Create Bet</Button>
+        </Flex>
+      </ChakraProvider>
     </>
   )
 }
