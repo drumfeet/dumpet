@@ -29,12 +29,24 @@ end)
 
 Handlers.add("Deposit", Handlers.utils.hasMatchingTag("Action", "Deposit"), function(msg)
     print("Deposit")
+    ao.send({
+        Target = msg.From,
+        Data = "Deposit"
+    })
 end)
 
 Handlers.add("Withdraw", Handlers.utils.hasMatchingTag("Action", "Withdraw"), function(msg)
     print("Withdraw")
+    ao.send({
+        Target = msg.From,
+        Data = "Withdraw"
+    })
 end)
 
 Handlers.add("Conclude", Handlers.utils.hasMatchingTag("Action", "Conclude"), function(msg)
     print("Conclude")
+    ao.send({
+        Target = msg.From,
+        Data = "Conclude"
+    })
 end)
