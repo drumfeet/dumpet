@@ -1,4 +1,4 @@
-import { Button, ChakraProvider, Flex, Input } from "@chakra-ui/react"
+import { Button, ChakraProvider, Flex, Input, useToast } from "@chakra-ui/react"
 import {
   createDataItemSigner,
   spawn,
@@ -10,12 +10,30 @@ import {
 import { useState } from "react"
 
 const MAIN_PROCESS_ID = "4WxCo_-ieXMemQ9eByvSyeowC1MNZnHIDK4xkAuxCy0"
-const MODULE_ID = "bkjb55i07GUCUSWROtKK4HU1mBS_X0TyH3M5jMV6aPg"
 
 export default function Home() {
   const [title, setTitle] = useState("")
   const [duration, setDuration] = useState("")
   const [tokenTxId, setTokenTxId] = useState("")
+  const toast = useToast()
+
+  const handleMessageResultError = (_result) => {
+    const errorTag = _result?.Messages?.[0]?.Tags.find(
+      (tag) => tag.name === "Error"
+    )
+    console.log("errorTag", errorTag)
+    if (errorTag) {
+      toast({
+        description: _result.Messages[0].Data,
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+        position: "top",
+      })
+      return true
+    }
+    return false
+  }
 
   const createMarket2 = async () => {
     try {
@@ -48,28 +66,10 @@ export default function Home() {
         process: MAIN_PROCESS_ID,
       })
       console.log("_result", _result)
+
+      if (handleMessageResultError(_result)) return
     } catch (error) {
       console.error(error)
-    }
-  }
-
-  const spawnProcess = async () => {
-    try {
-      const processId = await spawn({
-        module: MODULE_ID,
-        scheduler: "_GQ33BkPtZrqxA84vM8Zk-N2aO0toNNu_C-l-rawrBA",
-        signer: createDataItemSigner(globalThis.arweaveWallet),
-        tags: [
-          {
-            name: "Authority",
-            value: "fcoN_xJeisVsPXA-trzVAuIiqO3ydLQxM-L4XbrQKzY",
-          },
-          { name: "AppName", value: "Dumpet" },
-        ],
-      })
-      console.log("processId", processId)
-    } catch (e) {
-      console.error(e)
     }
   }
 
@@ -93,16 +93,6 @@ export default function Home() {
             }}
           >
             Create
-          </Button>
-          <Button
-            onClick={async (event) => {
-              const button = event.target
-              button.disabled = true
-              await spawnProcess()
-              button.disabled = false
-            }}
-          >
-            Spawn
           </Button>
         </Flex>
       </ChakraProvider>
