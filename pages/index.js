@@ -32,6 +32,8 @@ export default function Home() {
   const [tokenTxId, setTokenTxId] = useState(
     "fzkhRptIvW3tJ7Dz7NFgt2DnZTJVKnwtzEOuURjfXrQ"
   )
+  const [optionA, setOptionA] = useState("This is sample option A")
+  const [optionB, setOptionB] = useState("This is sample option B")
   const toast = useToast()
 
   const {
@@ -218,8 +220,22 @@ export default function Home() {
                 onChange={(e) => setTokenTxId(e.target.value)}
               />
             </FormControl>
-            {/* Profile Image */}
-            {/* Links to Socials */}
+            <FormControl>
+              <FormHelperText fontSize="xs">Option A</FormHelperText>
+              <Input
+                placeholder="Option A"
+                value={optionA}
+                onChange={(e) => setOptionA(e.target.value)}
+              />
+            </FormControl>
+            <FormControl>
+              <FormHelperText fontSize="xs">Option B</FormHelperText>
+              <Input
+                placeholder="Option B"
+                value={optionB}
+                onChange={(e) => setOptionB(e.target.value)}
+              />
+            </FormControl>
             <Button
               width="100%"
               colorScheme="purple"

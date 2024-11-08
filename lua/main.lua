@@ -49,6 +49,16 @@ Handlers.add("Create", Handlers.utils.hasMatchingTag("Action", "Create"), functi
             return
         end
 
+        if type(msg.Tags.OptionA) ~= 'string' or msg.Tags.OptionA:match("^%s*$") then
+            sendErrorMessage(msg, 'OptionA is required and must be a non-empty string!')
+            return
+        end
+
+        if type(msg.Tags.OptionB) ~= 'string' or msg.Tags.OptionB:match("^%s*$") then
+            sendErrorMessage(msg, 'OptionB is required and must be a non-empty string!')
+            return
+        end
+
         -- Prevent multiple creations while waiting for a response
         WaitFor[msg.From] = true
 
@@ -60,6 +70,8 @@ Handlers.add("Create", Handlers.utils.hasMatchingTag("Action", "Create"), functi
             Title = msg.Tags.Title,
             Duration = msg.Tags.Duration,
             TokenTxId = msg.Tags.TokenTxId,
+            OptionA = msg.Tags.OptionA,
+            OptionB = msg.Tags.OptionB,
             ProcessId = childProcessId,
             Creator = msg.From,
             BlockHeight = tostring(msg["Block-Height"]),
