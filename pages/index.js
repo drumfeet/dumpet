@@ -10,6 +10,8 @@ import {
   Input,
   useToast,
   Text,
+  FormControl,
+  FormHelperText,
 } from "@chakra-ui/react"
 import {
   createDataItemSigner,
@@ -22,12 +24,14 @@ import {
 import { Link } from "arnext"
 import { useState } from "react"
 
-const MAIN_PROCESS_ID = "4WxCo_-ieXMemQ9eByvSyeowC1MNZnHIDK4xkAuxCy0"
+const MAIN_PROCESS_ID = "yC4kFwIGERjmLx5qSxEa0MX87sFuqRDFbWUqEedVOZo"
 
 export default function Home() {
   const [title, setTitle] = useState("sample title")
   const [duration, setDuration] = useState("11")
-  const [tokenTxId, setTokenTxId] = useState("0xtest12345")
+  const [tokenTxId, setTokenTxId] = useState(
+    "fzkhRptIvW3tJ7Dz7NFgt2DnZTJVKnwtzEOuURjfXrQ"
+  )
   const toast = useToast()
 
   const {
@@ -191,9 +195,30 @@ export default function Home() {
             width="100%"
             maxW="lg"
           >
-            <Input placeholder="Title" />
-            <Input placeholder="Duration" />
-            <Input placeholder="Token txid" />
+            <FormControl>
+              <FormHelperText fontSize="xs">Title</FormHelperText>
+              <Input
+                placeholder="Title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              />
+            </FormControl>
+            <FormControl>
+              <FormHelperText fontSize="xs">Duration</FormHelperText>
+              <Input
+                placeholder="Duration"
+                value={duration}
+                onChange={(e) => setDuration(e.target.value)}
+              />
+            </FormControl>
+            <FormControl>
+              <FormHelperText fontSize="xs">Token TxId</FormHelperText>
+              <Input
+                placeholder="Token txid"
+                value={tokenTxId}
+                onChange={(e) => setTokenTxId(e.target.value)}
+              />
+            </FormControl>
             {/* Profile Image */}
             {/* Links to Socials */}
             <Button

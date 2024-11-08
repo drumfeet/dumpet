@@ -15,15 +15,13 @@ local utils = {
     end
 }
 
-WAR_PROCESS_ID = "xU9zFkq3X2ZQ6olwNVvr1vUWIjc3kXTWr7xKQD6dh10"
-DUMPET_PROCESS_ID = "fzkhRptIvW3tJ7Dz7NFgt2DnZTJVKnwtzEOuURjfXrQ"
+
 Balances = Balances or {}
 BASE_UNIT = BASE_UNIT or 10
 Denomination = Denomination or 12
-
-Creator = Creator or ""
 TotalDeposit = TotalDeposit or "0"
 MarketInfo = MarketInfo or {}
+Creator = Creator or ""
 
 local multiplyByPower = function(v)
     return v * (BASE_UNIT ^ Denomination)
@@ -59,14 +57,15 @@ Handlers.add("GetCreator", Handlers.utils.hasMatchingTag("Action", "GetCreator")
     ao.send({ Target = msg.From, Data = Creator })
 end)
 
-Handlers.add("Deposit", Handlers.utils.hasMatchingTag("Action", "Deposit"), function(msg)
-    print("Deposit")
-    ao.send({ Target = msg.From, Data = "Deposit" })
-end)
-
 Handlers.add("Withdraw", Handlers.utils.hasMatchingTag("Action", "Withdraw"), function(msg)
     print("Withdraw")
     ao.send({ Target = msg.From, Data = "Withdraw" })
+end)
+
+Handlers.add("WithdrawRewards", Handlers.utils.hasMatchingTag("Action", "WithdrawRewards"), function(msg)
+    -- only the creator can withdraw rewards
+    print("WithdrawRewards")
+    ao.send({ Target = msg.From, Data = "WithdrawRewards" })
 end)
 
 Handlers.add("Conclude", Handlers.utils.hasMatchingTag("Action", "Conclude"), function(msg)
@@ -79,8 +78,14 @@ Handlers.add("GetMarketInfo", Handlers.utils.hasMatchingTag("Action", "GetMarket
     ao.send({ Target = msg.From, Data = json.encode(MarketInfo) })
 end)
 
+Handlers.add("GetTokenTxId", Handlers.utils.hasMatchingTag("Action", "GetTokenTxId"), function(msg)
+    print("GetTokenTxId")
+    ao.send({ Target = msg.From, Data = MarketInfo.TokenTxId })
+end)
+
 Handlers.add("Credit-Notice", Handlers.utils.hasMatchingTag("Action", "Credit-Notice"), function(msg)
-    if msg.From == DUMPET_PROCESS_ID or msg.From == WAR_PROCESS_ID then
+    if msg.From == MarketInfo.TokenTxId then
+        -- if Sender is the process itself
         if msg.Tags.Sender == msg.From then
             local currentVal = Balances[ao.id] or "0"
             Balances[ao.id] = utils.add(currentVal, msg.Tags.Quantity)
@@ -106,6 +111,8 @@ Handlers.add("Credit-Notice", Handlers.utils.hasMatchingTag("Action", "Credit-No
                 Balance = Balances[ao.id],
             })
         end
+
+        TotalDeposit = utils.add(TotalDeposit, msg.Tags.Quantity)
     else
         ao.send({
             Target = msg.From, -- user token PROCESS_ID
@@ -114,5 +121,44 @@ Handlers.add("Credit-Notice", Handlers.utils.hasMatchingTag("Action", "Credit-No
             Quantity = msg.Tags.Quantity,
         })
         sendErrorMessage(msg, 'Invalid token received', msg.Tags.Sender)
+    end
+end)
+
+Handlers.add('Balance', Handlers.utils.hasMatchingTag("Action", "Balance"), function(msg)
+    local bal = '0'
+
+    -- If not Recipient is provided, then return the Senders balance
+    if (msg.Tags.Recipient) then
+        if (Balances[msg.Tags.Recipient]) then
+            bal = Balances[msg.Tags.Recipient]
+        end
+    elseif msg.Tags.Target and Balances[msg.Tags.Target] then
+        bal = Balances[msg.Tags.Target]
+    elseif Balances[msg.From] then
+        bal = Balances[msg.From]
+    end
+    if msg.reply then
+        msg.reply({
+            Balance = bal,
+            Ticker = Ticker,
+            Account = msg.Tags.Recipient or msg.From,
+            Data = bal
+        })
+    else
+        Send({
+            Target = msg.From,
+            Balance = bal,
+            Ticker = Ticker,
+            Account = msg.Tags.Recipient or msg.From,
+            Data = bal
+        })
+    end
+end)
+
+Handlers.add('Balances', Handlers.utils.hasMatchingTag("Action", "Balances"), function(msg)
+    if msg.reply then
+        msg.reply({ Data = json.encode(Balances) })
+    else
+        Send({ Target = msg.From, Data = json.encode(Balances) })
     end
 end)

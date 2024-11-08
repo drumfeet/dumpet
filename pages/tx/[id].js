@@ -32,16 +32,19 @@ export async function getStaticProps({ params: { id } }) {
   return { props: { pid: await getID(id) } }
 }
 
+const DUMPET_TOKEN_TXID = "fzkhRptIvW3tJ7Dz7NFgt2DnZTJVKnwtzEOuURjfXrQ"
+
 export default function Home({ _id = null }) {
   const { id } = useParams()
   const [pid, setPid] = useState(_id)
+  const [tokenTxId, setTokenTxId] = useState("")
   const [jsonData, setJsonData] = useState()
+  const [walletAddress, setWalletAddress] = useState("")
 
   useEffect(() => {
     ;(async () => {
       _id ?? setPid(await getID(id, _id))
 
-      // fetch txid from pid
       if (!_id) {
         console.log("_id", _id)
         console.log("id", id)
@@ -53,15 +56,93 @@ export default function Home({ _id = null }) {
           })
 
           console.log("result", result)
-          const jsonData = JSON.parse(result?.Messages[0]?.Data)
-          console.log(jsonData)
-          setJsonData(jsonData)
+          const _jsonData = JSON.parse(result?.Messages[0]?.Data)
+          console.log("_jsonData", _jsonData)
+          setJsonData(_jsonData)
+          setTokenTxId(_jsonData?.TokenTxId)
+          console.log("TokenTxId", _jsonData?.TokenTxId)
         } catch (error) {
           console.error(error)
         }
       }
     })()
   }, [_id, id])
+
+  const deposit = async () => {
+    try {
+      const messageId = await message({
+        process: DUMPET_TOKEN_TXID,
+        tags: [
+          {
+            name: "Action",
+            value: "Transfer",
+          },
+          {
+            name: "Quantity",
+            value: "2000000000000",
+          },
+          {
+            name: "Recipient",
+            value: pid,
+          },
+        ],
+        signer: createDataItemSigner(globalThis.arweaveWallet),
+      })
+      console.log("messageId", messageId)
+
+      const _result = await result({
+        message: messageId,
+        process: DUMPET_TOKEN_TXID,
+      })
+      console.log("_result", _result)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const getTokenTxId = async () => {
+    try {
+      const result = await dryrun({
+        process: pid,
+        tags: [{ name: "Action", value: "GetTokenTxId" }],
+      })
+      console.log("result", result)
+      // const jsonData = JSON.parse(result?.Messages[0]?.Data)
+      // console.log("jsonData", jsonData)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const getBalances = async () => {
+    try {
+      const result = await dryrun({
+        process: pid,
+        tags: [{ name: "Action", value: "Balances" }],
+      })
+      const jsonData = JSON.parse(result?.Messages[0]?.Data)
+      console.log("jsonData", jsonData)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const getBalance = async () => {
+    console.log("walletAddress", walletAddress)
+    try {
+      const result = await dryrun({
+        process: pid,
+        tags: [
+          { name: "Action", value: "Balance" },
+          { name: "Recipient", value: walletAddress },
+        ],
+      })
+      const jsonData = JSON.parse(result?.Messages[0]?.Data)
+      console.log("jsonData", jsonData)
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
   return (
     <>
@@ -126,9 +207,44 @@ export default function Home({ _id = null }) {
             <Text maxW="lg">{jsonData?.BlockHeight}</Text>
             <Text maxW="lg">{jsonData?.Timestamp}</Text>
 
-            <Button colorScheme="purple" w="100%" maxW="lg">Deposit</Button>
-            <Button colorScheme="purple" w="100%" maxW="lg">Withdraw</Button>
-            <Button colorScheme="purple" w="100%" maxW="lg">Conclude</Button>
+            <Button colorScheme="purple" w="100%" maxW="lg" onClick={deposit}>
+              Deposit
+            </Button>
+            <Button colorScheme="purple" w="100%" maxW="lg">
+              Withdraw
+            </Button>
+            <Button colorScheme="purple" w="100%" maxW="lg">
+              Conclude
+            </Button>
+            <Button
+              colorScheme="purple"
+              w="100%"
+              maxW="lg"
+              onClick={getTokenTxId}
+            >
+              getTokenTxId
+            </Button>
+            <Button
+              colorScheme="purple"
+              w="100%"
+              maxW="lg"
+              onClick={getBalances}
+            >
+              Get Balances
+            </Button>
+            <Input
+              placeholder="User Wallet Address"
+              value={walletAddress}
+              onChange={(e) => setWalletAddress(e.target.value)}
+            />
+            <Button
+              colorScheme="purple"
+              w="100%"
+              maxW="lg"
+              onClick={getBalance}
+            >
+              Get User Balance
+            </Button>
           </Flex>
         </Flex>
       </ChakraProvider>
