@@ -18,18 +18,15 @@ local printData = function(k, v)
     print(_data)
 end
 
-local sendErrorMessage = function(msg, err, target)
-    if not target then
-        ao.send({ Target = msg.From, Error = "true", Data = err })
-        printData("Error", "Target" .. " " .. msg.From .. " " .. err)
-    else
-        ao.send({ Target = target, Error = "true", Data = err })
-        printData("Error", "Target" .. " " .. target .. " " .. err)
-    end
+local function sendErrorMessage(msg, err, target)
+    local targetId = target or msg.From
+    ao.send({ Target = targetId, Error = "true", Data = err })
+    printData("Error", "Target" .. " " .. targetId .. " " .. err)
 end
 
 Records = Records or {}
 WaitFor = WaitFor or {}
+Creators = Creators or {}
 
 local function isSenderWaiting(sender)
     return WaitFor[sender] ~= nil
@@ -69,65 +66,35 @@ Handlers.add("Create", Handlers.utils.hasMatchingTag("Action", "Create"), functi
             Action = "Eval",
             Data = string.format([[
                 Creator = Creator or ""
-
                 Handlers.add("GetProcessOwner", Handlers.utils.hasMatchingTag("Action", "GetProcessOwner"), function(msg)
                     print("GetProcessOwner")
-                    print("ao.env.Process.Owner: " .. ao.env.Process.Owner)
-                    ao.send({
-                        Target = msg.From,
-                        Data = ao.env.Process.Owner
-                    })
+                    ao.send({ Target = msg.From, Data = ao.env.Process.Owner })
                 end)
-
                 Handlers.add("GetOwner", Handlers.utils.hasMatchingTag("Action", "GetOwner"), function(msg)
                     print("GetOwner")
-                    print("Owner: " .. Owner)
-                    ao.send({
-                        Target = msg.From,
-                        Data = Owner
-                    })
+                    ao.send({ Target = msg.From, Data = Owner })
                 end)
-
                 Handlers.add("GetCreator", Handlers.utils.hasMatchingTag("Action", "GetCreator"), function(msg)
                     print("GetCreator")
-                    print("Creator: " .. Creator)
-                    ao.send({
-                        Target = msg.From,
-                        Data = Creator
-                    })
+                    ao.send({ Target = msg.From, Data = Creator })
                 end)
-
                 Handlers.add("Deposit", Handlers.utils.hasMatchingTag("Action", "Deposit"), function(msg)
                     print("Deposit")
-                    ao.send({
-                        Target = msg.From,
-                        Data = "Deposit"
-                    })
+                    ao.send({ Target = msg.From, Data = "Deposit" })
                 end)
-
                 Handlers.add("Withdraw", Handlers.utils.hasMatchingTag("Action", "Withdraw"), function(msg)
                     print("Withdraw")
-                    ao.send({
-                        Target = msg.From,
-                        Data = "Withdraw"
-                    })
+                    ao.send({ Target = msg.From, Data = "Withdraw" })
                 end)
-
                 Handlers.add("Conclude", Handlers.utils.hasMatchingTag("Action", "Conclude"), function(msg)
                     print("Conclude")
-                    ao.send({
-                        Target = msg.From,
-                        Data = "Conclude"
-                    })
+                    ao.send({ Target = msg.From, Data = "Conclude" })
                 end)
-
                 Creator = "]] .. msg.From .. [["
                 Owner = ""
-            ]]
-            )
+            ]])
         })
 
-        Records[childProcessId] = Records[childProcessId] or {}
         Records[childProcessId] = {
             Title = msg.Tags.Title,
             Duration = msg.Tags.Duration,
@@ -171,6 +138,7 @@ Handlers.add("List", Handlers.utils.hasMatchingTag("Action", "List"), function(m
         -- Calculate skip based on page and limit
         local skip = (page - 1) * limit
 
+        -- Sort `Records` in place if it's an array-like table
         local sortedRecords = {}
         for k, v in pairs(Records) do
             table.insert(sortedRecords, v)
