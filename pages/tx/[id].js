@@ -202,6 +202,8 @@ export default function Home({ _id = null }) {
             <Text maxW="lg">{jsonData?.Title}</Text>
             <Text maxW="lg">{jsonData?.Duration}</Text>
             <Text maxW="lg">{jsonData?.TokenTxId}</Text>
+            <Text maxW="lg">{jsonData?.OptionA}</Text>
+            <Text maxW="lg">{jsonData?.OptionB}</Text>
             <Text maxW="lg">{jsonData?.ProcessId}</Text>
             <Text maxW="lg">{jsonData?.Creator}</Text>
             <Text maxW="lg">{jsonData?.BlockHeight}</Text>
@@ -209,6 +211,12 @@ export default function Home({ _id = null }) {
 
             <Button colorScheme="purple" w="100%" maxW="lg" onClick={deposit}>
               Deposit
+            </Button>
+            <Button colorScheme="purple" w="100%" maxW="lg">
+              Option A
+            </Button>
+            <Button colorScheme="purple" w="100%" maxW="lg">
+              Option B
             </Button>
             <Button colorScheme="purple" w="100%" maxW="lg">
               Withdraw

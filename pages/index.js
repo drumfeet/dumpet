@@ -84,6 +84,14 @@ export default function Home() {
             name: "TokenTxId",
             value: tokenTxId,
           },
+          {
+            name: "OptionA",
+            value: optionA,
+          },
+          {
+            name: "OptionB",
+            value: optionB,
+          },
         ],
         signer: createDataItemSigner(globalThis.arweaveWallet),
       })

@@ -57,6 +57,16 @@ Handlers.add("GetCreator", Handlers.utils.hasMatchingTag("Action", "GetCreator")
     ao.send({ Target = msg.From, Data = Creator })
 end)
 
+Handlers.add("OptionA", Handlers.utils.hasMatchingTag("Action", "OptionA"), function(msg)
+    print("OptionA")
+    ao.send({ Target = msg.From, Data = MarketInfo.OptionA })
+end)
+
+Handlers.add("OptionB", Handlers.utils.hasMatchingTag("Action", "OptionB"), function(msg)
+    print("OptionB")
+    ao.send({ Target = msg.From, Data = MarketInfo.OptionB })
+end)
+
 Handlers.add("Withdraw", Handlers.utils.hasMatchingTag("Action", "Withdraw"), function(msg)
     print("Withdraw")
     ao.send({ Target = msg.From, Data = "Withdraw" })
