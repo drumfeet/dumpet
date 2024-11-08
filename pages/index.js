@@ -1,6 +1,7 @@
 import TelegramIcon from "@/components/icons/TelegramIcon"
 import TwitterIcon from "@/components/icons/TwitterIcon"
 import UserIcon from "@/components/icons/UserIcon"
+import { useAppContext } from "@/context/AppContext"
 import {
   Button,
   ChakraProvider,
@@ -28,6 +29,15 @@ export default function Home() {
   const [duration, setDuration] = useState("11")
   const [tokenTxId, setTokenTxId] = useState("0xtest12345")
   const toast = useToast()
+
+  const {
+    connectWallet,
+    disconnectWallet,
+    isConnected,
+    setIsConnected,
+    userAddress,
+    setUserAddress,
+  } = useAppContext()
 
   const handleMessageResultError = (_result) => {
     const errorTag = _result?.Messages?.[0]?.Tags.find(
@@ -100,6 +110,24 @@ export default function Home() {
     }
   }
 
+  const login = async () => {
+    try {
+      const _connected = await connectWallet()
+      if (_connected.success === false) {
+        return
+      }
+      toast({
+        description: "Wallet connected!",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+        position: "top",
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   return (
     <>
       <ChakraProvider>
@@ -140,8 +168,11 @@ export default function Home() {
 
               <Flex
                 _hover={{ cursor: "pointer" }}
-                onClick={() => {
-                  // Login
+                onClick={async (event) => {
+                  const button = event.target
+                  button.disabled = true
+                  await login()
+                  button.disabled = false
                 }}
               >
                 <UserIcon strokeColor="#7023b6" size={34} />
@@ -187,11 +218,11 @@ export default function Home() {
               Fetch Records
             </Button>
 
-            <Link target="_blank" rel="noopener noreferrer" href={"/c/"}>
-              <Button width="100%" maxW="lg" colorScheme="purple">
-                Creator Page
-              </Button>
-            </Link>
+            <Flex width="100%">
+              <Link target="_blank" rel="noopener noreferrer" href={"/c/"}>
+                <Button colorScheme="purple">Creator Page</Button>
+              </Link>
+            </Flex>
           </Flex>
         </Flex>
       </ChakraProvider>
