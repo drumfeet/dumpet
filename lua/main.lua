@@ -60,11 +60,25 @@ Handlers.add("Create", Handlers.utils.hasMatchingTag("Action", "Create"), functi
         local childProcessId = Receive({ Action = "Spawned" }).Process
         print("childProcessId: " .. childProcessId)
 
+        local marketInfo = {
+            Title = msg.Tags.Title,
+            Duration = msg.Tags.Duration,
+            TokenTxId = msg.Tags.TokenTxId,
+            ProcessId = childProcessId,
+            Creator = msg.From,
+            BlockHeight = tostring(msg["Block-Height"]),
+            Timestamp = tostring(msg["Timestamp"]),
+        }
+        printData("marketInfo", marketInfo)
+
         ao.send({
             Target = childProcessId,
             Action = "Eval",
             Data = string.format([[
+                local json = require("json")
                 Creator = Creator or ""
+                TotalDeposit = TotalDeposit or "0"
+                MarketInfo = MarketInfo or {}
                 Handlers.add("GetProcessOwner", Handlers.utils.hasMatchingTag("Action", "GetProcessOwner"), function(msg)
                     print("GetProcessOwner")
                     ao.send({ Target = msg.From, Data = ao.env.Process.Owner })
@@ -89,20 +103,25 @@ Handlers.add("Create", Handlers.utils.hasMatchingTag("Action", "Create"), functi
                     print("Conclude")
                     ao.send({ Target = msg.From, Data = "Conclude" })
                 end)
+                Handlers.add("GetMarketInfo", Handlers.utils.hasMatchingTag("Action", "GetMarketInfo"), function(msg)
+                    print("GetMarketInfo")
+                    ao.send({ Target = msg.From, Data = json.encode(MarketInfo) })
+                end)
+                MarketInfo = {
+                    Title = "]] .. marketInfo.Title .. [[",
+                    Duration = "]] .. marketInfo.Duration .. [[",
+                    TokenTxId = "]] .. marketInfo.TokenTxId .. [[",
+                    ProcessId = "]] .. childProcessId .. [[",
+                    Creator = "]] .. msg.From .. [[",
+                    BlockHeight = "]] .. marketInfo.BlockHeight .. [[",
+                    Timestamp = "]] .. marketInfo.Timestamp .. [["
+                    }
                 Creator = "]] .. msg.From .. [["
                 Owner = ""
             ]])
         })
 
-        Records[childProcessId] = {
-            Title = msg.Tags.Title,
-            Duration = msg.Tags.Duration,
-            TokenTxId = msg.Tags.TokenTxId,
-            ProcessId = childProcessId,
-            Creator = msg.From,
-            BlockHeight = msg["Block-Height"],
-            Timestamp = msg["Timestamp"],
-        }
+        Records[childProcessId] = marketInfo
         printData("Records[childProcessId]", Records[childProcessId])
 
         -- Add childProcessId to the creator's list in Creators table
