@@ -190,7 +190,6 @@ export default function Home() {
             flexDirection="column"
             gap={4}
             align="center"
-            // bg="white"
             borderRadius="md"
             width="100%"
             maxW="lg"
@@ -223,7 +222,6 @@ export default function Home() {
             {/* Links to Socials */}
             <Button
               width="100%"
-              maxW="lg"
               colorScheme="purple"
               onClick={async (event) => {
                 const button = event.target
@@ -234,20 +232,15 @@ export default function Home() {
             >
               Create
             </Button>
-            <Button
-              width="100%"
-              maxW="lg"
-              colorScheme="purple"
-              onClick={fetchRecords}
-            >
+            <Button width="100%" colorScheme="purple" onClick={fetchRecords}>
               Fetch Records
             </Button>
 
-            <Flex width="100%">
+            <Button colorScheme="purple" w="100%">
               <Link target="_blank" rel="noopener noreferrer" href={"/c/"}>
-                <Button colorScheme="purple">Creator Page</Button>
+                Creator Page{" "}
               </Link>
-            </Flex>
+            </Button>
           </Flex>
         </Flex>
       </ChakraProvider>
