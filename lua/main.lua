@@ -104,7 +104,11 @@ Handlers.add("Create", Handlers.utils.hasMatchingTag("Action", "Create"), functi
             BlockHeight = msg["Block-Height"],
             Timestamp = msg["Timestamp"],
         }
-        printData("Records[childProcessId]", Records[childProcessId])
+        printData("Records[childProcessId] Created: ", Records[childProcessId])
+
+        Creators[msg.From] = Creators[msg.From] or {}
+        Creators[msg.From][#Creators[msg.From] + 1] = childProcessId
+        printData("Creators[msg.From] Created: ", Creators[msg.From])
 
         ao.send({ Target = msg.From, Data = "Market Created!" })
 
