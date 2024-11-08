@@ -58,7 +58,8 @@ Variant = "0.0.3"
 Denomination = Denomination or 12
 Balances = Balances or { [ao.id] = utils.toBalanceValue(10000 * 10 ^ Denomination) }
 TotalSupply = TotalSupply or utils.toBalanceValue(10000 * 10 ^ Denomination)
-Name = Name or 'DUMPET'
+-- Name = Name or 'DUMPET'
+if Name ~= 'DUMPET' then Name = 'DUMPET' end
 Ticker = Ticker or 'DUMPET'
 Logo = Logo or '62Xi37z2A3zf74EH8WcdHsgerupea3xGgC6L_M3HT50'
 
