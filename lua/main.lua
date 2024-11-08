@@ -19,7 +19,7 @@ local function sendErrorMessage(msg, err, target)
     printData("Error", "Target" .. " " .. targetId .. " " .. err)
 end
 
-Records = Records or {}
+Markets = Markets or {}
 WaitFor = WaitFor or {}
 Creators = Creators or {}
 
@@ -251,8 +251,8 @@ end)
             ]])
         })
 
-        Records[childProcessId] = marketInfo
-        printData("Records[childProcessId]", Records[childProcessId])
+        Markets[childProcessId] = marketInfo
+        printData("Markets[childProcessId]", Markets[childProcessId])
 
         -- Add childProcessId to the creator's list in Creators table
         Creators[msg.From] = Creators[msg.From] or {}
@@ -293,9 +293,9 @@ Handlers.add("List", Handlers.utils.hasMatchingTag("Action", "List"), function(m
         -- Calculate skip based on page and limit
         local skip = (page - 1) * limit
 
-        -- Sort `Records` in place if it's an array-like table
+        -- Sort `Markets` in place if it's an array-like table
         local sortedRecords = {}
-        for k, v in pairs(Records) do
+        for k, v in pairs(Markets) do
             table.insert(sortedRecords, v)
         end
 
@@ -321,7 +321,7 @@ Handlers.add("List", Handlers.utils.hasMatchingTag("Action", "List"), function(m
             CurrentPage = page,
             NextPage = nextPage,
             HasMore = hasMore,
-            Records = result,
+            Markets = result,
             TotalRecords = #sortedRecords
         }
 
@@ -337,6 +337,6 @@ Handlers.add("Get", Handlers.utils.hasMatchingTag("Action", "Get"), function(msg
     assert(type(msg.id) == 'string', 'id is required!')
     ao.send({
         Target = msg.From,
-        Record = json.encode(Records[msg.id])
+        Record = json.encode(Markets[msg.id])
     })
 end)

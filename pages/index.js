@@ -99,7 +99,7 @@ export default function Home() {
     }
   }
 
-  const fetchRecords = async () => {
+  const fetchMarkets = async () => {
     try {
       const result = await dryrun({
         process: MAIN_PROCESS_ID,
@@ -232,8 +232,8 @@ export default function Home() {
             >
               Create
             </Button>
-            <Button width="100%" colorScheme="purple" onClick={fetchRecords}>
-              Fetch Records
+            <Button width="100%" colorScheme="purple" onClick={fetchMarkets}>
+              Fetch Markets
             </Button>
 
             <Button colorScheme="purple" w="100%">
