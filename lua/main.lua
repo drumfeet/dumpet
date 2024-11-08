@@ -2,19 +2,14 @@ local json = require("json")
 
 local function decodeMessageData(data)
     local status, decodedData = pcall(json.decode, data)
-
     if not status or type(decodedData) ~= 'table' then
         return false, nil
     end
-
     return true, decodedData
 end
 
-local printData = function(k, v)
-    local _data = {
-        Key = k,
-        Value = v
-    }
+local function printData(k, v)
+    local _data = { Key = k, Value = v }
     print(_data)
 end
 
@@ -36,21 +31,25 @@ Handlers.add("Create", Handlers.utils.hasMatchingTag("Action", "Create"), functi
     local success, err = pcall(function()
         if isSenderWaiting(msg.From) then
             sendErrorMessage(msg, 'You already have a market in progress!')
+            WaitFor[msg.From] = nil -- Reset WaitFor in case of error
             return
         end
 
         if type(msg.Tags.Title) ~= 'string' or msg.Tags.Title:match("^%s*$") then
             sendErrorMessage(msg, 'Title is required and must be a non-empty string!')
+            WaitFor[msg.From] = nil -- Reset WaitFor in case of error
             return
         end
 
         if type(msg.Tags.Duration) ~= 'string' or msg.Tags.Duration:match("^%s*$") then
             sendErrorMessage(msg, 'Duration is required and must be a non-empty string!')
+            WaitFor[msg.From] = nil -- Reset WaitFor in case of error
             return
         end
 
         if type(msg.Tags.TokenTxId) ~= 'string' or msg.Tags.TokenTxId:match("^%s*$") then
             sendErrorMessage(msg, 'TokenTxId is required and must be a non-empty string!')
+            WaitFor[msg.From] = nil -- Reset WaitFor in case of error
             return
         end
 
@@ -104,10 +103,12 @@ Handlers.add("Create", Handlers.utils.hasMatchingTag("Action", "Create"), functi
             BlockHeight = msg["Block-Height"],
             Timestamp = msg["Timestamp"],
         }
-        printData("Records[childProcessId] Created: ", Records[childProcessId])
+        printData("Records[childProcessId]", Records[childProcessId])
 
+        -- Add childProcessId to the creator's list in Creators table
         Creators[msg.From] = Creators[msg.From] or {}
-        Creators[msg.From][#Creators[msg.From] + 1] = childProcessId
+        -- Creators[msg.From][#Creators[msg.From] + 1] = childProcessId
+        table.insert(Creators[msg.From], childProcessId)
         printData("Creators[msg.From] Created: ", Creators[msg.From])
 
         ao.send({ Target = msg.From, Data = "Market Created!" })
@@ -117,6 +118,7 @@ Handlers.add("Create", Handlers.utils.hasMatchingTag("Action", "Create"), functi
 
     if not success then
         sendErrorMessage(msg, 'An unexpected error occurred: ' .. tostring(err))
+        WaitFor[msg.From] = nil -- Reset WaitFor in case of error
     end
 end)
 
