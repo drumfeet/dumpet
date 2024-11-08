@@ -8,6 +8,7 @@ import {
   Input,
   useToast,
   Text,
+  Heading,
 } from "@chakra-ui/react"
 import {
   createDataItemSigner,
@@ -25,7 +26,7 @@ export async function getStaticPaths() {
   return { paths: [], fallback: "blocking" }
 }
 
-const getID = async (id, pid) => `post-${pid ?? id}`
+const getID = async (id, pid) => `${pid ?? id}`
 
 export async function getStaticProps({ params: { id } }) {
   return { props: { pid: await getID(id) } }
@@ -34,6 +35,7 @@ export async function getStaticProps({ params: { id } }) {
 export default function Home({ _id = null }) {
   const { id } = useParams()
   const [pid, setPid] = useState(_id)
+  const [jsonData, setJsonData] = useState()
 
   useEffect(() => {
     ;(async () => {
@@ -43,14 +45,26 @@ export default function Home({ _id = null }) {
       if (!_id) {
         console.log("_id", _id)
         console.log("id", id)
+
+        try {
+          const result = await dryrun({
+            process: id,
+            tags: [{ name: "Action", value: "GetMarketInfo" }],
+          })
+
+          console.log("result", result)
+          const jsonData = JSON.parse(result?.Messages[0]?.Data)
+          console.log(jsonData)
+          setJsonData(jsonData)
+        } catch (error) {
+          console.error(error)
+        }
       }
     })()
-  }, [_id])
+  }, [_id, id])
 
   return (
     <>
-      <div>postt : {pid}</div>
-
       <ChakraProvider>
         <Flex
           flexDirection="column"
@@ -99,11 +113,23 @@ export default function Home({ _id = null }) {
             flexDirection="column"
             gap={4}
             align="center"
-            // bg="white"
             borderRadius="md"
             width="100%"
             maxW="lg"
-          ></Flex>
+          >
+            <Text maxW="lg">{pid}</Text>
+            <Text maxW="lg">{jsonData?.Title}</Text>
+            <Text maxW="lg">{jsonData?.Duration}</Text>
+            <Text maxW="lg">{jsonData?.TokenTxId}</Text>
+            <Text maxW="lg">{jsonData?.ProcessId}</Text>
+            <Text maxW="lg">{jsonData?.Creator}</Text>
+            <Text maxW="lg">{jsonData?.BlockHeight}</Text>
+            <Text maxW="lg">{jsonData?.Timestamp}</Text>
+
+            <Button colorScheme="purple" w="100%" maxW="lg">Deposit</Button>
+            <Button colorScheme="purple" w="100%" maxW="lg">Withdraw</Button>
+            <Button colorScheme="purple" w="100%" maxW="lg">Conclude</Button>
+          </Flex>
         </Flex>
       </ChakraProvider>
     </>
