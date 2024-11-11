@@ -28,14 +28,8 @@ import { useState } from "react"
 const MAIN_PROCESS_ID = "yC4kFwIGERjmLx5qSxEa0MX87sFuqRDFbWUqEedVOZo"
 
 export default function Home() {
-  const [title, setTitle] = useState("sample title")
-  const [duration, setDuration] = useState("11")
-  const [tokenTxId, setTokenTxId] = useState(
-    "fzkhRptIvW3tJ7Dz7NFgt2DnZTJVKnwtzEOuURjfXrQ"
-  )
-  const [optionA, setOptionA] = useState("This is sample option A")
-  const [optionB, setOptionB] = useState("This is sample option B")
   const toast = useToast()
+  const [markets, setMarkets] = useState([])
 
   const {
     connectWallet,
@@ -45,24 +39,6 @@ export default function Home() {
     userAddress,
     setUserAddress,
   } = useAppContext()
-
-  const handleMessageResultError = (_result) => {
-    const errorTag = _result?.Messages?.[0]?.Tags.find(
-      (tag) => tag.name === "Error"
-    )
-    console.log("errorTag", errorTag)
-    if (errorTag) {
-      toast({
-        description: _result.Messages[0].Data,
-        status: "error",
-        duration: 2000,
-        isClosable: true,
-        position: "top",
-      })
-      return true
-    }
-    return false
-  }
 
   const fetchMarkets = async () => {
     try {
@@ -74,24 +50,7 @@ export default function Home() {
       console.log(result.Messages[0])
       const jsonData = JSON.parse(result.Messages[0].Data)
       console.log(jsonData)
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
-  const login = async () => {
-    try {
-      const _connected = await connectWallet()
-      if (_connected.success === false) {
-        return
-      }
-      toast({
-        description: "Wallet connected!",
-        status: "success",
-        duration: 2000,
-        isClosable: true,
-        position: "top",
-      })
+      setMarkets(jsonData.Markets)
     } catch (error) {
       console.error(error)
     }
@@ -117,14 +76,32 @@ export default function Home() {
             width="100%"
             maxW="lg"
           >
-            <Button colorScheme="purple" w="100%">
-              <Link target="_blank" rel="noopener noreferrer" href={"/c/"}>
-                Profile Page
+            <Button width="100%" colorScheme="purple" onClick={fetchMarkets}>
+              <Link target="_blank" rel="noopener noreferrer" href="/create">
+                Create Bet
               </Link>
             </Button>
             <Button width="100%" colorScheme="purple" onClick={fetchMarkets}>
               Fetch Markets
             </Button>
+            {markets.length > 0 && (
+              <>
+                {markets.map((market, index) => (
+                  <Flex key={index} flexDirection="column" w="100%" maxW="lg">
+                    <Text>{market.Title}</Text>
+                    <Text>{market.Creator}</Text>
+                    <Text>{market.BlockHeight}</Text>
+                    <Text>{market.Duration}</Text>
+                    <Text>{market.OptionA}</Text>
+                    <Text>{market.OptionB}</Text>
+                    <Text>{market.ProcessId}</Text>
+                    <Text>{market.Timestamp}</Text>
+                    <Text>{market.TokenTxId}</Text>
+                    <Divider />
+                  </Flex>
+                ))}
+              </>
+            )}
           </Flex>
         </Flex>
       </ChakraProvider>
