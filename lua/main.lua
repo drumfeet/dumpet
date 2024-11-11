@@ -358,6 +358,15 @@ Handlers.add("List", Handlers.utils.hasMatchingTag("Action", "List"), function(m
     end
 end)
 
+Handlers.add("WaitFor", Handlers.utils.hasMatchingTag("Action", "WaitFor"), function(msg)
+    ao.send({ Target = msg.From, Data = json.encode(WaitFor) })
+end)
+
+Handlers.add("HasWaitFor", Handlers.utils.hasMatchingTag("Action", "HasWaitFor"), function(msg)
+    -- return boolean if sender is waiting
+    ao.send({ Target = msg.From, Data = isSenderWaiting(msg.From) })
+end)
+
 Handlers.add("Get", Handlers.utils.hasMatchingTag("Action", "Get"), function(msg)
     assert(type(msg.id) == 'string', 'id is required!')
     ao.send({
