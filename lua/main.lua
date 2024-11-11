@@ -363,8 +363,17 @@ Handlers.add("WaitFor", Handlers.utils.hasMatchingTag("Action", "WaitFor"), func
 end)
 
 Handlers.add("HasWaitFor", Handlers.utils.hasMatchingTag("Action", "HasWaitFor"), function(msg)
-    -- return boolean if sender is waiting
-    ao.send({ Target = msg.From, Data = isSenderWaiting(msg.From) })
+    if type(msg.Tags.ProfileId) ~= 'string' or msg.Tags.ProfileId:match("^%s*$") then
+        sendErrorMessage(msg, 'ProfileId is required and must be a non-empty string!')
+        return
+    end
+
+    local _data = json.encode({
+        Target = msg.From,
+        ProfileId = msg.Tags.ProfileId,
+        HasWaitFor = isSenderWaiting(msg.Tags.ProfileId)
+    })
+    ao.send({ Target = msg.From, Data = _data })
 end)
 
 Handlers.add("Get", Handlers.utils.hasMatchingTag("Action", "Get"), function(msg)
