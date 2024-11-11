@@ -1,28 +1,17 @@
-import TelegramIcon from "@/components/icons/TelegramIcon"
-import TwitterIcon from "@/components/icons/TwitterIcon"
-import UserIcon from "@/components/icons/UserIcon"
 import { useAppContext } from "@/context/AppContext"
 import {
   Button,
   ChakraProvider,
-  Divider,
   Flex,
   Input,
   useToast,
-  Text,
   FormControl,
   FormHelperText,
 } from "@chakra-ui/react"
-import {
-  createDataItemSigner,
-  spawn,
-  message,
-  result,
-  results,
-  dryrun,
-} from "@permaweb/aoconnect"
+import { createDataItemSigner, message, result } from "@permaweb/aoconnect"
 import { Link } from "arnext"
 import { useState } from "react"
+import AppHeader from "@/components/AppHeader"
 
 const MAIN_PROCESS_ID = "yC4kFwIGERjmLx5qSxEa0MX87sFuqRDFbWUqEedVOZo"
 
@@ -64,6 +53,11 @@ export default function Home() {
   }
 
   const createMarket = async () => {
+    const _connected = await connectWallet()
+    if (_connected.success === false) {
+      return
+    }
+
     try {
       const messageId = await message({
         process: MAIN_PROCESS_ID,
@@ -104,34 +98,10 @@ export default function Home() {
       console.log("_result", _result)
 
       if (handleMessageResultError(_result)) return
-    } catch (error) {
-      console.error(error)
-    }
-  }
 
-  const fetchMarkets = async () => {
-    try {
-      const result = await dryrun({
-        process: MAIN_PROCESS_ID,
-        tags: [{ name: "Action", value: "List" }],
-      })
-
-      console.log(result.Messages[0])
-      const jsonData = JSON.parse(result.Messages[0].Data)
-      console.log(jsonData)
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
-  const login = async () => {
-    try {
-      const _connected = await connectWallet()
-      if (_connected.success === false) {
-        return
-      }
       toast({
-        description: "Wallet connected!",
+        title: "Pending market creation",
+        description: "View your profile to see the list of markets you created",
         status: "success",
         duration: 2000,
         isClosable: true,
@@ -139,6 +109,13 @@ export default function Home() {
       })
     } catch (error) {
       console.error(error)
+      toast({
+        description: error.message,
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+        position: "top",
+      })
     }
   }
 
@@ -152,49 +129,7 @@ export default function Home() {
           bg="#f3f0fa"
           minH="100vh"
         >
-          <Flex
-            w="full"
-            justify="space-between"
-            align="center"
-            paddingX={[0, 8]}
-          >
-            <Text fontSize="3xl" color="#7023b6" fontWeight="bold">
-              Dumpet
-            </Text>
-            <Flex gap={4} alignItems="center">
-              <Link
-                target="_blank"
-                rel="noopener noreferrer"
-                href="https://t.me/dumpetdotfun"
-              >
-                <TelegramIcon strokeColor="#7023b6" size={18} />
-              </Link>
-
-              <Link
-                target="_blank"
-                rel="noopener noreferrer"
-                href="https://x.com/dumpetdotfun"
-              >
-                <TwitterIcon strokeColor="#7023b6" size={18} />
-              </Link>
-
-              <Flex paddingX={[0, 2]}></Flex>
-
-              <Flex
-                _hover={{ cursor: "pointer" }}
-                onClick={async (event) => {
-                  const button = event.target
-                  button.disabled = true
-                  await login()
-                  button.disabled = false
-                }}
-              >
-                <UserIcon strokeColor="#7023b6" size={34} />
-              </Flex>
-            </Flex>
-          </Flex>
-          <Divider />
-          <Flex paddingY={8}></Flex>
+          <AppHeader />
 
           <Flex
             flexDirection="column"
@@ -254,17 +189,21 @@ export default function Home() {
                 button.disabled = false
               }}
             >
-              Create
+              Create Bet
             </Button>
-            <Button width="100%" colorScheme="purple" onClick={fetchMarkets}>
-              Fetch Markets
-            </Button>
-
-            <Button colorScheme="purple" w="100%">
-              <Link target="_blank" rel="noopener noreferrer" href={"/c/"}>
-                Creator Page{" "}
-              </Link>
-            </Button>
+            {isConnected &&
+              typeof userAddress === "string" &&
+              userAddress.length > 0 && (
+                <Button width="100%" colorScheme="purple">
+                  <Link
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href={`/profile/${userAddress}`}
+                  >
+                    View Profile
+                  </Link>
+                </Button>
+              )}
           </Flex>
         </Flex>
       </ChakraProvider>

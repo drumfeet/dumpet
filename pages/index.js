@@ -1,27 +1,13 @@
 import AppHeader from "@/components/AppHeader"
-import TelegramIcon from "@/components/icons/TelegramIcon"
-import TwitterIcon from "@/components/icons/TwitterIcon"
-import UserIcon from "@/components/icons/UserIcon"
-import { useAppContext } from "@/context/AppContext"
 import {
   Button,
   ChakraProvider,
   Divider,
   Flex,
-  Input,
   useToast,
   Text,
-  FormControl,
-  FormHelperText,
 } from "@chakra-ui/react"
-import {
-  createDataItemSigner,
-  spawn,
-  message,
-  result,
-  results,
-  dryrun,
-} from "@permaweb/aoconnect"
+import { dryrun } from "@permaweb/aoconnect"
 import { Link } from "arnext"
 import { useState } from "react"
 
@@ -30,15 +16,6 @@ const MAIN_PROCESS_ID = "yC4kFwIGERjmLx5qSxEa0MX87sFuqRDFbWUqEedVOZo"
 export default function Home() {
   const toast = useToast()
   const [markets, setMarkets] = useState([])
-
-  const {
-    connectWallet,
-    disconnectWallet,
-    isConnected,
-    setIsConnected,
-    userAddress,
-    setUserAddress,
-  } = useAppContext()
 
   const fetchMarkets = async () => {
     try {
