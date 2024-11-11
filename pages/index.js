@@ -63,52 +63,6 @@ export default function Home() {
     return false
   }
 
-  const createMarket = async () => {
-    try {
-      const messageId = await message({
-        process: MAIN_PROCESS_ID,
-        tags: [
-          {
-            name: "Action",
-            value: "Create",
-          },
-          {
-            name: "Title",
-            value: title,
-          },
-          {
-            name: "Duration",
-            value: duration,
-          },
-          {
-            name: "TokenTxId",
-            value: tokenTxId,
-          },
-          {
-            name: "OptionA",
-            value: optionA,
-          },
-          {
-            name: "OptionB",
-            value: optionB,
-          },
-        ],
-        signer: createDataItemSigner(globalThis.arweaveWallet),
-      })
-      console.log("messageId", messageId)
-
-      const _result = await result({
-        message: messageId,
-        process: MAIN_PROCESS_ID,
-      })
-      console.log("_result", _result)
-
-      if (handleMessageResultError(_result)) return
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
   const fetchMarkets = async () => {
     try {
       const result = await dryrun({
@@ -204,66 +158,13 @@ export default function Home() {
             width="100%"
             maxW="lg"
           >
-            <FormControl>
-              <FormHelperText fontSize="xs">Title</FormHelperText>
-              <Input
-                placeholder="Title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-              />
-            </FormControl>
-            <FormControl>
-              <FormHelperText fontSize="xs">Duration</FormHelperText>
-              <Input
-                placeholder="Duration"
-                value={duration}
-                onChange={(e) => setDuration(e.target.value)}
-              />
-            </FormControl>
-            <FormControl>
-              <FormHelperText fontSize="xs">Token TxId</FormHelperText>
-              <Input
-                placeholder="Token txid"
-                value={tokenTxId}
-                onChange={(e) => setTokenTxId(e.target.value)}
-              />
-            </FormControl>
-            <FormControl>
-              <FormHelperText fontSize="xs">Option A</FormHelperText>
-              <Input
-                placeholder="Option A"
-                value={optionA}
-                onChange={(e) => setOptionA(e.target.value)}
-              />
-            </FormControl>
-            <FormControl>
-              <FormHelperText fontSize="xs">Option B</FormHelperText>
-              <Input
-                placeholder="Option B"
-                value={optionB}
-                onChange={(e) => setOptionB(e.target.value)}
-              />
-            </FormControl>
-            <Button
-              width="100%"
-              colorScheme="purple"
-              onClick={async (event) => {
-                const button = event.target
-                button.disabled = true
-                await createMarket()
-                button.disabled = false
-              }}
-            >
-              Create
+            <Button colorScheme="purple" w="100%">
+              <Link target="_blank" rel="noopener noreferrer" href={"/c/"}>
+                Profile Page
+              </Link>
             </Button>
             <Button width="100%" colorScheme="purple" onClick={fetchMarkets}>
               Fetch Markets
-            </Button>
-
-            <Button colorScheme="purple" w="100%">
-              <Link target="_blank" rel="noopener noreferrer" href={"/c/"}>
-                Creator Page{" "}
-              </Link>
             </Button>
           </Flex>
         </Flex>
