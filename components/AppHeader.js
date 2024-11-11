@@ -2,7 +2,7 @@ import { ChakraProvider, Divider, Flex, Text } from "@chakra-ui/react"
 import { Link } from "arnext"
 import TelegramIcon from "./icons/TelegramIcon"
 import TwitterIcon from "./icons/TwitterIcon"
-import UserIcon from "./icons/UserIcon"
+import LoginModal from "./LoginModal"
 
 export default function AppHeader() {
   return (
@@ -30,17 +30,7 @@ export default function AppHeader() {
 
           <Flex paddingX={[0, 2]}></Flex>
 
-          <Flex
-            _hover={{ cursor: "pointer" }}
-            onClick={async (event) => {
-              const button = event.target
-              button.disabled = true
-              await login()
-              button.disabled = false
-            }}
-          >
-            <UserIcon strokeColor="#7023b6" size={34} />
-          </Flex>
+          <LoginModal />
         </Flex>
       </Flex>
       <Divider />
