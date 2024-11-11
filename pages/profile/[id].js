@@ -8,7 +8,23 @@ import {
   results,
   dryrun,
 } from "@permaweb/aoconnect"
-import { Button, ChakraProvider, Flex, useToast, Text } from "@chakra-ui/react"
+import {
+  Button,
+  ChakraProvider,
+  Flex,
+  useToast,
+  Text,
+  Table,
+  Thead,
+  Tr,
+  Th,
+  Tbody,
+  Td,
+  Divider,
+  TableContainer,
+  IconButton,
+} from "@chakra-ui/react"
+import { AddIcon, DeleteIcon, EditIcon, UpDownIcon } from "@chakra-ui/icons"
 import AppHeader from "@/components/AppHeader"
 
 export async function getStaticPaths() {
@@ -27,6 +43,7 @@ export default function Home({ _id = null }) {
   const { id } = useParams()
   const [pid, setPid] = useState(_id)
   const [isPending, setIsPending] = useState(false)
+  const [userMarkets, setUserMarkets] = useState([])
 
   useEffect(() => {
     ;(async () => {
@@ -39,6 +56,7 @@ export default function Home({ _id = null }) {
     if (pid) {
       ;(async () => {
         await hasWaitFor()
+        await fetchMarkets()
       })()
     }
   }, [pid])
@@ -101,6 +119,28 @@ export default function Home({ _id = null }) {
     }
   }
 
+  const fetchMarkets = async () => {
+    try {
+      const _result = await dryrun({
+        process: MAIN_PROCESS_ID,
+        tags: [
+          { name: "Action", value: "Creator" },
+          {
+            name: "ProfileId",
+            value: pid,
+          },
+        ],
+      })
+      console.log("_result", _result)
+      if (handleMessageResultError(_result)) return
+      const jsonData = JSON.parse(_result?.Messages[0]?.Data)
+      console.log("jsonData", jsonData)
+      setUserMarkets(jsonData.Markets)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   return (
     <>
       <ChakraProvider>
@@ -124,6 +164,43 @@ export default function Home({ _id = null }) {
             <Button width="100%" colorScheme="purple" onClick={hasWaitFor}>
               hasWaitFor
             </Button>
+            {userMarkets?.length > 0 ? (
+              <>
+                <TableContainer width="100%" maxW="lg">
+                  <Table size="sm">
+                    <Thead>
+                      <Tr>
+                        <Th>Market Tx Id</Th>
+                      </Tr>
+                    </Thead>
+                    <Tbody>
+                      {userMarkets.map((record, index) => (
+                        <Tr key={index}>
+                          <Td textAlign="left">
+                            <Text
+                              as="a"
+                              href={`/tx/${record}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              color="#7023b6"
+                              textDecoration="underline"
+                              _hover={{ cursor: "pointer" }}
+                            >
+                              {record}
+                            </Text>
+                          </Td>
+                        </Tr>
+                      ))}
+                    </Tbody>
+                  </Table>
+                </TableContainer>
+              </>
+            ) : (
+              <>
+                <Text color="#7023b6">No market found</Text>
+                <Flex paddingY={8}></Flex>
+              </>
+            )}
           </Flex>
         </Flex>
       </ChakraProvider>

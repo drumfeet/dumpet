@@ -376,6 +376,25 @@ Handlers.add("HasWaitFor", Handlers.utils.hasMatchingTag("Action", "HasWaitFor")
     ao.send({ Target = msg.From, Data = _data })
 end)
 
+Handlers.add("Creators", Handlers.utils.hasMatchingTag("Action", "Creators"), function(msg)
+    ao.send({ Target = msg.From, Data = json.encode(Creators) })
+end)
+
+Handlers.add('Creator', Handlers.utils.hasMatchingTag("Action", "Creator"), function(msg)
+    if type(msg.Tags.ProfileId) ~= 'string' or msg.Tags.ProfileId:match("^%s*$") then
+        sendErrorMessage(msg, 'ProfileId is required and must be a non-empty string!')
+        return
+    end
+
+    local markets = Creators[msg.Tags.ProfileId] or {}
+    local _data = json.encode({
+        Target = msg.From,
+        ProfileId = msg.Tags.ProfileId,
+        Markets = markets
+    })
+    ao.send({ Target = msg.From, Data = _data })
+end)
+
 Handlers.add("Get", Handlers.utils.hasMatchingTag("Action", "Get"), function(msg)
     assert(type(msg.id) == 'string', 'id is required!')
     ao.send({
