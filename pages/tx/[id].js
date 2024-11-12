@@ -281,7 +281,7 @@ export default function Home({ _id = null }) {
         tags: [
           {
             name: "Action",
-            value: "voteB",
+            value: "VoteB",
           },
           {
             name: "Quantity",
