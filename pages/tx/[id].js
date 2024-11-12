@@ -49,8 +49,8 @@ export default function Home({ _id = null }) {
   const [pid, setPid] = useState(_id)
   const [tokenTxId, setTokenTxId] = useState("")
   const [jsonData, setJsonData] = useState()
-  const [walletAddress, setWalletAddress] = useState("")
   const [amount, setAmount] = useState(1)
+  const [amountOfVote, setAmountOfVote] = useState(1)
   const [userBalance, setUserBalance] = useState(-1)
 
   const {
@@ -207,6 +207,76 @@ export default function Home({ _id = null }) {
     }
   }
 
+  const voteA = async () => {
+    const _connected = await connectWallet()
+    if (_connected.success === false) {
+      return
+    }
+
+    const _amount = multiplyByPower(amountOfVote)
+    console.log("_amount", _amount)
+
+    try {
+      const messageId = await message({
+        process: pid,
+        tags: [
+          {
+            name: "Action",
+            value: "OptionA",
+          },
+          {
+            name: "Quantity",
+            value: _amount.toString(),
+          }
+        ],
+        signer: createDataItemSigner(globalThis.arweaveWallet),
+      })
+      console.log("messageId", messageId)
+
+      const _result = await result({
+        message: messageId,
+        process: pid,
+      })
+      console.log("_result", _result)
+      if (handleMessageResultError(_result)) return
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const voteB = async () => {
+    const _connected = await connectWallet()
+    if (_connected.success === false) {
+      return
+    }
+
+    const _amount = multiplyByPower(amountOfVote)
+    console.log("_amount", _amount)
+
+    try {
+      const messageId = await message({
+        process: pid,
+        tags: [
+          {
+            name: "Action",
+            value: "OptionB",
+          },
+        ],
+        signer: createDataItemSigner(globalThis.arweaveWallet),
+      })
+      console.log("messageId", messageId)
+
+      const _result = await result({
+        message: messageId,
+        process: pid,
+      })
+      console.log("_result", _result)
+      if (handleMessageResultError(_result)) return
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   return (
     <>
       <ChakraProvider>
@@ -244,16 +314,34 @@ export default function Home({ _id = null }) {
               <Text maxW="lg">{jsonData?.TokenTxId}</Text>
             </FormControl>
             <FormControl>
+              <FormHelperText fontSize="xs">Amount of Vote</FormHelperText>
+              <NumberInput
+                precision={2}
+                value={amountOfVote}
+                min={1}
+                onChange={(e) => {
+                  setAmountOfVote(e)
+                }}
+              >
+                <NumberInputField />
+                <NumberInputStepper>
+                  <NumberIncrementStepper />
+                  <NumberDecrementStepper />
+                </NumberInputStepper>
+              </NumberInput>
+            </FormControl>
+            <FormControl>
               <FormHelperText fontSize="xs">OptionA</FormHelperText>
               <Text maxW="lg">{jsonData?.OptionA}</Text>
-              <Button colorScheme="purple" w="100%" maxW="lg">
+
+              <Button colorScheme="purple" w="100%" maxW="lg" onClick={voteA}>
                 Vote A
               </Button>
             </FormControl>
             <FormControl>
               <FormHelperText fontSize="xs">OptionB</FormHelperText>
               <Text maxW="lg">{jsonData?.OptionB}</Text>
-              <Button colorScheme="purple" w="100%" maxW="lg">
+              <Button colorScheme="purple" w="100%" maxW="lg" onClick={voteB}>
                 Vote B
               </Button>
             </FormControl>
@@ -273,7 +361,6 @@ export default function Home({ _id = null }) {
             <FormControl>
               <FormHelperText fontSize="xs">Amount</FormHelperText>
               <NumberInput
-                colorScheme="purple"
                 precision={2}
                 value={amount}
                 min={1}

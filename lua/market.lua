@@ -58,8 +58,8 @@ Handlers.add("GetCreator", Handlers.utils.hasMatchingTag("Action", "GetCreator")
 end)
 
 Handlers.add("OptionA", Handlers.utils.hasMatchingTag("Action", "OptionA"), function(msg)
-    print("OptionA")
-    ao.send({ Target = msg.From, Data = MarketInfo.OptionA })
+
+    -- TODO: Check if the user has enough balance to buy the option
 end)
 
 Handlers.add("OptionB", Handlers.utils.hasMatchingTag("Action", "OptionB"), function(msg)
