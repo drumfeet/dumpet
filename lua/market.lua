@@ -127,7 +127,69 @@ Handlers.add("VoteA", Handlers.utils.hasMatchingTag("Action", "VoteA"), function
 end)
 
 Handlers.add("VoteB", Handlers.utils.hasMatchingTag("Action", "VoteB"), function(msg)
+    -- Define the original state variables and set them initially to nil
+    local originalSenderBalance = nil
+    local originalBalanceVoteB = nil
+    local originalTotalBalanceVoteB = nil
 
+    local success, err = pcall(function()
+        -- Validate that msg.Tags.Quantity is a valid string representing a number greater than 0
+        if type(msg.Tags.Quantity) ~= 'string' then
+            sendErrorMessage(msg, "Quantity must be a valid string representing a number greater than 0")
+            return
+        end
+
+        -- Check if the Quantity is a positive number
+        local quantity = tonumber(msg.Tags.Quantity)
+        if not quantity or quantity <= 0 then
+            sendErrorMessage(msg, "Quantity must be greater than 0")
+            return
+        end
+
+        -- Check if Balances[msg.From] has enough balance to vote
+        local senderBalance = Balances[msg.From] or "0"
+        if tonumber(senderBalance) < quantity then
+            sendErrorMessage(msg, "Insufficient balance to vote")
+            return
+        end
+
+        -- Save the original states for rollback purposes
+        originalSenderBalance = senderBalance
+        originalBalanceVoteB = BalancesVoteB[msg.From] or "0"
+        originalTotalBalanceVoteB = TotalBalanceVoteB
+
+        -- Perform balance updates
+        Balances[msg.From] = utils.subtract(senderBalance, msg.Tags.Quantity)
+        BalancesVoteB[msg.From] = utils.add(originalBalanceVoteB, msg.Tags.Quantity)
+        TotalBalanceVoteB = utils.add(originalTotalBalanceVoteB, msg.Tags.Quantity)
+
+        -- Prepare data to be returned
+        local _data = {
+            From = msg.From,
+            Quantity = msg.Tags.Quantity,
+            NewBalance = Balances[msg.From],
+            BalanceVoteB = BalancesVoteB[msg.From],
+            TotalBalanceVoteB = TotalBalanceVoteB
+        }
+        printData("VoteB _data", _data)
+
+        ao.send({ Target = msg.From, Data = json.encode(_data) })
+    end)
+
+    if not success then
+        -- Rollback: restore original balances if an error occurred
+        if originalSenderBalance then
+            Balances[msg.From] = originalSenderBalance
+        end
+        if originalBalanceVoteB then
+            BalancesVoteB[msg.From] = originalBalanceVoteB
+        end
+        if originalTotalBalanceVoteB then
+            TotalBalanceVoteB = originalTotalBalanceVoteB
+        end
+
+        sendErrorMessage(msg, 'An unexpected error occurred: ' .. tostring(err))
+    end
 end)
 
 Handlers.add("Withdraw", Handlers.utils.hasMatchingTag("Action", "Withdraw"), function(msg)
