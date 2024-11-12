@@ -318,6 +318,9 @@ export default function Home({ _id = null }) {
 
   return (
     <>
+    {/* TODO: 
+    - Display TotalBalanceVoteA and TotalBalanceVoteB count
+    - Display userBalanceVoteA and userBalanceVoteB count */}
       <ChakraProvider>
         <Flex
           flexDirection="column"
