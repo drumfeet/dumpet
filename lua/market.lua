@@ -84,13 +84,18 @@ Handlers.add("VoteA", Handlers.utils.hasMatchingTag("Action", "VoteA"), function
         -- Subtract the quantity from sender's balance to register the vote
         Balances[msg.From] = utils.subtract(senderBalance, msg.Tags.Quantity)
 
-        utils.add(BalancesVoteA[msg.From] or "0", msg.Tags.Quantity)
+        -- Update BalancesVoteA for tracking votes on A
+        BalancesVoteA[msg.From] = utils.add(BalancesVoteA[msg.From] or "0", msg.Tags.Quantity)
+
+        -- Update TotalBalanceVoteA for tracking total votes on A
+        TotalBalanceVoteA = utils.add(TotalBalanceVoteA, msg.Tags.Quantity)
 
         local _data = {
             From = msg.From,
             Quantity = msg.Tags.Quantity,
             NewBalance = Balances[msg.From],
-            BalanceVoteA = BalancesVoteA[msg.From]
+            BalanceVoteA = BalancesVoteA[msg.From],
+            TotalBalanceVoteA = TotalBalanceVoteA
         }
         printData("VoteA _data", _data)
 
@@ -102,7 +107,6 @@ Handlers.add("VoteA", Handlers.utils.hasMatchingTag("Action", "VoteA"), function
         -- TODO: reset or revert changes in case of error
     end
 end)
-
 
 Handlers.add("VoteB", Handlers.utils.hasMatchingTag("Action", "VoteB"), function(msg)
 
