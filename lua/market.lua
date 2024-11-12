@@ -15,11 +15,14 @@ local utils = {
     end
 }
 
-
 Balances = Balances or {}
+TotalBalances = TotalBalances or "0"
+BalancesVoteA = BalancesVoteA or {}
+BalancesVoteB = BalancesVoteB or {}
+TotalBalanceVoteA = TotalBalanceVoteA or "0"
+TotalBalanceVoteB = TotalBalanceVoteB or "0"
 BASE_UNIT = BASE_UNIT or 10
 Denomination = Denomination or 12
-TotalDeposit = TotalDeposit or "0"
 MarketInfo = MarketInfo or {}
 Creator = Creator or ""
 
@@ -58,14 +61,48 @@ Handlers.add("GetCreator", Handlers.utils.hasMatchingTag("Action", "GetCreator")
 end)
 
 Handlers.add("VoteA", Handlers.utils.hasMatchingTag("Action", "VoteA"), function(msg)
-    if type(msg.Tags.Quantity) ~= 'string' or msg.Tags.Quantity:match("^%s*$") then
-        -- TODO: validate if the msg.Tags.Quantity is a valid number greater than 0, if not call sendErrorMessage
+    local success, err = pcall(function()
+        if type(msg.Tags.Quantity) ~= 'string' or msg.Tags.Quantity:match("^%s*$") then
+            sendErrorMessage(msg, "Quantity must be a valid string representing a number greater than 0", msg.From)
+            return
+        end
 
-        return
+        -- Check if the Quantity is a positive number
+        local quantity = tonumber(msg.Tags.Quantity)
+        if not quantity or quantity <= 0 then
+            sendErrorMessage(msg, "Quantity must be greater than 0", msg.From)
+            return
+        end
+
+        -- Check if Balances[msg.From] has enough balance to vote
+        local senderBalance = Balances[msg.From] or "0"
+        if tonumber(senderBalance) < quantity then
+            sendErrorMessage(msg, "Insufficient balance to vote", msg.From)
+            return
+        end
+
+        -- Subtract the quantity from sender's balance to register the vote
+        Balances[msg.From] = utils.subtract(senderBalance, msg.Tags.Quantity)
+
+        utils.add(BalancesVoteA[msg.From] or "0", msg.Tags.Quantity)
+
+        local _data = {
+            From = msg.From,
+            Quantity = msg.Tags.Quantity,
+            NewBalance = Balances[msg.From],
+            BalanceVoteA = BalancesVoteA[msg.From]
+        }
+        printData("VoteA _data", _data)
+
+        ao.send({ Target = msg.From, Data = json.encode(_data) })
+    end)
+
+    if not success then
+        sendErrorMessage(msg, 'An unexpected error occurred: ' .. tostring(err))
+        -- TODO: reset or revert changes in case of error
     end
-
-    -- TODO: Check if Balances[msg.From] has enough balance to vote
 end)
+
 
 Handlers.add("VoteB", Handlers.utils.hasMatchingTag("Action", "VoteB"), function(msg)
 
@@ -125,7 +162,7 @@ Handlers.add("Credit-Notice", Handlers.utils.hasMatchingTag("Action", "Credit-No
             })
         end
 
-        TotalDeposit = utils.add(TotalDeposit, msg.Tags.Quantity)
+        TotalBalances = utils.add(TotalBalances, msg.Tags.Quantity)
     else
         ao.send({
             Target = msg.From, -- user token PROCESS_ID
