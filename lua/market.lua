@@ -61,35 +61,43 @@ Handlers.add("GetCreator", Handlers.utils.hasMatchingTag("Action", "GetCreator")
 end)
 
 Handlers.add("VoteA", Handlers.utils.hasMatchingTag("Action", "VoteA"), function(msg)
+    -- Define the original state variables and set them initially to nil
+    local originalSenderBalance = nil
+    local originalBalanceVoteA = nil
+    local originalTotalBalanceVoteA = nil
+
     local success, err = pcall(function()
+        -- Validate that msg.Tags.Quantity is a valid string representing a number greater than 0
         if type(msg.Tags.Quantity) ~= 'string' or msg.Tags.Quantity:match("^%s*$") then
-            sendErrorMessage(msg, "Quantity must be a valid string representing a number greater than 0", msg.From)
+            sendErrorMessage(msg, "Quantity must be a valid string representing a number greater than 0")
             return
         end
 
         -- Check if the Quantity is a positive number
         local quantity = tonumber(msg.Tags.Quantity)
         if not quantity or quantity <= 0 then
-            sendErrorMessage(msg, "Quantity must be greater than 0", msg.From)
+            sendErrorMessage(msg, "Quantity must be greater than 0")
             return
         end
 
         -- Check if Balances[msg.From] has enough balance to vote
         local senderBalance = Balances[msg.From] or "0"
         if tonumber(senderBalance) < quantity then
-            sendErrorMessage(msg, "Insufficient balance to vote", msg.From)
+            sendErrorMessage(msg, "Insufficient balance to vote")
             return
         end
 
-        -- Subtract the quantity from sender's balance to register the vote
+        -- Save the original states for rollback purposes
+        originalSenderBalance = senderBalance
+        originalBalanceVoteA = BalancesVoteA[msg.From] or "0"
+        originalTotalBalanceVoteA = TotalBalanceVoteA
+
+        -- Perform balance updates
         Balances[msg.From] = utils.subtract(senderBalance, msg.Tags.Quantity)
+        BalancesVoteA[msg.From] = utils.add(originalBalanceVoteA, msg.Tags.Quantity)
+        TotalBalanceVoteA = utils.add(originalTotalBalanceVoteA, msg.Tags.Quantity)
 
-        -- Update BalancesVoteA for tracking votes on A
-        BalancesVoteA[msg.From] = utils.add(BalancesVoteA[msg.From] or "0", msg.Tags.Quantity)
-
-        -- Update TotalBalanceVoteA for tracking total votes on A
-        TotalBalanceVoteA = utils.add(TotalBalanceVoteA, msg.Tags.Quantity)
-
+        -- Prepare data to be returned
         local _data = {
             From = msg.From,
             Quantity = msg.Tags.Quantity,
@@ -103,8 +111,18 @@ Handlers.add("VoteA", Handlers.utils.hasMatchingTag("Action", "VoteA"), function
     end)
 
     if not success then
+        -- Rollback: restore original balances if an error occurred
+        if originalSenderBalance then
+            Balances[msg.From] = originalSenderBalance
+        end
+        if originalBalanceVoteA then
+            BalancesVoteA[msg.From] = originalBalanceVoteA
+        end
+        if originalTotalBalanceVoteA then
+            TotalBalanceVoteA = originalTotalBalanceVoteA
+        end
+
         sendErrorMessage(msg, 'An unexpected error occurred: ' .. tostring(err))
-        -- TODO: reset or revert changes in case of error
     end
 end)
 
