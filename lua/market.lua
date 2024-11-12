@@ -57,14 +57,18 @@ Handlers.add("GetCreator", Handlers.utils.hasMatchingTag("Action", "GetCreator")
     ao.send({ Target = msg.From, Data = Creator })
 end)
 
-Handlers.add("OptionA", Handlers.utils.hasMatchingTag("Action", "OptionA"), function(msg)
+Handlers.add("VoteA", Handlers.utils.hasMatchingTag("Action", "VoteA"), function(msg)
+    if type(msg.Tags.Quantity) ~= 'string' or msg.Tags.Quantity:match("^%s*$") then
+        -- TODO: validate if the msg.Tags.Quantity is a valid number greater than 0, if not call sendErrorMessage
 
-    -- TODO: Check if the user has enough balance to buy the option
+        return
+    end
+
+    -- TODO: Check if Balances[msg.From] has enough balance to vote
 end)
 
-Handlers.add("OptionB", Handlers.utils.hasMatchingTag("Action", "OptionB"), function(msg)
-    print("OptionB")
-    ao.send({ Target = msg.From, Data = MarketInfo.OptionB })
+Handlers.add("VoteB", Handlers.utils.hasMatchingTag("Action", "VoteB"), function(msg)
+
 end)
 
 Handlers.add("Withdraw", Handlers.utils.hasMatchingTag("Action", "Withdraw"), function(msg)
