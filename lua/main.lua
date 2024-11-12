@@ -100,11 +100,14 @@ Handlers.add("Create", Handlers.utils.hasMatchingTag("Action", "Create"), functi
                     end
                 }
 
-
                 Balances = Balances or {}
+                TotalBalances = TotalBalances or "0"
+                BalancesVoteA = BalancesVoteA or {}
+                BalancesVoteB = BalancesVoteB or {}
+                TotalBalanceVoteA = TotalBalanceVoteA or "0"
+                TotalBalanceVoteB = TotalBalanceVoteB or "0"
                 BASE_UNIT = BASE_UNIT or 10
                 Denomination = Denomination or 12
-                TotalDeposit = TotalDeposit or "0"
                 MarketInfo = MarketInfo or {}
                 Creator = Creator or ""
 
@@ -142,14 +145,74 @@ Handlers.add("Create", Handlers.utils.hasMatchingTag("Action", "Create"), functi
                     ao.send({ Target = msg.From, Data = Creator })
                 end)
 
-                Handlers.add("OptionA", Handlers.utils.hasMatchingTag("Action", "OptionA"), function(msg)
-                    print("OptionA")
-                    ao.send({ Target = msg.From, Data = MarketInfo.OptionA })
+                Handlers.add("VoteA", Handlers.utils.hasMatchingTag("Action", "VoteA"), function(msg)
+                    -- Define the original state variables and set them initially to nil
+                    local originalSenderBalance = nil
+                    local originalBalanceVoteA = nil
+                    local originalTotalBalanceVoteA = nil
+
+                    local success, err = pcall(function()
+                        -- Validate that msg.Tags.Quantity is a valid string representing a number greater than 0
+                        if type(msg.Tags.Quantity) ~= 'string' then
+                            sendErrorMessage(msg, "Quantity must be a valid string representing a number greater than 0")
+                            return
+                        end
+
+                        -- Check if the Quantity is a positive number
+                        local quantity = tonumber(msg.Tags.Quantity)
+                        if not quantity or quantity <= 0 then
+                            sendErrorMessage(msg, "Quantity must be greater than 0")
+                            return
+                        end
+
+                        -- Check if Balances[msg.From] has enough balance to vote
+                        local senderBalance = Balances[msg.From] or "0"
+                        if tonumber(senderBalance) < quantity then
+                            sendErrorMessage(msg, "Insufficient balance to vote")
+                            return
+                        end
+
+                        -- Save the original states for rollback purposes
+                        originalSenderBalance = senderBalance
+                        originalBalanceVoteA = BalancesVoteA[msg.From] or "0"
+                        originalTotalBalanceVoteA = TotalBalanceVoteA
+
+                        -- Perform balance updates
+                        Balances[msg.From] = utils.subtract(senderBalance, msg.Tags.Quantity)
+                        BalancesVoteA[msg.From] = utils.add(originalBalanceVoteA, msg.Tags.Quantity)
+                        TotalBalanceVoteA = utils.add(originalTotalBalanceVoteA, msg.Tags.Quantity)
+
+                        -- Prepare data to be returned
+                        local _data = {
+                            From = msg.From,
+                            Quantity = msg.Tags.Quantity,
+                            NewBalance = Balances[msg.From],
+                            BalanceVoteA = BalancesVoteA[msg.From],
+                            TotalBalanceVoteA = TotalBalanceVoteA
+                        }
+                        printData("VoteA _data", _data)
+
+                        ao.send({ Target = msg.From, Data = json.encode(_data) })
+                    end)
+
+                    if not success then
+                        -- Rollback: restore original balances if an error occurred
+                        if originalSenderBalance then
+                            Balances[msg.From] = originalSenderBalance
+                        end
+                        if originalBalanceVoteA then
+                            BalancesVoteA[msg.From] = originalBalanceVoteA
+                        end
+                        if originalTotalBalanceVoteA then
+                            TotalBalanceVoteA = originalTotalBalanceVoteA
+                        end
+
+                        sendErrorMessage(msg, 'An unexpected error occurred: ' .. tostring(err))
+                    end
                 end)
 
-                Handlers.add("OptionB", Handlers.utils.hasMatchingTag("Action", "OptionB"), function(msg)
-                    print("OptionB")
-                    ao.send({ Target = msg.From, Data = MarketInfo.OptionB })
+                Handlers.add("VoteB", Handlers.utils.hasMatchingTag("Action", "VoteB"), function(msg)
+
                 end)
 
                 Handlers.add("Withdraw", Handlers.utils.hasMatchingTag("Action", "Withdraw"), function(msg)
@@ -174,7 +237,6 @@ Handlers.add("Create", Handlers.utils.hasMatchingTag("Action", "Create"), functi
                 end)
 
                 Handlers.add("GetTokenTxId", Handlers.utils.hasMatchingTag("Action", "GetTokenTxId"), function(msg)
-                    print("GetTokenTxId")
                     ao.send({ Target = msg.From, Data = MarketInfo.TokenTxId })
                 end)
 
@@ -207,7 +269,7 @@ Handlers.add("Create", Handlers.utils.hasMatchingTag("Action", "Create"), functi
                             })
                         end
 
-                        TotalDeposit = utils.add(TotalDeposit, msg.Tags.Quantity)
+                        TotalBalances = utils.add(TotalBalances, msg.Tags.Quantity)
                     else
                         ao.send({
                             Target = msg.From, -- user token PROCESS_ID

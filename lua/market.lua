@@ -68,7 +68,7 @@ Handlers.add("VoteA", Handlers.utils.hasMatchingTag("Action", "VoteA"), function
 
     local success, err = pcall(function()
         -- Validate that msg.Tags.Quantity is a valid string representing a number greater than 0
-        if type(msg.Tags.Quantity) ~= 'string' or msg.Tags.Quantity:match("^%s*$") then
+        if type(msg.Tags.Quantity) ~= 'string' then
             sendErrorMessage(msg, "Quantity must be a valid string representing a number greater than 0")
             return
         end

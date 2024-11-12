@@ -45,6 +45,7 @@ export async function getStaticProps({ params: { id } }) {
 const DUMPET_TOKEN_TXID = "fzkhRptIvW3tJ7Dz7NFgt2DnZTJVKnwtzEOuURjfXrQ"
 
 export default function Home({ _id = null }) {
+  const toast = useToast()
   const { id } = useParams()
   const [pid, setPid] = useState(_id)
   const [tokenTxId, setTokenTxId] = useState("")
@@ -151,6 +152,14 @@ export default function Home({ _id = null }) {
       })
       console.log("_result", _result)
       if (handleMessageResultError(_result)) return
+
+      toast({
+        description: "Deposit success",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+        position: "top",
+      })
     } catch (error) {
       console.error(error)
     }
@@ -222,12 +231,12 @@ export default function Home({ _id = null }) {
         tags: [
           {
             name: "Action",
-            value: "OptionA",
+            value: "VoteA",
           },
           {
             name: "Quantity",
             value: _amount.toString(),
-          }
+          },
         ],
         signer: createDataItemSigner(globalThis.arweaveWallet),
       })
@@ -239,6 +248,19 @@ export default function Home({ _id = null }) {
       })
       console.log("_result", _result)
       if (handleMessageResultError(_result)) return
+
+      const jsonData = JSON.parse(_result?.Messages[0]?.Data)
+      console.log("jsonData", jsonData)
+
+      toast({
+        description: "Vote A success",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+        position: "top",
+      })
+
+      setUserBalance(divideByPower(jsonData.NewBalance))
     } catch (error) {
       console.error(error)
     }
@@ -259,7 +281,11 @@ export default function Home({ _id = null }) {
         tags: [
           {
             name: "Action",
-            value: "OptionB",
+            value: "voteB",
+          },
+          {
+            name: "Quantity",
+            value: _amount.toString(),
           },
         ],
         signer: createDataItemSigner(globalThis.arweaveWallet),
@@ -272,6 +298,19 @@ export default function Home({ _id = null }) {
       })
       console.log("_result", _result)
       if (handleMessageResultError(_result)) return
+
+      const jsonData = JSON.parse(_result?.Messages[0]?.Data)
+      console.log("jsonData", jsonData)
+
+      toast({
+        description: "Vote B success",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+        position: "top",
+      })
+
+      setUserBalance(divideByPower(jsonData.NewBalance))
     } catch (error) {
       console.error(error)
     }
