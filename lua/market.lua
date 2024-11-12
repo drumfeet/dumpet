@@ -89,7 +89,6 @@ Handlers.add("GetMarketInfo", Handlers.utils.hasMatchingTag("Action", "GetMarket
 end)
 
 Handlers.add("GetTokenTxId", Handlers.utils.hasMatchingTag("Action", "GetTokenTxId"), function(msg)
-    print("GetTokenTxId")
     ao.send({ Target = msg.From, Data = MarketInfo.TokenTxId })
 end)
 

@@ -158,13 +158,12 @@ export default function Home({ _id = null }) {
 
   const getTokenTxId = async () => {
     try {
-      const result = await dryrun({
+      const _result = await dryrun({
         process: pid,
         tags: [{ name: "Action", value: "GetTokenTxId" }],
       })
-      console.log("result", result)
-      // const jsonData = JSON.parse(result?.Messages[0]?.Data)
-      // console.log("jsonData", jsonData)
+      console.log("_result", _result)
+      console.log("_result?.Messages[0]?.Data", _result?.Messages[0]?.Data)
     } catch (error) {
       console.error(error)
     }
@@ -172,11 +171,11 @@ export default function Home({ _id = null }) {
 
   const getBalances = async () => {
     try {
-      const result = await dryrun({
+      const _result = await dryrun({
         process: pid,
         tags: [{ name: "Action", value: "Balances" }],
       })
-      const jsonData = JSON.parse(result?.Messages[0]?.Data)
+      const jsonData = JSON.parse(_result?.Messages[0]?.Data)
       console.log("jsonData", jsonData)
     } catch (error) {
       console.error(error)
@@ -322,9 +321,6 @@ export default function Home({ _id = null }) {
                 Get User Balance
               </Button>
             </FormControl>
-            <Button colorScheme="purple" w="100%" maxW="lg">
-              Conclude
-            </Button>
             <Button
               colorScheme="purple"
               w="100%"
@@ -332,6 +328,9 @@ export default function Home({ _id = null }) {
               onClick={getTokenTxId}
             >
               getTokenTxId
+            </Button>
+            <Button colorScheme="purple" w="100%" maxW="lg">
+              Conclude
             </Button>
           </Flex>
         </Flex>
