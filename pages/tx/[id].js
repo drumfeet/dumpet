@@ -9,6 +9,8 @@ import {
   useToast,
   Text,
   Heading,
+  FormControl,
+  FormHelperText,
 } from "@chakra-ui/react"
 import {
   createDataItemSigner,
@@ -21,6 +23,7 @@ import {
 import TelegramIcon from "@/components/icons/TelegramIcon"
 import TwitterIcon from "@/components/icons/TwitterIcon"
 import UserIcon from "@/components/icons/UserIcon"
+import AppHeader from "@/components/AppHeader"
 
 export async function getStaticPaths() {
   return { paths: [], fallback: "blocking" }
@@ -44,29 +47,35 @@ export default function Home({ _id = null }) {
   useEffect(() => {
     ;(async () => {
       _id ?? setPid(await getID(id, _id))
-
-      if (!_id) {
-        console.log("_id", _id)
-        console.log("id", id)
-
-        try {
-          const result = await dryrun({
-            process: id,
-            tags: [{ name: "Action", value: "GetMarketInfo" }],
-          })
-
-          console.log("result", result)
-          const _jsonData = JSON.parse(result?.Messages[0]?.Data)
-          console.log("_jsonData", _jsonData)
-          setJsonData(_jsonData)
-          setTokenTxId(_jsonData?.TokenTxId)
-          console.log("TokenTxId", _jsonData?.TokenTxId)
-        } catch (error) {
-          console.error(error)
-        }
-      }
     })()
-  }, [_id, id])
+  }, [])
+
+  useEffect(() => {
+    console.log("pid", pid)
+    if (pid) {
+      ;(async () => {
+        await getMarketInfo()
+      })()
+    }
+  }, [pid])
+
+  const getMarketInfo = async () => {
+    try {
+      const result = await dryrun({
+        process: id,
+        tags: [{ name: "Action", value: "GetMarketInfo" }],
+      })
+
+      console.log("result", result)
+      const _jsonData = JSON.parse(result?.Messages[0]?.Data)
+      console.log("_jsonData", _jsonData)
+      setJsonData(_jsonData)
+      setTokenTxId(_jsonData?.TokenTxId)
+      console.log("TokenTxId", _jsonData?.TokenTxId)
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
   const deposit = async () => {
     try {
@@ -154,41 +163,7 @@ export default function Home({ _id = null }) {
           bg="#f3f0fa"
           minH="100vh"
         >
-          <Flex
-            w="full"
-            justify="space-between"
-            align="center"
-            paddingX={[0, 8]}
-          >
-            <Text fontSize="3xl" color="#7023b6" fontWeight="bold">
-              <Link href="/">Dumpet</Link>
-            </Text>
-            <Flex gap={4} alignItems="center">
-              <Link
-                target="_blank"
-                rel="noopener noreferrer"
-                href="https://t.me/dumpetdotfun"
-              >
-                <TelegramIcon strokeColor="#7023b6" size={18} />
-              </Link>
-
-              <Link
-                target="_blank"
-                rel="noopener noreferrer"
-                href="https://x.com/dumpetdotfun"
-              >
-                <TwitterIcon strokeColor="#7023b6" size={18} />
-              </Link>
-
-              <Flex paddingX={[0, 2]}></Flex>
-
-              <Flex _hover={{ cursor: "pointer" }} _disabled={true}>
-                <UserIcon strokeColor="#7023b6" size={34} />
-              </Flex>
-            </Flex>
-          </Flex>
-          <Divider />
-          <Flex paddingY={8}></Flex>
+          <AppHeader />
 
           <Flex
             flexDirection="column"
@@ -198,25 +173,51 @@ export default function Home({ _id = null }) {
             width="100%"
             maxW="lg"
           >
-            <Text maxW="lg">{pid}</Text>
-            <Text maxW="lg">{jsonData?.Title}</Text>
-            <Text maxW="lg">{jsonData?.Duration}</Text>
-            <Text maxW="lg">{jsonData?.TokenTxId}</Text>
-            <Text maxW="lg">{jsonData?.OptionA}</Text>
-            <Text maxW="lg">{jsonData?.OptionB}</Text>
-            <Text maxW="lg">{jsonData?.ProcessId}</Text>
-            <Text maxW="lg">{jsonData?.Creator}</Text>
-            <Text maxW="lg">{jsonData?.BlockHeight}</Text>
-            <Text maxW="lg">{jsonData?.Timestamp}</Text>
+            <FormControl>
+              <FormHelperText fontSize="xs">Market ProcessId</FormHelperText>
+              <Text maxW="lg">{pid}</Text>
+            </FormControl>
+            <FormControl>
+              <FormHelperText fontSize="xs">Title</FormHelperText>
+              <Text maxW="lg">{jsonData?.Title}</Text>
+            </FormControl>
+            <FormControl>
+              <FormHelperText fontSize="xs">Duration</FormHelperText>
+              <Text maxW="lg">{jsonData?.Duration}</Text>
+            </FormControl>
+            <FormControl>
+              <FormHelperText fontSize="xs">Token TxId</FormHelperText>
+              <Text maxW="lg">{jsonData?.TokenTxId}</Text>
+            </FormControl>
+            <FormControl>
+              <FormHelperText fontSize="xs">OptionA</FormHelperText>
+              <Text maxW="lg">{jsonData?.OptionA}</Text>
+              <Button colorScheme="purple" w="100%" maxW="lg">
+                Vote A
+              </Button>
+            </FormControl>
+            <FormControl>
+              <FormHelperText fontSize="xs">OptionB</FormHelperText>
+              <Text maxW="lg">{jsonData?.OptionB}</Text>
+              <Button colorScheme="purple" w="100%" maxW="lg">
+                Vote B
+              </Button>
+            </FormControl>
+            <FormControl>
+              <FormHelperText fontSize="xs">Creator</FormHelperText>
+              <Text maxW="lg">{jsonData?.Creator}</Text>
+            </FormControl>
+            <FormControl>
+              <FormHelperText fontSize="xs">BlockHeight</FormHelperText>
+              <Text maxW="lg">{jsonData?.BlockHeight}</Text>
+            </FormControl>
+            <FormControl>
+              <FormHelperText fontSize="xs">Timestamp</FormHelperText>
+              <Text maxW="lg">{jsonData?.Timestamp}</Text>
+            </FormControl>
 
             <Button colorScheme="purple" w="100%" maxW="lg" onClick={deposit}>
               Deposit
-            </Button>
-            <Button colorScheme="purple" w="100%" maxW="lg">
-              Option A
-            </Button>
-            <Button colorScheme="purple" w="100%" maxW="lg">
-              Option B
             </Button>
             <Button colorScheme="purple" w="100%" maxW="lg">
               Withdraw
