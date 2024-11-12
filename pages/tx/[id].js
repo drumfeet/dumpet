@@ -11,6 +11,12 @@ import {
   Heading,
   FormControl,
   FormHelperText,
+  Spacer,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
 } from "@chakra-ui/react"
 import {
   createDataItemSigner,
@@ -24,6 +30,7 @@ import TelegramIcon from "@/components/icons/TelegramIcon"
 import TwitterIcon from "@/components/icons/TwitterIcon"
 import UserIcon from "@/components/icons/UserIcon"
 import AppHeader from "@/components/AppHeader"
+import { useAppContext } from "@/context/AppContext"
 
 export async function getStaticPaths() {
   return { paths: [], fallback: "blocking" }
@@ -43,6 +50,19 @@ export default function Home({ _id = null }) {
   const [tokenTxId, setTokenTxId] = useState("")
   const [jsonData, setJsonData] = useState()
   const [walletAddress, setWalletAddress] = useState("")
+  const [amount, setAmount] = useState(1)
+  const [userBalance, setUserBalance] = useState(-1)
+
+  const {
+    connectWallet,
+    disconnectWallet,
+    isConnected,
+    setIsConnected,
+    userAddress,
+    setUserAddress,
+    multiplyByPower,
+    divideByPower,
+  } = useAppContext()
 
   useEffect(() => {
     ;(async () => {
@@ -58,6 +78,24 @@ export default function Home({ _id = null }) {
       })()
     }
   }, [pid])
+
+  const handleMessageResultError = (_result) => {
+    const errorTag = _result?.Messages?.[0]?.Tags.find(
+      (tag) => tag.name === "Error"
+    )
+    console.log("errorTag", errorTag)
+    if (errorTag) {
+      toast({
+        description: _result.Messages[0].Data,
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+        position: "top",
+      })
+      return true
+    }
+    return false
+  }
 
   const getMarketInfo = async () => {
     try {
@@ -78,6 +116,14 @@ export default function Home({ _id = null }) {
   }
 
   const deposit = async () => {
+    const _connected = await connectWallet()
+    if (_connected.success === false) {
+      return
+    }
+
+    const _amount = multiplyByPower(amount)
+    console.log("_amount", _amount)
+
     try {
       const messageId = await message({
         process: DUMPET_TOKEN_TXID,
@@ -88,7 +134,7 @@ export default function Home({ _id = null }) {
           },
           {
             name: "Quantity",
-            value: "2000000000000",
+            value: _amount.toString(),
           },
           {
             name: "Recipient",
@@ -104,6 +150,7 @@ export default function Home({ _id = null }) {
         process: DUMPET_TOKEN_TXID,
       })
       console.log("_result", _result)
+      if (handleMessageResultError(_result)) return
     } catch (error) {
       console.error(error)
     }
@@ -137,17 +184,25 @@ export default function Home({ _id = null }) {
   }
 
   const getBalance = async () => {
-    console.log("walletAddress", walletAddress)
+    const _connected = await connectWallet()
+    if (_connected.success === false) {
+      return
+    }
+    const _userAddress = _connected.userAddress
+
     try {
-      const result = await dryrun({
+      const _result = await dryrun({
         process: pid,
         tags: [
           { name: "Action", value: "Balance" },
-          { name: "Recipient", value: walletAddress },
+          { name: "Recipient", value: _userAddress },
         ],
       })
-      const jsonData = JSON.parse(result?.Messages[0]?.Data)
+      console.log("_result", _result)
+
+      const jsonData = JSON.parse(_result?.Messages[0]?.Data)
       console.log("jsonData", jsonData)
+      setUserBalance(divideByPower(jsonData))
     } catch (error) {
       console.error(error)
     }
@@ -216,12 +271,57 @@ export default function Home({ _id = null }) {
               <Text maxW="lg">{jsonData?.Timestamp}</Text>
             </FormControl>
 
-            <Button colorScheme="purple" w="100%" maxW="lg" onClick={deposit}>
-              Deposit
+            <FormControl>
+              <FormHelperText fontSize="xs">Amount</FormHelperText>
+              <NumberInput
+                colorScheme="purple"
+                precision={2}
+                value={amount}
+                min={1}
+                onChange={(e) => {
+                  setAmount(e)
+                }}
+              >
+                <NumberInputField />
+                <NumberInputStepper>
+                  <NumberIncrementStepper />
+                  <NumberDecrementStepper />
+                </NumberInputStepper>
+              </NumberInput>
+              <Flex paddingY={1}></Flex>
+              <Button colorScheme="purple" w="100%" maxW="lg" onClick={deposit}>
+                Deposit
+              </Button>
+              <Flex paddingY={1}></Flex>
+              <Button colorScheme="purple" w="100%" maxW="lg">
+                Withdraw
+              </Button>
+              <Flex paddingY={4}></Flex>
+            </FormControl>
+            <Button
+              colorScheme="purple"
+              w="100%"
+              maxW="lg"
+              onClick={getBalances}
+            >
+              Get Balances
             </Button>
-            <Button colorScheme="purple" w="100%" maxW="lg">
-              Withdraw
-            </Button>
+            <FormControl>
+              <FormHelperText fontSize="xs">User Balance</FormHelperText>
+              {userBalance >= 0 ? (
+                <Text maxW="lg">{userBalance}</Text>
+              ) : (
+                <Text maxW="lg">-</Text>
+              )}
+              <Button
+                colorScheme="purple"
+                w="100%"
+                maxW="lg"
+                onClick={getBalance}
+              >
+                Get User Balance
+              </Button>
+            </FormControl>
             <Button colorScheme="purple" w="100%" maxW="lg">
               Conclude
             </Button>
@@ -232,27 +332,6 @@ export default function Home({ _id = null }) {
               onClick={getTokenTxId}
             >
               getTokenTxId
-            </Button>
-            <Button
-              colorScheme="purple"
-              w="100%"
-              maxW="lg"
-              onClick={getBalances}
-            >
-              Get Balances
-            </Button>
-            <Input
-              placeholder="User Wallet Address"
-              value={walletAddress}
-              onChange={(e) => setWalletAddress(e.target.value)}
-            />
-            <Button
-              colorScheme="purple"
-              w="100%"
-              maxW="lg"
-              onClick={getBalance}
-            >
-              Get User Balance
             </Button>
           </Flex>
         </Flex>

@@ -2,6 +2,8 @@ import { useToast } from "@chakra-ui/react"
 import { createContext, useContext, useState } from "react"
 
 const AppContext = createContext()
+const BASE_UNIT = 10
+const DENOMINATION = 12
 
 export const AppContextProvider = ({ children }) => {
   const toast = useToast()
@@ -53,6 +55,14 @@ export const AppContextProvider = ({ children }) => {
     }
   }
 
+  const multiplyByPower = (v) => {
+    return v * Math.pow(BASE_UNIT, DENOMINATION)
+  }
+
+  const divideByPower = (v) => {
+    return (v / Math.pow(BASE_UNIT, DENOMINATION)).toFixed(12)
+  }
+
   return (
     <AppContext.Provider
       value={{
@@ -62,6 +72,8 @@ export const AppContextProvider = ({ children }) => {
         setIsConnected,
         userAddress,
         setUserAddress,
+        multiplyByPower,
+        divideByPower,
       }}
     >
       {children}
