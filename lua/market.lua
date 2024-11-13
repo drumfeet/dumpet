@@ -205,6 +205,10 @@ Handlers.add("TotalBalanceVoteB", Handlers.utils.hasMatchingTag("Action", "Total
     ao.send({ Target = msg.From, Data = TotalBalanceVoteB })
 end)
 
+Handlers.add("TotalVotersBalance", Handlers.utils.hasMatchingTag("Action", "TotalVotersBalance"), function(msg)
+    ao.send({ Target = msg.From, Data = utils.add(TotalBalanceVoteA, TotalBalanceVoteB) })
+end)
+
 Handlers.add("UserBalanceVoteA", Handlers.utils.hasMatchingTag("Action", "UserBalanceVoteA"), function(msg)
     local bal = '0'
 

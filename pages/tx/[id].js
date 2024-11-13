@@ -58,6 +58,7 @@ export default function Home({ _id = null }) {
   const [userBalanceVoteB, setUserBalanceVoteB] = useState(-1)
   const [totalBalanceVoteA, setTotalBalanceVoteA] = useState(-1)
   const [totalBalanceVoteB, setTotalBalanceVoteB] = useState(-1)
+  const [totalVotersBalance, setTotalVotersBalance] = useState(-1)
 
   const {
     connectWallet,
@@ -347,6 +348,22 @@ export default function Home({ _id = null }) {
     }
   }
 
+  const getTotalVotersBalance = async () => {
+    try {
+      console.log("getTotalVotersBalance pid", pid)
+      const _result = await dryrun({
+        process: pid,
+        tags: [{ name: "Action", value: "TotalVotersBalance" }],
+      })
+      console.log("getTotalVotersBalance _result", _result)
+      const jsonData = JSON.parse(_result?.Messages[0]?.Data)
+      console.log("getTotalVotersBalance jsonData", jsonData)
+      setTotalVotersBalance(divideByPower(jsonData))
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   const getTotalBalanceVoteA = async () => {
     try {
       console.log("getTotalBalanceVoteA pid", pid)
@@ -575,6 +592,20 @@ export default function Home({ _id = null }) {
               borderRadius="md"
               padding={4}
             >
+              <FormHelperText fontSize="xs">TotalVotersBalance</FormHelperText>
+              {totalVotersBalance >= 0 ? (
+                <Text maxW="lg">{totalVotersBalance}</Text>
+              ) : (
+                <Text maxW="lg">-</Text>
+              )}
+              <Button
+                colorScheme="purple"
+                w="100%"
+                maxW="lg"
+                onClick={getTotalVotersBalance}
+              >
+                Get TotalVotersBalance
+              </Button>
               <FormHelperText fontSize="xs">TotalBalanceVoteA</FormHelperText>
               {totalBalanceVoteA >= 0 ? (
                 <Text maxW="lg">{totalBalanceVoteA}</Text>
