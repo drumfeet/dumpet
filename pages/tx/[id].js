@@ -393,7 +393,7 @@ export default function Home({ _id = null }) {
               <FormHelperText fontSize="xs">Timestamp</FormHelperText>
               <Text maxW="lg">{jsonData?.Timestamp}</Text>
             </FormControl>
-            <Flex paddingY={4}></Flex>
+            <Flex paddingY={2}></Flex>
             <FormControl
               border="1px solid #805ad5"
               borderRadius="md"
@@ -452,7 +452,7 @@ export default function Home({ _id = null }) {
                 Withdraw
               </Button>
             </FormControl>
-            <Flex paddingY={4}></Flex>
+            <Flex paddingY={2}></Flex>
             <FormControl
               border="1px solid #805ad5"
               borderRadius="md"
@@ -484,16 +484,23 @@ export default function Home({ _id = null }) {
                 Vote B
               </Button>
             </FormControl>
-            <Flex paddingY={4}></Flex>
-            <Button
-              colorScheme="purple"
-              w="100%"
-              maxW="lg"
-              onClick={getBalances}
+            <Flex paddingY={2}></Flex>
+            <FormControl
+              border="1px solid #805ad5"
+              borderRadius="md"
+              padding={4}
             >
-              Get Balances
-            </Button>
-            <FormControl>
+              <FormHelperText fontSize="xs">
+                Get All User Balances Deposited
+              </FormHelperText>
+              <Button
+                colorScheme="purple"
+                w="100%"
+                maxW="lg"
+                onClick={getBalances}
+              >
+                Get Balances
+              </Button>
               <FormHelperText fontSize="xs">User Balance</FormHelperText>
               {userBalance >= 0 ? (
                 <Text maxW="lg">{userBalance}</Text>
@@ -509,6 +516,7 @@ export default function Home({ _id = null }) {
                 Get User Balance
               </Button>
             </FormControl>
+            <Flex paddingY={2}></Flex>
             <Button
               colorScheme="purple"
               w="100%"
