@@ -53,6 +53,7 @@ export default function Home({ _id = null }) {
   const [amount, setAmount] = useState(1)
   const [amountOfVote, setAmountOfVote] = useState(1)
   const [userBalance, setUserBalance] = useState(-1)
+  const [walletBalance, setWalletBalance] = useState(-1)
 
   const {
     connectWallet,
@@ -216,6 +217,31 @@ export default function Home({ _id = null }) {
     }
   }
 
+  const getWalletBalance = async () => {
+    const _connected = await connectWallet()
+    if (_connected.success === false) {
+      return
+    }
+    const _userAddress = _connected.userAddress
+
+    try {
+      const _result = await dryrun({
+        process: DUMPET_TOKEN_TXID,
+        tags: [
+          { name: "Action", value: "Balance" },
+          { name: "Recipient", value: _userAddress },
+        ],
+      })
+      console.log("_result", _result)
+
+      const jsonData = JSON.parse(_result?.Messages[0]?.Data)
+      console.log("jsonData", jsonData)
+      setWalletBalance(divideByPower(jsonData))
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   const voteA = async () => {
     const _connected = await connectWallet()
     if (_connected.success === false) {
@@ -318,7 +344,7 @@ export default function Home({ _id = null }) {
 
   return (
     <>
-    {/* TODO: 
+      {/* TODO: 
     - Display TotalBalanceVoteA and TotalBalanceVoteB count
     - Display userBalanceVoteA and userBalanceVoteB count */}
       <ChakraProvider>
@@ -356,38 +382,6 @@ export default function Home({ _id = null }) {
               <Text maxW="lg">{jsonData?.TokenTxId}</Text>
             </FormControl>
             <FormControl>
-              <FormHelperText fontSize="xs">Amount of Vote</FormHelperText>
-              <NumberInput
-                precision={2}
-                value={amountOfVote}
-                min={1}
-                onChange={(e) => {
-                  setAmountOfVote(e)
-                }}
-              >
-                <NumberInputField />
-                <NumberInputStepper>
-                  <NumberIncrementStepper />
-                  <NumberDecrementStepper />
-                </NumberInputStepper>
-              </NumberInput>
-            </FormControl>
-            <FormControl>
-              <FormHelperText fontSize="xs">OptionA</FormHelperText>
-              <Text maxW="lg">{jsonData?.OptionA}</Text>
-
-              <Button colorScheme="purple" w="100%" maxW="lg" onClick={voteA}>
-                Vote A
-              </Button>
-            </FormControl>
-            <FormControl>
-              <FormHelperText fontSize="xs">OptionB</FormHelperText>
-              <Text maxW="lg">{jsonData?.OptionB}</Text>
-              <Button colorScheme="purple" w="100%" maxW="lg" onClick={voteB}>
-                Vote B
-              </Button>
-            </FormControl>
-            <FormControl>
               <FormHelperText fontSize="xs">Creator</FormHelperText>
               <Text maxW="lg">{jsonData?.Creator}</Text>
             </FormControl>
@@ -399,8 +393,28 @@ export default function Home({ _id = null }) {
               <FormHelperText fontSize="xs">Timestamp</FormHelperText>
               <Text maxW="lg">{jsonData?.Timestamp}</Text>
             </FormControl>
-
-            <FormControl>
+            <Flex paddingY={4}></Flex>
+            <FormControl
+              border="1px solid #805ad5"
+              borderRadius="md"
+              padding={4}
+            >
+              <FormHelperText fontSize="xs">
+                Get token balance from user wallet
+              </FormHelperText>
+              {walletBalance >= 0 ? (
+                <Text maxW="lg">{walletBalance}</Text>
+              ) : (
+                <Text maxW="lg">-</Text>
+              )}
+              <Button
+                colorScheme="purple"
+                w="100%"
+                maxW="lg"
+                onClick={getWalletBalance}
+              >
+                Get Wallet Balance
+              </Button>
               <FormHelperText fontSize="xs">Amount</FormHelperText>
               <NumberInput
                 precision={2}
@@ -421,11 +435,56 @@ export default function Home({ _id = null }) {
                 Deposit
               </Button>
               <Flex paddingY={1}></Flex>
-              <Button colorScheme="purple" w="100%" maxW="lg">
+              <Button
+                colorScheme="purple"
+                w="100%"
+                maxW="lg"
+                onClick={() => {
+                  toast({
+                    description: "Not implemented yet",
+                    status: "error",
+                    duration: 2000,
+                    isClosable: true,
+                    position: "top",
+                  })
+                }}
+              >
                 Withdraw
               </Button>
-              <Flex paddingY={4}></Flex>
             </FormControl>
+            <Flex paddingY={4}></Flex>
+            <FormControl
+              border="1px solid #805ad5"
+              borderRadius="md"
+              padding={4}
+            >
+              <FormHelperText fontSize="xs">Amount of Vote</FormHelperText>
+              <NumberInput
+                precision={2}
+                value={amountOfVote}
+                min={1}
+                onChange={(e) => {
+                  setAmountOfVote(e)
+                }}
+              >
+                <NumberInputField />
+                <NumberInputStepper>
+                  <NumberIncrementStepper />
+                  <NumberDecrementStepper />
+                </NumberInputStepper>
+              </NumberInput>
+              <FormHelperText fontSize="xs">OptionA</FormHelperText>
+              <Text maxW="lg">{jsonData?.OptionA}</Text>
+              <Button colorScheme="purple" w="100%" maxW="lg" onClick={voteA}>
+                Vote A
+              </Button>
+              <FormHelperText fontSize="xs">OptionB</FormHelperText>
+              <Text maxW="lg">{jsonData?.OptionB}</Text>
+              <Button colorScheme="purple" w="100%" maxW="lg" onClick={voteB}>
+                Vote B
+              </Button>
+            </FormControl>
+            <Flex paddingY={4}></Flex>
             <Button
               colorScheme="purple"
               w="100%"
@@ -458,7 +517,20 @@ export default function Home({ _id = null }) {
             >
               getTokenTxId
             </Button>
-            <Button colorScheme="purple" w="100%" maxW="lg">
+            <Button
+              colorScheme="purple"
+              w="100%"
+              maxW="lg"
+              onClick={() => {
+                toast({
+                  description: "Not implemented yet",
+                  status: "error",
+                  duration: 2000,
+                  isClosable: true,
+                  position: "top",
+                })
+              }}
+            >
               Conclude
             </Button>
           </Flex>
