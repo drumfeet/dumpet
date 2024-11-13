@@ -46,18 +46,23 @@ local function sendErrorMessage(msg, err, target)
 end
 
 Handlers.add("GetProcessOwner", Handlers.utils.hasMatchingTag("Action", "GetProcessOwner"), function(msg)
-    print("GetProcessOwner")
     ao.send({ Target = msg.From, Data = ao.env.Process.Owner })
 end)
 
 Handlers.add("GetOwner", Handlers.utils.hasMatchingTag("Action", "GetOwner"), function(msg)
-    print("GetOwner")
     ao.send({ Target = msg.From, Data = Owner })
 end)
 
 Handlers.add("GetCreator", Handlers.utils.hasMatchingTag("Action", "GetCreator"), function(msg)
-    print("GetCreator")
     ao.send({ Target = msg.From, Data = Creator })
+end)
+
+Handlers.add("GetMarketInfo", Handlers.utils.hasMatchingTag("Action", "GetMarketInfo"), function(msg)
+    ao.send({ Target = msg.From, Data = json.encode(MarketInfo) })
+end)
+
+Handlers.add("GetTokenTxId", Handlers.utils.hasMatchingTag("Action", "GetTokenTxId"), function(msg)
+    ao.send({ Target = msg.From, Data = MarketInfo.TokenTxId })
 end)
 
 Handlers.add("VoteA", Handlers.utils.hasMatchingTag("Action", "VoteA"), function(msg)
@@ -192,6 +197,22 @@ Handlers.add("VoteB", Handlers.utils.hasMatchingTag("Action", "VoteB"), function
     end
 end)
 
+Handlers.add("TotalBalanceVoteA", Handlers.utils.hasMatchingTag("Action", "TotalBalanceVoteA"), function(msg)
+    ao.send({ Target = msg.From, Data = TotalBalanceVoteA })
+end)
+
+Handlers.add("TotalBalanceVoteB", Handlers.utils.hasMatchingTag("Action", "TotalBalanceVoteB"), function(msg)
+    ao.send({ Target = msg.From, Data = TotalBalanceVoteB })
+end)
+
+Handlers.add("UserBalanceVoteA", Handlers.utils.hasMatchingTag("Action", "UserBalanceVoteA"), function(msg)
+    ao.send({ Target = msg.From, Data = BalancesVoteA[msg.From] or "0" })
+end)
+
+Handlers.add("UserBalanceVoteB", Handlers.utils.hasMatchingTag("Action", "UserBalanceVoteB"), function(msg)
+    ao.send({ Target = msg.From, Data = BalancesVoteB[msg.From] or "0" })
+end)
+
 Handlers.add("Withdraw", Handlers.utils.hasMatchingTag("Action", "Withdraw"), function(msg)
     print("Withdraw")
     ao.send({ Target = msg.From, Data = "Withdraw" })
@@ -206,15 +227,6 @@ end)
 Handlers.add("Conclude", Handlers.utils.hasMatchingTag("Action", "Conclude"), function(msg)
     print("Conclude")
     ao.send({ Target = msg.From, Data = "Conclude" })
-end)
-
-Handlers.add("GetMarketInfo", Handlers.utils.hasMatchingTag("Action", "GetMarketInfo"), function(msg)
-    print("GetMarketInfo")
-    ao.send({ Target = msg.From, Data = json.encode(MarketInfo) })
-end)
-
-Handlers.add("GetTokenTxId", Handlers.utils.hasMatchingTag("Action", "GetTokenTxId"), function(msg)
-    ao.send({ Target = msg.From, Data = MarketInfo.TokenTxId })
 end)
 
 Handlers.add("Credit-Notice", Handlers.utils.hasMatchingTag("Action", "Credit-Notice"), function(msg)
