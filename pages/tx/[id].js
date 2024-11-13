@@ -346,6 +346,88 @@ export default function Home({ _id = null }) {
     }
   }
 
+  const getTotalBalanceVoteA = async () => {
+    try {
+      console.log("getTotalBalanceVoteA pid", pid)
+      const _result = await dryrun({
+        process: pid,
+        tags: [{ name: "Action", value: "TotalBalanceVoteA" }],
+      })
+      console.log("getTotalBalanceVoteA _result", _result)
+      const jsonData = JSON.parse(_result?.Messages[0]?.Data)
+      console.log("getTotalBalanceVoteA jsonData", jsonData)
+      setTotalBalanceVoteA(divideByPower(jsonData))
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const getTotalBalanceVoteB = async () => {
+    try {
+      console.log("getTotalBalanceVoteB pid", pid)
+      const _result = await dryrun({
+        process: pid,
+        tags: [{ name: "Action", value: "TotalBalanceVoteB" }],
+      })
+      console.log("getTotalBalanceVoteB _result", _result)
+      const jsonData = JSON.parse(_result?.Messages[0]?.Data)
+      console.log("getTotalBalanceVoteB jsonData", jsonData)
+      setTotalBalanceVoteB(divideByPower(jsonData))
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const getUserBalanceVoteA = async () => {
+    const _connected = await connectWallet()
+    if (_connected.success === false) {
+      return
+    }
+    const _userAddress = _connected.userAddress
+
+    try {
+      console.log("getUserBalanceVoteA pid", pid)
+      const _result = await dryrun({
+        process: pid,
+        tags: [
+          { name: "Action", value: "UserBalanceVoteA" },
+          { name: "Recipient", value: _userAddress },
+        ],
+      })
+      console.log("getUserBalanceVoteA _result", _result)
+      const jsonData = JSON.parse(_result?.Messages[0]?.Data)
+      console.log("getUserBalanceVoteA jsonData", jsonData)
+      setUserBalanceVoteA(divideByPower(jsonData))
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const getUserBalanceVoteB = async () => {
+    const _connected = await connectWallet()
+    if (_connected.success === false) {
+      return
+    }
+    const _userAddress = _connected.userAddress
+
+    try {
+      console.log("getUserBalanceVoteB pid", pid)
+      const _result = await dryrun({
+        process: pid,
+        tags: [
+          { name: "Action", value: "UserBalanceVoteB" },
+          { name: "Recipient", value: _userAddress },
+        ],
+      })
+      console.log("getUserBalanceVoteB _result", _result)
+      const jsonData = JSON.parse(_result?.Messages[0]?.Data)
+      console.log("getUserBalanceVoteB jsonData", jsonData)
+      setUserBalanceVoteB(divideByPower(jsonData))
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   return (
     <>
       <ChakraProvider>
@@ -502,15 +584,7 @@ export default function Home({ _id = null }) {
                 colorScheme="purple"
                 w="100%"
                 maxW="lg"
-                onClick={() => {
-                  toast({
-                    description: "Not implemented yet",
-                    status: "error",
-                    duration: 2000,
-                    isClosable: true,
-                    position: "top",
-                  })
-                }}
+                onClick={getTotalBalanceVoteA}
               >
                 Get TotalBalanceVoteA
               </Button>
@@ -525,15 +599,7 @@ export default function Home({ _id = null }) {
                 colorScheme="purple"
                 w="100%"
                 maxW="lg"
-                onClick={() => {
-                  toast({
-                    description: "Not implemented yet",
-                    status: "error",
-                    duration: 2000,
-                    isClosable: true,
-                    position: "top",
-                  })
-                }}
+                onClick={getTotalBalanceVoteB}
               >
                 Get TotalBalanceVoteB
               </Button>
@@ -548,15 +614,7 @@ export default function Home({ _id = null }) {
                 colorScheme="purple"
                 w="100%"
                 maxW="lg"
-                onClick={() => {
-                  toast({
-                    description: "Not implemented yet",
-                    status: "error",
-                    duration: 2000,
-                    isClosable: true,
-                    position: "top",
-                  })
-                }}
+                onClick={getUserBalanceVoteA}
               >
                 Get UserBalanceVoteA
               </Button>
@@ -571,15 +629,7 @@ export default function Home({ _id = null }) {
                 colorScheme="purple"
                 w="100%"
                 maxW="lg"
-                onClick={() => {
-                  toast({
-                    description: "Not implemented yet",
-                    status: "error",
-                    duration: 2000,
-                    isClosable: true,
-                    position: "top",
-                  })
-                }}
+                onClick={getUserBalanceVoteB}
               >
                 Get UserBalanceVoteB
               </Button>
