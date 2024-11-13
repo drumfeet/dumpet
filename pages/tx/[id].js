@@ -54,6 +54,10 @@ export default function Home({ _id = null }) {
   const [amountOfVote, setAmountOfVote] = useState(1)
   const [userBalance, setUserBalance] = useState(-1)
   const [walletBalance, setWalletBalance] = useState(-1)
+  const [userBalanceVoteA, setUserBalanceVoteA] = useState(-1)
+  const [userBalanceVoteB, setUserBalanceVoteB] = useState(-1)
+  const [totalBalanceVoteA, setTotalBalanceVoteA] = useState(-1)
+  const [totalBalanceVoteB, setTotalBalanceVoteB] = useState(-1)
 
   const {
     connectWallet,
@@ -344,9 +348,6 @@ export default function Home({ _id = null }) {
 
   return (
     <>
-      {/* TODO: 
-    - Display TotalBalanceVoteA and TotalBalanceVoteB count
-    - Display userBalanceVoteA and userBalanceVoteB count */}
       <ChakraProvider>
         <Flex
           flexDirection="column"
@@ -492,6 +493,11 @@ export default function Home({ _id = null }) {
               padding={4}
             >
               <FormHelperText fontSize="xs">TotalBalanceVoteA</FormHelperText>
+              {totalBalanceVoteA >= 0 ? (
+                <Text maxW="lg">{totalBalanceVoteA}</Text>
+              ) : (
+                <Text maxW="lg">-</Text>
+              )}
               <Button
                 colorScheme="purple"
                 w="100%"
@@ -510,6 +516,11 @@ export default function Home({ _id = null }) {
               </Button>
 
               <FormHelperText fontSize="xs">TotalBalanceVoteB</FormHelperText>
+              {totalBalanceVoteB >= 0 ? (
+                <Text maxW="lg">{totalBalanceVoteB}</Text>
+              ) : (
+                <Text maxW="lg">-</Text>
+              )}
               <Button
                 colorScheme="purple"
                 w="100%"
@@ -528,6 +539,11 @@ export default function Home({ _id = null }) {
               </Button>
 
               <FormHelperText fontSize="xs">UserBalanceVoteA</FormHelperText>
+              {userBalanceVoteA >= 0 ? (
+                <Text maxW="lg">{userBalanceVoteA}</Text>
+              ) : (
+                <Text maxW="lg">-</Text>
+              )}
               <Button
                 colorScheme="purple"
                 w="100%"
@@ -546,6 +562,11 @@ export default function Home({ _id = null }) {
               </Button>
 
               <FormHelperText fontSize="xs">UserBalanceVoteB</FormHelperText>
+              {userBalanceVoteB >= 0 ? (
+                <Text maxW="lg">{userBalanceVoteB}</Text>
+              ) : (
+                <Text maxW="lg">-</Text>
+              )}
               <Button
                 colorScheme="purple"
                 w="100%"
