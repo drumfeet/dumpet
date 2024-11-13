@@ -206,11 +206,65 @@ Handlers.add("TotalBalanceVoteB", Handlers.utils.hasMatchingTag("Action", "Total
 end)
 
 Handlers.add("UserBalanceVoteA", Handlers.utils.hasMatchingTag("Action", "UserBalanceVoteA"), function(msg)
-    ao.send({ Target = msg.From, Data = BalancesVoteA[msg.From] or "0" })
+    local bal = '0'
+
+    -- If not Recipient is provided, then return the Senders balance
+    if (msg.Tags.Recipient) then
+        if (BalancesVoteA[msg.Tags.Recipient]) then
+            bal = BalancesVoteA[msg.Tags.Recipient]
+        end
+    elseif msg.Tags.Target and BalancesVoteA[msg.Tags.Target] then
+        bal = BalancesVoteA[msg.Tags.Target]
+    elseif BalancesVoteA[msg.From] then
+        bal = BalancesVoteA[msg.From]
+    end
+    if msg.reply then
+        msg.reply({
+            Balance = bal,
+            Ticker = Ticker,
+            Account = msg.Tags.Recipient or msg.From,
+            Data = bal
+        })
+    else
+        Send({
+            Target = msg.From,
+            Balance = bal,
+            Ticker = Ticker,
+            Account = msg.Tags.Recipient or msg.From,
+            Data = bal
+        })
+    end
 end)
 
 Handlers.add("UserBalanceVoteB", Handlers.utils.hasMatchingTag("Action", "UserBalanceVoteB"), function(msg)
-    ao.send({ Target = msg.From, Data = BalancesVoteB[msg.From] or "0" })
+    local bal = '0'
+
+    -- If not Recipient is provided, then return the Senders balance
+    if (msg.Tags.Recipient) then
+        if (BalancesVoteB[msg.Tags.Recipient]) then
+            bal = BalancesVoteB[msg.Tags.Recipient]
+        end
+    elseif msg.Tags.Target and BalancesVoteB[msg.Tags.Target] then
+        bal = BalancesVoteB[msg.Tags.Target]
+    elseif BalancesVoteB[msg.From] then
+        bal = BalancesVoteB[msg.From]
+    end
+    if msg.reply then
+        msg.reply({
+            Balance = bal,
+            Ticker = Ticker,
+            Account = msg.Tags.Recipient or msg.From,
+            Data = bal
+        })
+    else
+        Send({
+            Target = msg.From,
+            Balance = bal,
+            Ticker = Ticker,
+            Account = msg.Tags.Recipient or msg.From,
+            Data = bal
+        })
+    end
 end)
 
 Handlers.add("Withdraw", Handlers.utils.hasMatchingTag("Action", "Withdraw"), function(msg)

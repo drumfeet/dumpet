@@ -189,6 +189,7 @@ export default function Home({ _id = null }) {
         process: pid,
         tags: [{ name: "Action", value: "Balances" }],
       })
+      console.log("_result", _result)
       const jsonData = JSON.parse(_result?.Messages[0]?.Data)
       console.log("jsonData", jsonData)
     } catch (error) {

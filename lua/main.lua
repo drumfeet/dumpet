@@ -131,18 +131,23 @@ Handlers.add("Create", Handlers.utils.hasMatchingTag("Action", "Create"), functi
                 end
 
                 Handlers.add("GetProcessOwner", Handlers.utils.hasMatchingTag("Action", "GetProcessOwner"), function(msg)
-                    print("GetProcessOwner")
                     ao.send({ Target = msg.From, Data = ao.env.Process.Owner })
                 end)
 
                 Handlers.add("GetOwner", Handlers.utils.hasMatchingTag("Action", "GetOwner"), function(msg)
-                    print("GetOwner")
                     ao.send({ Target = msg.From, Data = Owner })
                 end)
 
                 Handlers.add("GetCreator", Handlers.utils.hasMatchingTag("Action", "GetCreator"), function(msg)
-                    print("GetCreator")
                     ao.send({ Target = msg.From, Data = Creator })
+                end)
+
+                Handlers.add("GetMarketInfo", Handlers.utils.hasMatchingTag("Action", "GetMarketInfo"), function(msg)
+                    ao.send({ Target = msg.From, Data = json.encode(MarketInfo) })
+                end)
+
+                Handlers.add("GetTokenTxId", Handlers.utils.hasMatchingTag("Action", "GetTokenTxId"), function(msg)
+                    ao.send({ Target = msg.From, Data = MarketInfo.TokenTxId })
                 end)
 
                 Handlers.add("VoteA", Handlers.utils.hasMatchingTag("Action", "VoteA"), function(msg)
@@ -277,6 +282,76 @@ Handlers.add("Create", Handlers.utils.hasMatchingTag("Action", "Create"), functi
                     end
                 end)
 
+                Handlers.add("TotalBalanceVoteA", Handlers.utils.hasMatchingTag("Action", "TotalBalanceVoteA"), function(msg)
+                    ao.send({ Target = msg.From, Data = TotalBalanceVoteA })
+                end)
+
+                Handlers.add("TotalBalanceVoteB", Handlers.utils.hasMatchingTag("Action", "TotalBalanceVoteB"), function(msg)
+                    ao.send({ Target = msg.From, Data = TotalBalanceVoteB })
+                end)
+
+                Handlers.add("UserBalanceVoteA", Handlers.utils.hasMatchingTag("Action", "UserBalanceVoteA"), function(msg)
+                    local bal = '0'
+
+                    -- If not Recipient is provided, then return the Senders balance
+                    if (msg.Tags.Recipient) then
+                        if (BalancesVoteA[msg.Tags.Recipient]) then
+                            bal = BalancesVoteA[msg.Tags.Recipient]
+                        end
+                    elseif msg.Tags.Target and BalancesVoteA[msg.Tags.Target] then
+                        bal = BalancesVoteA[msg.Tags.Target]
+                    elseif BalancesVoteA[msg.From] then
+                        bal = BalancesVoteA[msg.From]
+                    end
+                    if msg.reply then
+                        msg.reply({
+                            Balance = bal,
+                            Ticker = Ticker,
+                            Account = msg.Tags.Recipient or msg.From,
+                            Data = bal
+                        })
+                    else
+                        Send({
+                            Target = msg.From,
+                            Balance = bal,
+                            Ticker = Ticker,
+                            Account = msg.Tags.Recipient or msg.From,
+                            Data = bal
+                        })
+                    end
+                end)
+
+                Handlers.add("UserBalanceVoteB", Handlers.utils.hasMatchingTag("Action", "UserBalanceVoteB"), function(msg)
+                    local bal = '0'
+
+                    -- If not Recipient is provided, then return the Senders balance
+                    if (msg.Tags.Recipient) then
+                        if (BalancesVoteB[msg.Tags.Recipient]) then
+                            bal = BalancesVoteB[msg.Tags.Recipient]
+                        end
+                    elseif msg.Tags.Target and BalancesVoteB[msg.Tags.Target] then
+                        bal = BalancesVoteB[msg.Tags.Target]
+                    elseif BalancesVoteB[msg.From] then
+                        bal = BalancesVoteB[msg.From]
+                    end
+                    if msg.reply then
+                        msg.reply({
+                            Balance = bal,
+                            Ticker = Ticker,
+                            Account = msg.Tags.Recipient or msg.From,
+                            Data = bal
+                        })
+                    else
+                        Send({
+                            Target = msg.From,
+                            Balance = bal,
+                            Ticker = Ticker,
+                            Account = msg.Tags.Recipient or msg.From,
+                            Data = bal
+                        })
+                    end
+                end)
+
                 Handlers.add("Withdraw", Handlers.utils.hasMatchingTag("Action", "Withdraw"), function(msg)
                     print("Withdraw")
                     ao.send({ Target = msg.From, Data = "Withdraw" })
@@ -291,15 +366,6 @@ Handlers.add("Create", Handlers.utils.hasMatchingTag("Action", "Create"), functi
                 Handlers.add("Conclude", Handlers.utils.hasMatchingTag("Action", "Conclude"), function(msg)
                     print("Conclude")
                     ao.send({ Target = msg.From, Data = "Conclude" })
-                end)
-
-                Handlers.add("GetMarketInfo", Handlers.utils.hasMatchingTag("Action", "GetMarketInfo"), function(msg)
-                    print("GetMarketInfo")
-                    ao.send({ Target = msg.From, Data = json.encode(MarketInfo) })
-                end)
-
-                Handlers.add("GetTokenTxId", Handlers.utils.hasMatchingTag("Action", "GetTokenTxId"), function(msg)
-                    ao.send({ Target = msg.From, Data = MarketInfo.TokenTxId })
                 end)
 
                 Handlers.add("Credit-Notice", Handlers.utils.hasMatchingTag("Action", "Credit-Notice"), function(msg)
