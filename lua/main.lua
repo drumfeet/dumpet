@@ -39,8 +39,37 @@ Handlers.add("Create", Handlers.utils.hasMatchingTag("Action", "Create"), functi
             return
         end
 
-        if type(msg.Tags.Duration) ~= 'string' or msg.Tags.Duration:match("^%s*$") then
+        local duration = msg.Tags.Duration
+        local timestamp = msg["Timestamp"]
+        if not duration or type(duration) ~= 'string' or duration:match("^%s*$") then
             sendErrorMessage(msg, 'Duration is required and must be a non-empty string!')
+            return
+        end
+
+        local duration_num = tonumber(duration)
+        if not duration_num then
+            sendErrorMessage(msg, 'Duration must be a valid numeric string!')
+            return
+        end
+
+        if not timestamp then
+            sendErrorMessage(msg, 'Timestamp is required and cannot be nil!')
+            return
+        end
+
+        -- Define time bounds
+        local min_duration = timestamp + 86400   -- 24 hours
+        local max_duration = timestamp + 7776000 -- 90 days
+
+        -- Check if duration is within the valid range
+        if duration_num < timestamp then
+            sendErrorMessage(msg, 'Duration must be greater than current time')
+            return
+        elseif duration_num < min_duration then
+            sendErrorMessage(msg, 'Duration must be greater than 24 hours')
+            return
+        elseif duration_num > max_duration then
+            sendErrorMessage(msg, 'Duration must be less than 90 days')
             return
         end
 
