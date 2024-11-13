@@ -485,6 +485,86 @@ export default function Home({ _id = null }) {
               </Button>
             </FormControl>
             <Flex paddingY={2}></Flex>
+
+            <FormControl
+              border="1px solid #805ad5"
+              borderRadius="md"
+              padding={4}
+            >
+              <FormHelperText fontSize="xs">TotalBalanceVoteA</FormHelperText>
+              <Button
+                colorScheme="purple"
+                w="100%"
+                maxW="lg"
+                onClick={() => {
+                  toast({
+                    description: "Not implemented yet",
+                    status: "error",
+                    duration: 2000,
+                    isClosable: true,
+                    position: "top",
+                  })
+                }}
+              >
+                Get TotalBalanceVoteA
+              </Button>
+
+              <FormHelperText fontSize="xs">TotalBalanceVoteB</FormHelperText>
+              <Button
+                colorScheme="purple"
+                w="100%"
+                maxW="lg"
+                onClick={() => {
+                  toast({
+                    description: "Not implemented yet",
+                    status: "error",
+                    duration: 2000,
+                    isClosable: true,
+                    position: "top",
+                  })
+                }}
+              >
+                Get TotalBalanceVoteB
+              </Button>
+
+              <FormHelperText fontSize="xs">UserBalanceVoteA</FormHelperText>
+              <Button
+                colorScheme="purple"
+                w="100%"
+                maxW="lg"
+                onClick={() => {
+                  toast({
+                    description: "Not implemented yet",
+                    status: "error",
+                    duration: 2000,
+                    isClosable: true,
+                    position: "top",
+                  })
+                }}
+              >
+                Get UserBalanceVoteA
+              </Button>
+
+              <FormHelperText fontSize="xs">UserBalanceVoteB</FormHelperText>
+              <Button
+                colorScheme="purple"
+                w="100%"
+                maxW="lg"
+                onClick={() => {
+                  toast({
+                    description: "Not implemented yet",
+                    status: "error",
+                    duration: 2000,
+                    isClosable: true,
+                    position: "top",
+                  })
+                }}
+              >
+                Get UserBalanceVoteB
+              </Button>
+            </FormControl>
+
+            <Flex paddingY={2}></Flex>
             <FormControl
               border="1px solid #805ad5"
               borderRadius="md"
@@ -501,7 +581,9 @@ export default function Home({ _id = null }) {
               >
                 Get Balances
               </Button>
-              <FormHelperText fontSize="xs">User Balance</FormHelperText>
+              <FormHelperText fontSize="xs">
+                User Balance Deposited
+              </FormHelperText>
               {userBalance >= 0 ? (
                 <Text maxW="lg">{userBalance}</Text>
               ) : (
