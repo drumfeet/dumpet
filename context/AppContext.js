@@ -63,6 +63,24 @@ export const AppContextProvider = ({ children }) => {
     return (v / Math.pow(BASE_UNIT, DENOMINATION)).toFixed(12)
   }
 
+  const handleMessageResultError = (_result) => {
+    const errorTag = _result?.Messages?.[0]?.Tags.find(
+      (tag) => tag.name === "Error"
+    )
+    console.log("errorTag", errorTag)
+    if (errorTag) {
+      toast({
+        description: _result?.Messages[0]?.Data,
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+        position: "top",
+      })
+      return true
+    }
+    return false
+  }
+
   return (
     <AppContext.Provider
       value={{
@@ -74,6 +92,7 @@ export const AppContextProvider = ({ children }) => {
         setUserAddress,
         multiplyByPower,
         divideByPower,
+        handleMessageResultError
       }}
     >
       {children}

@@ -1,4 +1,5 @@
 import AppHeader from "@/components/AppHeader"
+import { useAppContext } from "@/context/AppContext"
 import {
   Button,
   ChakraProvider,
@@ -17,6 +18,8 @@ export default function Home() {
   const toast = useToast()
   const [markets, setMarkets] = useState([])
 
+  const { handleMessageResultError } = useAppContext()
+
   const fetchMarkets = async () => {
     try {
       const result = await dryrun({
@@ -28,6 +31,21 @@ export default function Home() {
       const jsonData = JSON.parse(result.Messages[0].Data)
       console.log(jsonData)
       setMarkets(jsonData.Markets)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const fetchRandomMarket = async () => {
+    try {
+      const _result = await dryrun({
+        process: MAIN_PROCESS_ID,
+        tags: [{ name: "Action", value: "RandomMarket" }],
+      })
+      console.log(_result?.Messages[0])
+      if (handleMessageResultError(_result)) return
+      const jsonData = JSON.parse(_result?.Messages[0]?.Data)
+      console.log(jsonData)
     } catch (error) {
       console.error(error)
     }
@@ -57,6 +75,13 @@ export default function Home() {
               <Link target="_blank" rel="noopener noreferrer" href="/create">
                 Create Bet
               </Link>
+            </Button>
+            <Button
+              width="100%"
+              colorScheme="purple"
+              onClick={fetchRandomMarket}
+            >
+              Fetch RandomMarket
             </Button>
             <Button width="100%" colorScheme="purple" onClick={fetchMarkets}>
               Fetch Markets

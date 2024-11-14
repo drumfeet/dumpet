@@ -20,6 +20,7 @@ local function sendErrorMessage(msg, err, target)
 end
 
 Markets = Markets or {}
+MarketKeys = MarketKeys or {}
 WaitFor = WaitFor or {}
 Creators = Creators or {}
 
@@ -58,19 +59,21 @@ Handlers.add("Create", Handlers.utils.hasMatchingTag("Action", "Create"), functi
         end
 
         -- Define time bounds
-        local min_duration = timestamp + 86400   -- 24 hours
-        local max_duration = timestamp + 7776000 -- 90 days
+        local min_duration = timestamp + (86400 * 1000)   -- 24 hours in milliseconds
+        local max_duration = timestamp + (7776000 * 1000) -- 90 days in milliseconds
+
 
         -- Check if duration is within the valid range
         if duration_num < timestamp then
-            sendErrorMessage(msg, 'Duration must be greater than current time')
+            sendErrorMessage(msg,
+                'Duration must be greater than current time in milliseconds')
             return
         elseif duration_num < min_duration then
-            sendErrorMessage(msg, 'Duration must be greater than 24 hours')
+            sendErrorMessage(msg, 'Duration must be greater than 24 hours in milliseconds')
             return
         elseif duration_num > max_duration then
-            sendErrorMessage(msg, 'Duration must be less than 90 days')
-            return
+            sendErrorMessage(msg,
+                'Duration must be less than 90 days in milliseconds')
         end
 
         if type(msg.Tags.TokenTxId) ~= 'string' or msg.Tags.TokenTxId:match("^%s*$") then
@@ -499,6 +502,7 @@ Handlers.add("Create", Handlers.utils.hasMatchingTag("Action", "Create"), functi
             ]])
         })
 
+        table.insert(MarketKeys, childProcessId)
         Markets[childProcessId] = marketInfo
         printData("Markets[childProcessId]", Markets[childProcessId])
 
@@ -581,6 +585,25 @@ Handlers.add("List", Handlers.utils.hasMatchingTag("Action", "List"), function(m
     end
 end)
 
+Handlers.add("RandomMarket", Handlers.utils.hasMatchingTag("Action", "RandomMarket"), function(msg)
+    local success, err = pcall(function()
+        if #MarketKeys == 0 then
+            sendErrorMessage(msg, 'No markets available!')
+            return
+        end
+
+        local randomIndex = math.random(#MarketKeys)
+        local randomKey = MarketKeys[randomIndex]
+        local randomMarket = Markets[randomKey]
+
+        ao.send({ Target = msg.From, Data = json.encode(randomMarket) })
+    end)
+
+    if not success then
+        sendErrorMessage(msg, 'An unexpected error occurred: ' .. tostring(err))
+    end
+end)
+
 Handlers.add("WaitFor", Handlers.utils.hasMatchingTag("Action", "WaitFor"), function(msg)
     ao.send({ Target = msg.From, Data = json.encode(WaitFor) })
 end)
@@ -616,12 +639,4 @@ Handlers.add('Creator', Handlers.utils.hasMatchingTag("Action", "Creator"), func
         Markets = markets
     })
     ao.send({ Target = msg.From, Data = _data })
-end)
-
-Handlers.add("Get", Handlers.utils.hasMatchingTag("Action", "Get"), function(msg)
-    assert(type(msg.id) == 'string', 'id is required!')
-    ao.send({
-        Target = msg.From,
-        Record = json.encode(Markets[msg.id])
-    })
 end)
