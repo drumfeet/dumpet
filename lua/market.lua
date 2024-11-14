@@ -340,13 +340,11 @@ Handlers.add("UserBalanceVoteB", Handlers.utils.hasMatchingTag("Action", "UserBa
 end)
 
 Handlers.add("Withdraw", Handlers.utils.hasMatchingTag("Action", "Withdraw"), function(msg)
-    print("Withdraw")
     ao.send({ Target = msg.From, Data = "Withdraw" })
 end)
 
 Handlers.add("WithdrawRewards", Handlers.utils.hasMatchingTag("Action", "WithdrawRewards"), function(msg)
     -- only the creator can withdraw rewards
-    print("WithdrawRewards")
     ao.send({ Target = msg.From, Data = "WithdrawRewards" })
 end)
 

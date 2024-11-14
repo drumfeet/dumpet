@@ -647,7 +647,6 @@ end)
                     Timestamp = "]] .. marketInfo.Timestamp .. [[",
                     Concluded = false
                     }
-                TokenProcessId = "]] .. marketInfo.TokenTxId .. [["
                 Creator = "]] .. msg.From .. [["
                 Owner = ""
             ]])
