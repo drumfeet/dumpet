@@ -45,6 +45,26 @@ local function sendErrorMessage(msg, err, target)
     printData("Error", "Target" .. " " .. targetId .. " " .. err)
 end
 
+local function hasMarketExpired(msg)
+    local duration_num = tonumber(MarketInfo.Duration)
+    local timestamp = msg["Timestamp"]
+
+    if not timestamp then
+        sendErrorMessage(msg, 'Timestamp is required and cannot be nil!')
+        return true
+    end
+
+    if MarketInfo.Concluded then
+        sendErrorMessage(msg, 'Market has already been concluded.')
+        return true
+    end
+
+    if timestamp > duration_num then
+        sendErrorMessage(msg, 'Market duration has already expired.')
+        return true
+    end
+end
+
 Handlers.add("GetProcessOwner", Handlers.utils.hasMatchingTag("Action", "GetProcessOwner"), function(msg)
     ao.send({ Target = msg.From, Data = ao.env.Process.Owner })
 end)
@@ -65,7 +85,52 @@ Handlers.add("GetTokenTxId", Handlers.utils.hasMatchingTag("Action", "GetTokenTx
     ao.send({ Target = msg.From, Data = MarketInfo.TokenTxId })
 end)
 
+Handlers.add("CancelVotes", Handlers.utils.hasMatchingTag("Action", "CancelVotes"), function(msg)
+    if (hasMarketExpired(msg)) then
+        return
+    end
+
+    local success, err = pcall(function()
+        -- Check if Balances[msg.From] has enough balance to cancel votes
+        local senderBalanceVoteA = BalancesVoteA[msg.From] or "0"
+        local senderBalanceVoteB = BalancesVoteB[msg.From] or "0"
+        if utils.toNumber(senderBalanceVoteA) <= 0 and utils.toNumber(senderBalanceVoteB) <= 0 then
+            sendErrorMessage(msg, "No votes to cancel")
+            return
+        end
+
+        -- Perform balance updates
+        BalancesVoteA[msg.From] = nil
+        BalancesVoteB[msg.From] = nil
+        TotalBalanceVoteA = utils.subtract(TotalBalanceVoteA, senderBalanceVoteA)
+        TotalBalanceVoteB = utils.subtract(TotalBalanceVoteB, senderBalanceVoteB)
+        Balances[msg.From] = utils.add(Balances[msg.From], senderBalanceVoteA)
+        Balances[msg.From] = utils.add(Balances[msg.From], senderBalanceVoteB)
+
+        -- Prepare data to be returned
+        local _data = {
+            From = msg.From,
+            NewBalance = Balances[msg.From],
+            BalanceVoteA = BalancesVoteA[msg.From],
+            BalanceVoteB = BalancesVoteB[msg.From],
+            TotalBalanceVoteA = TotalBalanceVoteA,
+            TotalBalanceVoteB = TotalBalanceVoteB
+        }
+        printData("CancelVotes _data", _data)
+
+        ao.send({ Target = msg.From, Data = json.encode(_data) })
+    end)
+
+    if not success then
+        sendErrorMessage(msg, 'An unexpected error occurred: ' .. tostring(err))
+    end
+end)
+
 Handlers.add("VoteA", Handlers.utils.hasMatchingTag("Action", "VoteA"), function(msg)
+    if (hasMarketExpired(msg)) then
+        return
+    end
+
     -- Define the original state variables and set them initially to nil
     local originalSenderBalance = nil
     local originalBalanceVoteA = nil
@@ -132,6 +197,10 @@ Handlers.add("VoteA", Handlers.utils.hasMatchingTag("Action", "VoteA"), function
 end)
 
 Handlers.add("VoteB", Handlers.utils.hasMatchingTag("Action", "VoteB"), function(msg)
+    if (hasMarketExpired(msg)) then
+        return
+    end
+
     -- Define the original state variables and set them initially to nil
     local originalSenderBalance = nil
     local originalBalanceVoteB = nil
@@ -283,11 +352,92 @@ Handlers.add("WithdrawRewards", Handlers.utils.hasMatchingTag("Action", "Withdra
 end)
 
 Handlers.add("Conclude", Handlers.utils.hasMatchingTag("Action", "Conclude"), function(msg)
-    print("Conclude")
-    ao.send({ Target = msg.From, Data = "Conclude" })
+    local success, err = pcall(function()
+        -- Ensure timestamp and duration are valid
+        local duration_num = tonumber(MarketInfo.Duration)
+        local timestamp = msg["Timestamp"]
+
+        if not timestamp then
+            sendErrorMessage(msg, 'Timestamp is required and cannot be nil!')
+            return
+        end
+
+        if MarketInfo.Concluded then
+            sendErrorMessage(msg, 'Market has already been concluded.')
+            return
+        end
+
+        -- TODO: uncomment this block
+        -- if timestamp < duration_num then
+        --     sendErrorMessage(msg, 'Market duration has not yet expired.')
+        --     return
+        -- end
+
+        -- Determine the winning side
+        local winner, winnerBalances, winnerTotal
+        local loserBalances, loserTotal
+
+        if utils.toNumber(TotalBalanceVoteA) > utils.toNumber(TotalBalanceVoteB) then
+            winner = MarketInfo.OptionA
+            winnerBalances = BalancesVoteA
+            winnerTotal = TotalBalanceVoteA
+            loserBalances = BalancesVoteB
+            loserTotal = TotalBalanceVoteB
+        else
+            winner = MarketInfo.OptionB
+            winnerBalances = BalancesVoteB
+            winnerTotal = TotalBalanceVoteB
+            loserBalances = BalancesVoteA
+            loserTotal = TotalBalanceVoteA
+        end
+
+        if utils.toNumber(winnerTotal) == 0 or utils.toNumber(loserTotal) == 0 then
+            -- TODO: disolve the market and return all funds to the voters Balances
+            -- MarketInfo.Concluded = true
+            sendErrorMessage(msg, 'Error in concluding: Total balance for reward calculation is zero.')
+            return
+        end
+
+        -- loserBalances will be distributed to the winning voters
+        -- Distribute rewards proportionally to winning voters
+        for voter, balance in pairs(winnerBalances) do
+            local proportion = utils.toNumber(balance) / utils.toNumber(winnerTotal)
+            local reward = proportion * utils.toNumber(loserTotal)
+            Balances[voter] = utils.add(Balances[voter] or "0", utils.toBalanceValue(reward))
+            Balances[voter] = utils.add(Balances[voter] or "0", balance)
+        end
+
+        -- Mark the market as concluded
+        MarketInfo.Concluded = true
+
+        -- Send a success message
+        local _data = {
+            Message = "Market concluded successfully.",
+            Winner = winner,
+            RewardPool = loserTotal,
+            MarketInfo = MarketInfo,
+        }
+        ao.send({ Target = msg.From, Data = json.encode(_data) })
+    end)
+
+    if not success then
+        sendErrorMessage(msg, 'An unexpected error occurred: ' .. tostring(err))
+    end
 end)
 
 Handlers.add("Credit-Notice", Handlers.utils.hasMatchingTag("Action", "Credit-Notice"), function(msg)
+    if (hasMarketExpired(msg)) then
+        -- return funds to sender
+        ao.send({
+            Target = msg.From, -- user token PROCESS_ID
+            Action = "Transfer",
+            Recipient = msg.Tags.Sender,
+            Quantity = msg.Tags.Quantity,
+        })
+        sendErrorMessage(msg, '', msg.Tags.Sender)
+        return
+    end
+
     if msg.From == MarketInfo.TokenTxId then
         -- if Sender is the process itself
         if msg.Tags.Sender == msg.From then
