@@ -25,6 +25,7 @@ BASE_UNIT = BASE_UNIT or 10
 Denomination = Denomination or 12
 MarketInfo = MarketInfo or {}
 Creator = Creator or ""
+MainProcessId = MainProcessId or ""
 
 local multiplyByPower = function(v)
     return v * (BASE_UNIT ^ Denomination)
@@ -64,6 +65,10 @@ local function hasMarketExpired(msg)
         return true
     end
 end
+
+Handlers.add("MainProcessId", Handlers.utils.hasMatchingTag("Action", "MainProcessId"), function(msg)
+    ao.send({ Target = msg.From, Data = MainProcessId })
+end)
 
 Handlers.add("GetProcessOwner", Handlers.utils.hasMatchingTag("Action", "GetProcessOwner"), function(msg)
     ao.send({ Target = msg.From, Data = ao.env.Process.Owner })

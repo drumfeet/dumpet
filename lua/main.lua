@@ -649,6 +649,7 @@ end)
                     }
                 Creator = "]] .. msg.From .. [["
                 Owner = ""
+                MainProcessId = "]] .. ao.id .. [["
             ]])
         })
 

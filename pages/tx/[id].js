@@ -185,6 +185,32 @@ export default function Home({ _id = null }) {
     }
   }
 
+  const getProcessOwner = async () => {
+    try {
+      const _result = await dryrun({
+        process: pid,
+        tags: [{ name: "Action", value: "GetProcessOwner" }],
+      })
+      console.log("_result", _result)
+      console.log("_result?.Messages[0]?.Data", _result?.Messages[0]?.Data)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const getMainProcessId = async () => {
+    try {
+      const _result = await dryrun({
+        process: pid,
+        tags: [{ name: "Action", value: "MainProcessId" }],
+      })
+      console.log("_result", _result)
+      console.log("_result?.Messages[0]?.Data", _result?.Messages[0]?.Data)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   const getBalances = async () => {
     try {
       const _result = await dryrun({
@@ -772,6 +798,14 @@ export default function Home({ _id = null }) {
               </Button>
             </FormControl>
             <Flex paddingY={2}></Flex>
+            <Button
+              colorScheme="purple"
+              w="100%"
+              maxW="lg"
+              onClick={getMainProcessId}
+            >
+              getMainProcessId
+            </Button>
             <Button
               colorScheme="purple"
               w="100%"
