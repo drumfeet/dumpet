@@ -249,6 +249,42 @@ export default function Home({ _id = null }) {
     }
   }
 
+  const cancelVote = async () => {
+    const _connected = await connectWallet()
+    if (_connected.success === false) {
+      return
+    }
+
+    try {
+      const messageId = await message({
+        process: pid,
+        tags: [{ name: "Action", value: "CancelVote" }],
+        signer: createDataItemSigner(globalThis.arweaveWallet),
+      })
+      console.log("messageId", messageId)
+
+      const _result = await result({
+        message: messageId,
+        process: pid,
+      })
+      console.log("_result", _result)
+      if (handleMessageResultError(_result)) return
+
+      const jsonData = JSON.parse(_result?.Messages[0]?.Data)
+      console.log("jsonData", jsonData)
+
+      toast({
+        description: "Cancel Vote success",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+        position: "top",
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   const voteA = async () => {
     const _connected = await connectWallet()
     if (_connected.success === false) {
@@ -609,6 +645,15 @@ export default function Home({ _id = null }) {
               <Button colorScheme="purple" w="100%" maxW="lg" onClick={voteB}>
                 Vote B
               </Button>
+              <Flex paddingY={8}></Flex>
+              <Button
+                colorScheme="purple"
+                w="100%"
+                maxW="lg"
+                onClick={cancelVote}
+              >
+                Cancel Vote
+              </Button>
             </FormControl>
             <Flex paddingY={2}></Flex>
 
@@ -735,12 +780,7 @@ export default function Home({ _id = null }) {
             >
               getTokenTxId
             </Button>
-            <Button
-              colorScheme="purple"
-              w="100%"
-              maxW="lg"
-              onClick={conclude}
-            >
+            <Button colorScheme="purple" w="100%" maxW="lg" onClick={conclude}>
               Conclude
             </Button>
           </Flex>

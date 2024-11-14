@@ -85,10 +85,12 @@ Handlers.add("GetTokenTxId", Handlers.utils.hasMatchingTag("Action", "GetTokenTx
     ao.send({ Target = msg.From, Data = MarketInfo.TokenTxId })
 end)
 
-Handlers.add("CancelVotes", Handlers.utils.hasMatchingTag("Action", "CancelVotes"), function(msg)
+Handlers.add("CancelVote", Handlers.utils.hasMatchingTag("Action", "CancelVote"), function(msg)
     if (hasMarketExpired(msg)) then
         return
     end
+
+    -- TODO: apply cancel fee
 
     local success, err = pcall(function()
         -- Check if Balances[msg.From] has enough balance to cancel votes
@@ -107,7 +109,6 @@ Handlers.add("CancelVotes", Handlers.utils.hasMatchingTag("Action", "CancelVotes
         Balances[msg.From] = utils.add(Balances[msg.From], senderBalanceVoteA)
         Balances[msg.From] = utils.add(Balances[msg.From], senderBalanceVoteB)
 
-        -- Prepare data to be returned
         local _data = {
             From = msg.From,
             NewBalance = Balances[msg.From],
@@ -167,7 +168,6 @@ Handlers.add("VoteA", Handlers.utils.hasMatchingTag("Action", "VoteA"), function
         BalancesVoteA[msg.From] = utils.add(originalBalanceVoteA, msg.Tags.Quantity)
         TotalBalanceVoteA = utils.add(originalTotalBalanceVoteA, msg.Tags.Quantity)
 
-        -- Prepare data to be returned
         local _data = {
             From = msg.From,
             Quantity = msg.Tags.Quantity,
@@ -237,7 +237,6 @@ Handlers.add("VoteB", Handlers.utils.hasMatchingTag("Action", "VoteB"), function
         BalancesVoteB[msg.From] = utils.add(originalBalanceVoteB, msg.Tags.Quantity)
         TotalBalanceVoteB = utils.add(originalTotalBalanceVoteB, msg.Tags.Quantity)
 
-        -- Prepare data to be returned
         local _data = {
             From = msg.From,
             Quantity = msg.Tags.Quantity,
