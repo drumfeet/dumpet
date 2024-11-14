@@ -105,9 +105,10 @@ export default function Home({ _id = null }) {
   }
 
   const getMarketInfo = async () => {
+    console.log("getMarketInfo pid", pid)
     try {
       const result = await dryrun({
-        process: id,
+        process: pid,
         tags: [{ name: "Action", value: "GetMarketInfo" }],
       })
 
@@ -446,6 +447,30 @@ export default function Home({ _id = null }) {
     }
   }
 
+  const conclude = async () => {
+    try {
+      console.log("conclude pid", pid)
+      const messageId = await message({
+        process: pid,
+        tags: [{ name: "Action", value: "Conclude" }],
+        signer: createDataItemSigner(globalThis.arweaveWallet),
+      })
+      console.log("messageId", messageId)
+
+      const _result = await result({
+        message: messageId,
+        process: pid,
+      })
+      console.log("_result", _result)
+      if (handleMessageResultError(_result)) return
+
+      const jsonData = JSON.parse(_result?.Messages[0]?.Data)
+      console.log("jsonData", jsonData)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   return (
     <>
       <ChakraProvider>
@@ -714,15 +739,7 @@ export default function Home({ _id = null }) {
               colorScheme="purple"
               w="100%"
               maxW="lg"
-              onClick={() => {
-                toast({
-                  description: "Not implemented yet",
-                  status: "error",
-                  duration: 2000,
-                  isClosable: true,
-                  position: "top",
-                })
-              }}
+              onClick={conclude}
             >
               Conclude
             </Button>
