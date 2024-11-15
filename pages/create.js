@@ -18,7 +18,17 @@ const MAIN_PROCESS_ID = "yC4kFwIGERjmLx5qSxEa0MX87sFuqRDFbWUqEedVOZo"
 
 export default function Home() {
   const [title, setTitle] = useState("")
-  const [duration, setDuration] = useState()
+  const [duration, setDuration] = useState(() => {
+    const defaultDuration = new Date()
+    defaultDuration.setHours(defaultDuration.getHours() + 48) // Add 48 hours
+    const year = defaultDuration.getFullYear()
+    const month = String(defaultDuration.getMonth() + 1).padStart(2, "0") // Months are 0-indexed
+    const day = String(defaultDuration.getDate()).padStart(2, "0")
+    const hours = String(defaultDuration.getHours()).padStart(2, "0")
+    const minutes = String(defaultDuration.getMinutes()).padStart(2, "0")
+    return `${year}-${month}-${day}T${hours}:${minutes}` // Format without seconds
+  })
+
   const [tokenTxId, setTokenTxId] = useState(
     "fzkhRptIvW3tJ7Dz7NFgt2DnZTJVKnwtzEOuURjfXrQ"
   )
@@ -43,6 +53,11 @@ export default function Home() {
     }
 
     try {
+      const durationTimestamp = isNaN(new Date(duration).getTime())
+        ? null
+        : new Date(duration).getTime()
+      console.log("durationTimestamp", durationTimestamp)
+
       const messageId = await message({
         process: MAIN_PROCESS_ID,
         tags: [
@@ -56,7 +71,7 @@ export default function Home() {
           },
           {
             name: "Duration",
-            value: duration,
+            value: durationTimestamp.toString(),
           },
           {
             name: "TokenTxId",
@@ -87,7 +102,7 @@ export default function Home() {
         title: "Pending market creation",
         description: "View your profile to see the list of markets you created",
         status: "success",
-        duration: 2000,
+        duration: 4000,
         isClosable: true,
         position: "top",
       })
@@ -214,10 +229,11 @@ export default function Home() {
             >
               Create
             </Button>
+            <Flex paddingY={1}></Flex>
             {isConnected &&
               typeof userAddress === "string" &&
               userAddress.length > 0 && (
-                <Button width="100%" colorScheme="purple">
+                <Button width="100%" colorScheme="purple" bg="#7023b6">
                   <Link
                     target="_blank"
                     rel="noopener noreferrer"
@@ -228,6 +244,8 @@ export default function Home() {
                 </Button>
               )}
           </Flex>
+
+          <Flex paddingY={8}></Flex>
         </Flex>
       </ChakraProvider>
     </>
