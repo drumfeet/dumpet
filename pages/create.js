@@ -254,8 +254,6 @@ export default function Home() {
               userAddress.length > 0 && (
                 <Button width="100%" colorScheme="purple" bg="#7023b6">
                   <Link
-                    target="_blank"
-                    rel="noopener noreferrer"
                     href={`/profile/${userAddress}`}
                   >
                     View Profile

@@ -41,7 +41,10 @@ const LoginModal = () => {
         <Flex
           _hover={{ cursor: "pointer" }}
           onClick={async () => {
-            await connectWallet()
+            const _connected = await connectWallet()
+            if (_connected.success === false) {
+              return
+            }
             toast({
               description: "Account connected",
               duration: 2000,
