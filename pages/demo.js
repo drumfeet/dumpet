@@ -29,14 +29,17 @@ export default function HomePage() {
           borderRadius="md"
           align="center"
           justify="center"
-          mb={6}
         >
           <Text fontSize="lg" fontWeight="bold" textAlign="center">
             CREATE DUMB BET
           </Text>
         </Flex>
 
-        <Box
+        <Flex paddingY={4}></Flex>
+
+        <Flex
+          flexDirection="column"
+          gap={2}
           w="250px"
           border="1px solid"
           borderColor="purple.700"
@@ -45,25 +48,21 @@ export default function HomePage() {
           borderRadius="md"
           textAlign="center"
         >
-          <Text fontSize="md" fontWeight="bold" color="purple.300" mb={2}>
+          <Text fontSize="md" fontWeight="bold" color="purple.300">
             TITLE
           </Text>
-          <Text fontSize="sm" mb={2}>
-            OptionA
-          </Text>
-          <Text fontSize="sm" mb={2}>
-            vs
-          </Text>
-          <Text fontSize="sm" mb={2}>
-            OptionB
-          </Text>
-          <Text fontSize="xs" color="gray.400">
-            Timestamp
-          </Text>
-          <Text fontSize="xs" color="gray.400">
-            Duration
-          </Text>
-        </Box>
+          <Text fontSize="sm">OptionA</Text>
+          <Text fontSize="sm">vs</Text>
+          <Text fontSize="sm">OptionB</Text>
+          <Flex flexDirection="column">
+            <Text fontSize="xs" color="gray.400">
+              Timestamp
+            </Text>
+            <Text fontSize="xs" color="gray.400">
+              Duration
+            </Text>
+          </Flex>
+        </Flex>
 
         <Flex paddingY={4}></Flex>
 
@@ -108,7 +107,9 @@ export default function HomePage() {
               time: "1 month ago",
             },
           ].map((card, index) => (
-            <Box
+            <Flex
+              flexDirection="column"
+              gap={2}
               key={index}
               w="250px"
               border="1px solid"
@@ -117,16 +118,14 @@ export default function HomePage() {
               borderRadius="md"
               textAlign="center"
             >
-              <Text fontSize="md" fontWeight="bold" color="purple.300" mb={2}>
+              <Text fontSize="md" fontWeight="bold" color="purple.300">
                 {card.title}
               </Text>
-              <Text fontSize="sm" mb={2}>
-                {card.description}
-              </Text>
+              <Text fontSize="sm">{card.description}</Text>
               <Text fontSize="xs" color="gray.400">
                 {card.mcap} | {card.time}
               </Text>
-            </Box>
+            </Flex>
           ))}
         </Flex>
       </Flex>
