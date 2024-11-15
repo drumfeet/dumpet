@@ -1,13 +1,6 @@
 import AppHeader from "@/components/AppHeader"
 import { useAppContext } from "@/context/AppContext"
-import {
-  Button,
-  ChakraProvider,
-  Divider,
-  Flex,
-  useToast,
-  Text,
-} from "@chakra-ui/react"
+import { Button, ChakraProvider, Flex, useToast, Text } from "@chakra-ui/react"
 import { dryrun } from "@permaweb/aoconnect"
 import { Link } from "arnext"
 import { useEffect, useState } from "react"
@@ -43,7 +36,11 @@ export default function HomePage() {
       console.log("_result", _result)
       const jsonData = JSON.parse(_result?.Messages[0]?.Data)
       console.log("jsonData", jsonData)
-      setMarkets(jsonData.Markets)
+
+      // Append new markets to the existing list
+      setMarkets((prevMarkets) => [...prevMarkets, ...jsonData.Markets])
+
+      // Update `hasMore` and `nextPage` state
       setHasMore(jsonData.HasMore)
       if (jsonData?.NextPage) setNextPage(jsonData.NextPage)
     } catch (error) {
