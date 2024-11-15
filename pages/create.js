@@ -9,6 +9,7 @@ import {
   FormHelperText,
   Heading,
   Text,
+  Box,
 } from "@chakra-ui/react"
 import { createDataItemSigner, message, result } from "@permaweb/aoconnect"
 import { Link } from "arnext"
@@ -252,13 +253,18 @@ export default function Home() {
             {isConnected &&
               typeof userAddress === "string" &&
               userAddress.length > 0 && (
-                <Button width="100%" colorScheme="purple" bg="#7023b6">
-                  <Link
-                    href={`/profile/${userAddress}`}
-                  >
-                    View Profile
+                <Box width="100%">
+                  <Link href={`/profile/${userAddress}`} passHref>
+                    <Button
+                      as="a"
+                      width="100%"
+                      colorScheme="purple"
+                      bg="#7023b6"
+                    >
+                      View Profile
+                    </Button>
                   </Link>
-                </Button>
+                </Box>
               )}
           </Flex>
 
