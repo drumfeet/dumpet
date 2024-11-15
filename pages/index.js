@@ -120,7 +120,18 @@ export default function Home() {
                 {randomMarket?.Title}
               </Text>
               <Text fontSize="sm">{randomMarket?.OptionA}</Text>
-              <Text fontSize="sm">vs</Text>
+              <Flex justifyContent="center">
+                <Text
+                  fontSize="sm"
+                  color="gray.400"
+                  border="1px solid"
+                  borderColor="purple"
+                  borderRadius="md"
+                  paddingX={4}
+                >
+                  versus
+                </Text>
+              </Flex>
               <Text fontSize="sm">{randomMarket?.OptionB}</Text>
               <Flex flexDirection="column">
                 <Text fontSize="xs" color="gray.400">
@@ -163,7 +174,18 @@ export default function Home() {
                       {market.Title}
                     </Text>
                     <Text fontSize="sm">{market.OptionA}</Text>
-                    <Text fontSize="sm">vs</Text>
+                    <Flex justifyContent="center">
+                      <Text
+                        fontSize="sm"
+                        color="gray.400"
+                        border="1px solid"
+                        borderColor="purple"
+                        borderRadius="md"
+                        paddingX={4}
+                      >
+                        versus
+                      </Text>
+                    </Flex>
                     <Text fontSize="sm">{market.OptionB}</Text>
                     <Flex flexDirection="column">
                       <Text fontSize="xs" color="gray.400">
