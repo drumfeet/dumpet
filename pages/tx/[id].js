@@ -155,6 +155,53 @@ export default function Home({ _id = null }) {
     }
   }
 
+  const withdraw = async () => {
+    const _connected = await connectWallet()
+    if (_connected.success === false) {
+      return
+    }
+
+    const _amount = multiplyByPower(amount)
+    console.log("_amount", _amount)
+
+    try {
+      const messageId = await message({
+        process: pid,
+        tags: [
+          {
+            name: "Action",
+            value: "Withdraw",
+          },
+          {
+            name: "Quantity",
+            value: _amount.toString(),
+          },
+        ],
+        signer: createDataItemSigner(globalThis.arweaveWallet),
+      })
+      console.log("messageId", messageId)
+
+      const _result = await result({
+        message: messageId,
+        process: pid,
+      })
+      console.log("_result", _result)
+      if (handleMessageResultError(_result)) return
+
+      toast({
+        description: "Withdraw success",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+        position: "top",
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const withdrawRewards = async () => {}
+
   const getTokenTxId = async () => {
     try {
       const _result = await dryrun({
@@ -610,17 +657,18 @@ export default function Home({ _id = null }) {
                 colorScheme="purple"
                 w="100%"
                 maxW="lg"
-                onClick={() => {
-                  toast({
-                    description: "Not implemented yet",
-                    status: "error",
-                    duration: 2000,
-                    isClosable: true,
-                    position: "top",
-                  })
-                }}
+                onClick={withdraw}
               >
                 Withdraw
+              </Button>
+              <Flex paddingY={4}></Flex>
+              <Button
+                colorScheme="purple"
+                w="100%"
+                maxW="lg"
+                onClick={withdrawRewards}
+              >
+                Withdraw Rewards
               </Button>
             </FormControl>
             <Flex paddingY={2}></Flex>
