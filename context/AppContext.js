@@ -69,8 +69,9 @@ export const AppContextProvider = ({ children }) => {
     )
     console.log("errorTag", errorTag)
     if (errorTag) {
+      const errorMsg = _result.Messages[0]?.Data ?? "An error occurred" //_result.Messages[0]?.Tags[6].value
       toast({
-        description: _result?.Messages[0]?.Data,
+        description: errorMsg,
         status: "error",
         duration: 2000,
         isClosable: true,

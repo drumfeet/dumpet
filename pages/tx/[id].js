@@ -69,9 +69,10 @@ export default function Home({ _id = null }) {
     setUserAddress,
     multiplyByPower,
     divideByPower,
+    handleMessageResultError
   } = useAppContext()
 
-  useEffect(() => {
+  useEffect(() => { 
     ;(async () => {
       _id ?? setPid(await getID(id, _id))
     })()
@@ -85,24 +86,6 @@ export default function Home({ _id = null }) {
       })()
     }
   }, [pid])
-
-  const handleMessageResultError = (_result) => {
-    const errorTag = _result?.Messages?.[0]?.Tags.find(
-      (tag) => tag.name === "Error"
-    )
-    console.log("errorTag", errorTag)
-    if (errorTag) {
-      toast({
-        description: _result.Messages[0].Data,
-        status: "error",
-        duration: 2000,
-        isClosable: true,
-        position: "top",
-      })
-      return true
-    }
-    return false
-  }
 
   const getMarketInfo = async () => {
     console.log("getMarketInfo pid", pid)

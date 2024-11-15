@@ -32,25 +32,8 @@ export default function Home() {
     setIsConnected,
     userAddress,
     setUserAddress,
+    handleMessageResultError,
   } = useAppContext()
-
-  const handleMessageResultError = (_result) => {
-    const errorTag = _result?.Messages?.[0]?.Tags.find(
-      (tag) => tag.name === "Error"
-    )
-    console.log("errorTag", errorTag)
-    if (errorTag) {
-      toast({
-        description: _result.Messages[0].Data,
-        status: "error",
-        duration: 2000,
-        isClosable: true,
-        position: "top",
-      })
-      return true
-    }
-    return false
-  }
 
   const createMarket = async () => {
     const _connected = await connectWallet()

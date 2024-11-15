@@ -26,6 +26,7 @@ import {
 } from "@chakra-ui/react"
 import { AddIcon, DeleteIcon, EditIcon, UpDownIcon } from "@chakra-ui/icons"
 import AppHeader from "@/components/AppHeader"
+import { useAppContext } from "@/context/AppContext"
 
 export async function getStaticPaths() {
   return { paths: [], fallback: "blocking" }
@@ -44,6 +45,7 @@ export default function Home({ _id = null }) {
   const [pid, setPid] = useState(_id)
   const [isPending, setIsPending] = useState(false)
   const [userMarkets, setUserMarkets] = useState([])
+  const { handleMessageResultError } = useAppContext()
 
   useEffect(() => {
     ;(async () => {
@@ -60,24 +62,6 @@ export default function Home({ _id = null }) {
       })()
     }
   }, [pid])
-
-  const handleMessageResultError = (_result) => {
-    const errorTag = _result?.Messages?.[0]?.Tags.find(
-      (tag) => tag.name === "Error"
-    )
-    console.log("errorTag", errorTag)
-    if (errorTag) {
-      toast({
-        description: _result.Messages[0].Data,
-        status: "error",
-        duration: 2000,
-        isClosable: true,
-        position: "top",
-      })
-      return true
-    }
-    return false
-  }
 
   const hasWaitFor = async () => {
     console.log("hasWaitFor")
