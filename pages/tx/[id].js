@@ -200,7 +200,38 @@ export default function Home({ _id = null }) {
     }
   }
 
-  const withdrawRewards = async () => {}
+  const withdrawRewards = async () => {
+    const _connected = await connectWallet()
+    if (_connected.success === false) {
+      return
+    }
+
+    try {
+      const messageId = await message({
+        process: pid,
+        tags: [{ name: "Action", value: "WithdrawRewards" }],
+        signer: createDataItemSigner(globalThis.arweaveWallet),
+      })
+      console.log("messageId", messageId)
+
+      const _result = await result({
+        message: messageId,
+        process: pid,
+      })
+      console.log("_result", _result)
+      if (handleMessageResultError(_result)) return
+
+      toast({
+        description: "Withdraw Rewards success",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+        position: "top",
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
   const getTokenTxId = async () => {
     try {
