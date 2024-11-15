@@ -9,16 +9,18 @@ export default function AppHeader() {
     <ChakraProvider>
       {/* <Flex w="full" justify="space-between" align="center" paddingX={[0, 8]}> */}
       <Flex
-          justify="space-between"
-          w="100%"
-          // maxW="1200px"
-          paddingY={4}
-          paddingX={[0, 8]}
-          align="center"
-        >
-        <Text fontSize="2xl" color="purple.400" fontWeight="bold">
-          dumpet
-        </Text>
+        justify="space-between"
+        w="100%"
+        // maxW="1200px"
+        paddingY={4}
+        paddingX={[0, 8]}
+        align="center"
+      >
+        <Link href="/">
+          <Text fontSize="2xl" color="purple.400" fontWeight="bold">
+            dumpet
+          </Text>
+        </Link>
         <Flex gap={4} alignItems="center">
           <Link
             target="_blank"
