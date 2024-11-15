@@ -392,12 +392,64 @@ Handlers.add("UserBalanceVoteB", Handlers.utils.hasMatchingTag("Action", "UserBa
 end)
 
 Handlers.add("Withdraw", Handlers.utils.hasMatchingTag("Action", "Withdraw"), function(msg)
-    ao.send({ Target = msg.From, Data = "Withdraw" })
+    local success, err = pcall(function()
+        -- Validate that msg.Tags.Quantity is a valid string representing a number greater than 0
+        if type(msg.Tags.Quantity) ~= 'string' then
+            sendErrorMessage(msg, "Quantity must be a valid string representing a number greater than 0")
+            return
+        end
+
+        -- Check if the Quantity is a positive number
+        local quantity = tonumber(msg.Tags.Quantity)
+        if not quantity or quantity <= 0 then
+            sendErrorMessage(msg, "Quantity must be greater than 0")
+            return
+        end
+
+        -- Check if Balances[msg.From] has enough balance
+        if not Balances[msg.From] then
+            sendErrorMessage(msg, 'Account has no balance')
+            return
+        end
+
+        if utils.toNumber(Balances[msg.From]) < utils.toNumber(msg.Tags.Quantity) then
+            sendErrorMessage(msg, 'Insufficient funds')
+            return
+        end
+
+        ao.send({
+            Target = MarketInfo.TokenTxId,
+            Action = "Transfer",
+            Recipient = msg.From,
+            Quantity = msg.Tags.Quantity,
+        })
+        Balances[msg.From] = utils.subtract(Balances[msg.From], msg.Tags.Quantity)
+    end)
+
+    if not success then
+        sendErrorMessage(msg, 'An unexpected error occurred: ' .. tostring(err))
+    end
 end)
 
 Handlers.add("WithdrawRewards", Handlers.utils.hasMatchingTag("Action", "WithdrawRewards"), function(msg)
-    -- only the creator can withdraw rewards
-    ao.send({ Target = msg.From, Data = "WithdrawRewards" })
+    local success, err = pcall(function()
+        -- only the creator can withdraw rewards
+        if msg.From ~= Creator then
+            sendErrorMessage(msg, 'Only the creator can withdraw rewards')
+            return
+        end
+
+        ao.send({
+            Target = MarketInfo.AoTokenProcessId,
+            Action = "Transfer",
+            Recipient = Creator,
+            Quantity = msg.Tags.Quantity,
+        })
+    end)
+
+    if not success then
+        sendErrorMessage(msg, 'An unexpected error occurred: ' .. tostring(err))
+    end
 end)
 
 Handlers.add("Conclude", Handlers.utils.hasMatchingTag("Action", "Conclude"), function(msg)
