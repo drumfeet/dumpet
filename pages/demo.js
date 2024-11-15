@@ -1,14 +1,65 @@
 import AppHeader from "@/components/AppHeader"
+import { useAppContext } from "@/context/AppContext"
 import {
-  Flex,
-  Text,
   Button,
-  Box,
   ChakraProvider,
-  Spacer,
+  Divider,
+  Flex,
+  useToast,
+  Text,
 } from "@chakra-ui/react"
+import { dryrun } from "@permaweb/aoconnect"
+import { Link } from "arnext"
+import { useEffect, useState } from "react"
+
+const MAIN_PROCESS_ID = "yC4kFwIGERjmLx5qSxEa0MX87sFuqRDFbWUqEedVOZo"
 
 export default function HomePage() {
+  const toast = useToast()
+  const [markets, setMarkets] = useState([])
+  const [randomMarket, setRandomMarket] = useState(null)
+
+  const { handleMessageResultError } = useAppContext()
+
+  useEffect(() => {
+    ;(async () => {
+      await fetchMarkets()
+      await fetchRandomMarket()
+    })()
+  }, [])
+
+  const fetchMarkets = async () => {
+    try {
+      const _result = await dryrun({
+        process: MAIN_PROCESS_ID,
+        tags: [{ name: "Action", value: "List" }],
+      })
+
+      console.log(_result.Messages[0])
+      const jsonData = JSON.parse(_result.Messages[0].Data)
+      console.log(jsonData)
+      setMarkets(jsonData.Markets)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const fetchRandomMarket = async () => {
+    try {
+      const _result = await dryrun({
+        process: MAIN_PROCESS_ID,
+        tags: [{ name: "Action", value: "RandomMarket" }],
+      })
+      console.log(_result?.Messages[0])
+      if (handleMessageResultError(_result)) return
+      const jsonData = JSON.parse(_result?.Messages[0]?.Data)
+      console.log("jsonData", jsonData)
+      setRandomMarket(jsonData)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   return (
     <ChakraProvider>
       <Flex
@@ -49,17 +100,17 @@ export default function HomePage() {
           textAlign="center"
         >
           <Text fontSize="md" fontWeight="bold" color="purple.300">
-            TITLE
+            {randomMarket?.Title}
           </Text>
-          <Text fontSize="sm">OptionA</Text>
+          <Text fontSize="sm">{randomMarket?.OptionA}</Text>
           <Text fontSize="sm">vs</Text>
-          <Text fontSize="sm">OptionB</Text>
+          <Text fontSize="sm">{randomMarket?.OptionB}</Text>
           <Flex flexDirection="column">
             <Text fontSize="xs" color="gray.400">
-              Timestamp
+              {randomMarket?.Timestamp}
             </Text>
             <Text fontSize="xs" color="gray.400">
-              Duration
+              {randomMarket?.Duration}
             </Text>
           </Flex>
         </Flex>
