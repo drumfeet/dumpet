@@ -69,10 +69,10 @@ export default function Home({ _id = null }) {
     setUserAddress,
     multiplyByPower,
     divideByPower,
-    handleMessageResultError
+    handleMessageResultError,
   } = useAppContext()
 
-  useEffect(() => { 
+  useEffect(() => {
     ;(async () => {
       _id ?? setPid(await getID(id, _id))
     })()
@@ -629,6 +629,40 @@ export default function Home({ _id = null }) {
               borderRadius="md"
               padding={4}
             >
+              <FormHelperText fontSize="xs">
+                Get All User Balances Deposited
+              </FormHelperText>
+              <Button
+                colorScheme="purple"
+                w="100%"
+                maxW="lg"
+                onClick={getBalances}
+              >
+                Get Balances
+              </Button>
+              <FormHelperText fontSize="xs">
+                User Balance Deposited
+              </FormHelperText>
+              {userBalance >= 0 ? (
+                <Text maxW="lg">{userBalance}</Text>
+              ) : (
+                <Text maxW="lg">-</Text>
+              )}
+              <Button
+                colorScheme="purple"
+                w="100%"
+                maxW="lg"
+                onClick={getBalance}
+              >
+                Get User Balance
+              </Button>
+            </FormControl>
+            <Flex paddingY={2}></Flex>
+            <FormControl
+              border="1px solid #805ad5"
+              borderRadius="md"
+              padding={4}
+            >
               <FormHelperText fontSize="xs">Amount of Vote</FormHelperText>
               <NumberInput
                 precision={2}
@@ -665,7 +699,6 @@ export default function Home({ _id = null }) {
               </Button>
             </FormControl>
             <Flex paddingY={2}></Flex>
-
             <FormControl
               border="1px solid #805ad5"
               borderRadius="md"
@@ -743,41 +776,6 @@ export default function Home({ _id = null }) {
                 onClick={getUserBalanceVoteB}
               >
                 Get UserBalanceVoteB
-              </Button>
-            </FormControl>
-
-            <Flex paddingY={2}></Flex>
-            <FormControl
-              border="1px solid #805ad5"
-              borderRadius="md"
-              padding={4}
-            >
-              <FormHelperText fontSize="xs">
-                Get All User Balances Deposited
-              </FormHelperText>
-              <Button
-                colorScheme="purple"
-                w="100%"
-                maxW="lg"
-                onClick={getBalances}
-              >
-                Get Balances
-              </Button>
-              <FormHelperText fontSize="xs">
-                User Balance Deposited
-              </FormHelperText>
-              {userBalance >= 0 ? (
-                <Text maxW="lg">{userBalance}</Text>
-              ) : (
-                <Text maxW="lg">-</Text>
-              )}
-              <Button
-                colorScheme="purple"
-                w="100%"
-                maxW="lg"
-                onClick={getBalance}
-              >
-                Get User Balance
               </Button>
             </FormControl>
             <Flex paddingY={2}></Flex>
