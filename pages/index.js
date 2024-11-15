@@ -1,36 +1,48 @@
 import AppHeader from "@/components/AppHeader"
 import { useAppContext } from "@/context/AppContext"
-import {
-  Button,
-  ChakraProvider,
-  Divider,
-  Flex,
-  useToast,
-  Text,
-} from "@chakra-ui/react"
+import { Button, ChakraProvider, Flex, useToast, Text } from "@chakra-ui/react"
 import { dryrun } from "@permaweb/aoconnect"
 import { Link } from "arnext"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 const MAIN_PROCESS_ID = "yC4kFwIGERjmLx5qSxEa0MX87sFuqRDFbWUqEedVOZo"
 
 export default function Home() {
   const toast = useToast()
   const [markets, setMarkets] = useState([])
+  const [randomMarket, setRandomMarket] = useState(null)
+  const [hasMore, setHasMore] = useState(false)
+  const [nextPage, setNextPage] = useState(1)
 
   const { handleMessageResultError } = useAppContext()
 
-  const fetchMarkets = async () => {
+  useEffect(() => {
+    ;(async () => {
+      await fetchRandomMarket()
+      await fetchMarkets()
+    })()
+  }, [])
+
+  async function fetchMarkets(nextPage = 1) {
     try {
-      const result = await dryrun({
+      const _result = await dryrun({
         process: MAIN_PROCESS_ID,
-        tags: [{ name: "Action", value: "List" }],
+        tags: [
+          { name: "Action", value: "List" },
+          { name: "Page", value: nextPage.toString() },
+        ],
       })
 
-      console.log(result.Messages[0])
-      const jsonData = JSON.parse(result.Messages[0].Data)
-      console.log(jsonData)
-      setMarkets(jsonData.Markets)
+      console.log("_result", _result)
+      const jsonData = JSON.parse(_result?.Messages[0]?.Data)
+      console.log("jsonData", jsonData)
+
+      // Append new markets to the existing list
+      setMarkets((prevMarkets) => [...prevMarkets, ...jsonData.Markets])
+
+      // Update `hasMore` and `nextPage` state
+      setHasMore(jsonData.HasMore)
+      if (jsonData?.NextPage) setNextPage(jsonData.NextPage)
     } catch (error) {
       console.error(error)
     }
@@ -45,68 +57,152 @@ export default function Home() {
       console.log(_result?.Messages[0])
       if (handleMessageResultError(_result)) return
       const jsonData = JSON.parse(_result?.Messages[0]?.Data)
-      console.log(jsonData)
+      console.log("jsonData", jsonData)
+      setRandomMarket(jsonData)
     } catch (error) {
       console.error(error)
     }
   }
 
-  return (
-    <>
-      <ChakraProvider>
-        <Flex
-          flexDirection="column"
-          alignItems="center"
-          p={5}
-          bg="#f3f0fa"
-          minH="100vh"
-        >
-          <AppHeader />
+  function formatUnixTimestamp(timestamp) {
+    const date = new Date(Number(timestamp))
+    return date.toUTCString()
+  }
 
+  return (
+    <ChakraProvider>
+      <Flex
+        direction="column"
+        align="center"
+        p={4}
+        bg="#1a1a2e" // Dark purple background
+        minHeight="100vh"
+        color="white"
+      >
+        <AppHeader />
+
+        <Link target="_blank" rel="noopener noreferrer" href="/create">
           <Flex
-            flexDirection="column"
-            gap={4}
-            align="center"
+            w="100%"
+            maxW="800px"
+            bg="purple.500" // Vibrant purple for the banner
+            p={4}
             borderRadius="md"
-            width="100%"
-            maxW="lg"
+            align="center"
+            justify="center"
           >
-            <Button width="100%" colorScheme="purple" onClick={fetchMarkets}>
-              <Link target="_blank" rel="noopener noreferrer" href="/create">
-                Create Bet
-              </Link>
-            </Button>
-            <Button
-              width="100%"
-              colorScheme="purple"
-              onClick={fetchRandomMarket}
-            >
-              Fetch RandomMarket
-            </Button>
-            <Button width="100%" colorScheme="purple" onClick={fetchMarkets}>
-              Fetch Markets
-            </Button>
-            {markets.length > 0 && (
-              <>
-                {markets.map((market, index) => (
-                  <Flex key={index} flexDirection="column" w="100%" maxW="lg">
-                    <Text>{market.Title}</Text>
-                    <Text>{market.Creator}</Text>
-                    <Text>{market.BlockHeight}</Text>
-                    <Text>{market.Duration}</Text>
-                    <Text>{market.OptionA}</Text>
-                    <Text>{market.OptionB}</Text>
-                    <Text>{market.ProcessId}</Text>
-                    <Text>{market.Timestamp}</Text>
-                    <Text>{market.TokenTxId}</Text>
-                    <Divider />
-                  </Flex>
-                ))}
-              </>
-            )}
+            <Text fontSize="lg" fontWeight="bold" textAlign="center">
+              CREATE DUMB BET
+            </Text>
           </Flex>
-        </Flex>
-      </ChakraProvider>
-    </>
+        </Link>
+
+        <Flex paddingY={4}></Flex>
+
+        {randomMarket && (
+          <Link
+            target="_blank"
+            rel="noopener noreferrer"
+            href={`/tx/${randomMarket.ProcessId}`}
+          >
+            <Flex
+              flexDirection="column"
+              gap={2}
+              w="250px"
+              border="1px solid"
+              borderColor="purple.700"
+              paddingX={4}
+              paddingY={8}
+              borderRadius="md"
+              textAlign="center"
+            >
+              <Text fontSize="md" fontWeight="bold" color="purple.300">
+                {randomMarket?.Title}
+              </Text>
+              <Text fontSize="sm">{randomMarket?.OptionA}</Text>
+              <Text fontSize="sm">vs</Text>
+              <Text fontSize="sm">{randomMarket?.OptionB}</Text>
+              <Flex flexDirection="column">
+                <Text fontSize="xs" color="gray.400">
+                  Expires on:
+                </Text>
+                <Text fontSize="xs" color="gray.400">
+                  {randomMarket?.Duration
+                    ? formatUnixTimestamp(randomMarket?.Duration)
+                    : ""}
+                </Text>
+              </Flex>
+            </Flex>
+          </Link>
+        )}
+
+        <Flex paddingY={4}></Flex>
+
+        {markets && markets.length > 0 && (
+          <>
+            <Flex wrap="wrap" justify="center" gap={4} maxW="1200px">
+              {markets.map((market, index) => (
+                <Link
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href={`/tx/${market.ProcessId}`}
+                  key={index}
+                >
+                  <Flex
+                    flexDirection="column"
+                    gap={2}
+                    w="250px"
+                    border="1px solid"
+                    borderColor="purple.700"
+                    paddingX={4}
+                    paddingY={8}
+                    borderRadius="md"
+                    textAlign="center"
+                  >
+                    <Text fontSize="md" fontWeight="bold" color="purple.300">
+                      {market.Title}
+                    </Text>
+                    <Text fontSize="sm">{market.OptionA}</Text>
+                    <Text fontSize="sm">vs</Text>
+                    <Text fontSize="sm">{market.OptionB}</Text>
+                    <Flex flexDirection="column">
+                      <Text fontSize="xs" color="gray.400">
+                        Expires on:
+                      </Text>
+                      <Text fontSize="xs" color="gray.400">
+                        {market.Duration
+                          ? formatUnixTimestamp(market.Duration)
+                          : ""}
+                      </Text>
+                    </Flex>
+                  </Flex>
+                </Link>
+              ))}
+            </Flex>
+          </>
+        )}
+
+        <Flex paddingY={4}></Flex>
+
+        {hasMore && (
+          <Button
+            colorScheme="purple"
+            onClick={async () => {
+              await fetchMarkets(nextPage)
+            }}
+          >
+            Fetch More
+          </Button>
+        )}
+
+        {!hasMore && (
+          <Text fontSize="sm" color="gray.400">
+            No more markets to fetch.
+          </Text>
+        )}
+
+        <Flex paddingY={8}></Flex>
+      </Flex>
+    </ChakraProvider>
   )
 }

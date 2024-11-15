@@ -8,6 +8,7 @@ import {
   FormControl,
   FormHelperText,
   Heading,
+  Text,
 } from "@chakra-ui/react"
 import { createDataItemSigner, message, result } from "@permaweb/aoconnect"
 import { Link } from "arnext"
@@ -210,8 +211,18 @@ export default function Home() {
                 focusBorderColor="#7023b6"
                 _placeholder={{ color: "gray.400" }}
               />
-            </FormControl>
-            <FormControl>
+              <Flex paddingTop={4} justifyContent="center">
+                <Text
+                  fontSize="sm"
+                  color="gray.400"
+                  border="1px solid"
+                  borderColor="purple"
+                  borderRadius="md"
+                  paddingX={4}
+                >
+                  versus
+                </Text>
+              </Flex>
               <FormHelperText fontSize="xs">Option B</FormHelperText>
               <Input
                 placeholder="Option B"
@@ -224,7 +235,6 @@ export default function Home() {
                 _placeholder={{ color: "gray.400" }}
               />
             </FormControl>
-            <Flex paddingY={4}></Flex>
             <Button
               width="100%"
               colorScheme="purple"
@@ -238,7 +248,7 @@ export default function Home() {
             >
               Create
             </Button>
-            <Flex paddingY={1}></Flex>
+            <Flex paddingY={2}></Flex>
             {isConnected &&
               typeof userAddress === "string" &&
               userAddress.length > 0 && (
