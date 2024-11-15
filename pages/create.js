@@ -17,13 +17,13 @@ import AppHeader from "@/components/AppHeader"
 const MAIN_PROCESS_ID = "yC4kFwIGERjmLx5qSxEa0MX87sFuqRDFbWUqEedVOZo"
 
 export default function Home() {
-  const [title, setTitle] = useState("sample title")
-  const [duration, setDuration] = useState("11")
+  const [title, setTitle] = useState("")
+  const [duration, setDuration] = useState()
   const [tokenTxId, setTokenTxId] = useState(
     "fzkhRptIvW3tJ7Dz7NFgt2DnZTJVKnwtzEOuURjfXrQ"
   )
-  const [optionA, setOptionA] = useState("This is sample option A")
-  const [optionB, setOptionB] = useState("This is sample option B")
+  const [optionA, setOptionA] = useState("")
+  const [optionB, setOptionB] = useState("")
   const toast = useToast()
 
   const {
@@ -135,6 +135,7 @@ export default function Home() {
                 placeholder="Title"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
+                borderColor="#98A2B3"
                 bg="#2d2d44" // Slightly lighter than the page background
                 color="white" // White text for contrast
                 focusBorderColor="#7023b6" // Vibrant purple border on focus
@@ -146,8 +147,14 @@ export default function Home() {
               <FormHelperText fontSize="xs">Duration</FormHelperText>
               <Input
                 placeholder="Duration"
+                size="md"
+                type="datetime-local"
                 value={duration}
-                onChange={(e) => setDuration(e.target.value)}
+                onChange={(e) => {
+                  console.log("onChange Duration", e.target.value)
+                  setDuration(e.target.value)
+                }}
+                borderColor="#98A2B3"
                 bg="#2d2d44"
                 color="white"
                 focusBorderColor="#7023b6"
@@ -160,6 +167,7 @@ export default function Home() {
                 placeholder="Token txid"
                 value={tokenTxId}
                 onChange={(e) => setTokenTxId(e.target.value)}
+                borderColor="#98A2B3"
                 bg="#2d2d44"
                 color="white"
                 focusBorderColor="#7023b6"
@@ -172,6 +180,7 @@ export default function Home() {
                 placeholder="Option A"
                 value={optionA}
                 onChange={(e) => setOptionA(e.target.value)}
+                borderColor="#98A2B3"
                 bg="#2d2d44"
                 color="white"
                 focusBorderColor="#7023b6"
@@ -184,6 +193,7 @@ export default function Home() {
                 placeholder="Option B"
                 value={optionB}
                 onChange={(e) => setOptionB(e.target.value)}
+                borderColor="#98A2B3"
                 bg="#2d2d44"
                 color="white"
                 focusBorderColor="#7023b6"
