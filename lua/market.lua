@@ -95,6 +95,13 @@ Handlers.add("CancelVote", Handlers.utils.hasMatchingTag("Action", "CancelVote")
         return
     end
 
+    -- Define the original state variables and set them initially to nil
+    local originalSenderBalance = nil
+    local originalBalanceVoteA = nil
+    local originalBalanceVoteB = nil
+    local originalTotalBalanceVoteA = nil
+    local originalTotalBalanceVoteB = nil
+
     -- TODO: apply cancel fee
 
     local success, err = pcall(function()
@@ -106,19 +113,26 @@ Handlers.add("CancelVote", Handlers.utils.hasMatchingTag("Action", "CancelVote")
             return
         end
 
+        -- Save the original states for rollback purposes
+        originalSenderBalance = Balances[msg.From] or "0"
+        originalBalanceVoteA = senderBalanceVoteA
+        originalBalanceVoteB = senderBalanceVoteB
+        originalTotalBalanceVoteA = TotalBalanceVoteA
+        originalTotalBalanceVoteB = TotalBalanceVoteB
+
         -- Perform balance updates
         BalancesVoteA[msg.From] = nil
         BalancesVoteB[msg.From] = nil
         TotalBalanceVoteA = utils.subtract(TotalBalanceVoteA, senderBalanceVoteA)
         TotalBalanceVoteB = utils.subtract(TotalBalanceVoteB, senderBalanceVoteB)
-        Balances[msg.From] = utils.add(Balances[msg.From], senderBalanceVoteA)
-        Balances[msg.From] = utils.add(Balances[msg.From], senderBalanceVoteB)
+
+        -- Refund the user's canceled vote balances to their general balance
+        local updatedBalance = utils.add(Balances[msg.From] or "0", utils.add(senderBalanceVoteA, senderBalanceVoteB))
+        Balances[msg.From] = updatedBalance
 
         local _data = {
             From = msg.From,
-            NewBalance = Balances[msg.From],
-            BalanceVoteA = BalancesVoteA[msg.From],
-            BalanceVoteB = BalancesVoteB[msg.From],
+            NewBalance = updatedBalance,
             TotalBalanceVoteA = TotalBalanceVoteA,
             TotalBalanceVoteB = TotalBalanceVoteB
         }
@@ -128,6 +142,23 @@ Handlers.add("CancelVote", Handlers.utils.hasMatchingTag("Action", "CancelVote")
     end)
 
     if not success then
+        -- Rollback: restore original balances if an error occurred
+        if originalSenderBalance then
+            Balances[msg.From] = originalSenderBalance
+        end
+        if originalBalanceVoteA then
+            BalancesVoteA[msg.From] = originalBalanceVoteA
+        end
+        if originalBalanceVoteB then
+            BalancesVoteB[msg.From] = originalBalanceVoteB
+        end
+        if originalTotalBalanceVoteA then
+            TotalBalanceVoteA = originalTotalBalanceVoteA
+        end
+        if originalTotalBalanceVoteB then
+            TotalBalanceVoteB = originalTotalBalanceVoteB
+        end
+
         sendErrorMessage(msg, 'An unexpected error occurred: ' .. tostring(err))
     end
 end)
