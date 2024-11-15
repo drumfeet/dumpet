@@ -1,3 +1,4 @@
+import AppHeader from "@/components/AppHeader"
 import {
   Flex,
   Text,
@@ -18,21 +19,7 @@ export default function HomePage() {
         minHeight="100vh"
         color="white"
       >
-        {/* Header Section */}
-        <Flex
-          justify="space-between"
-          w="100%"
-          maxW="1200px"
-          p={4}
-          align="center"
-        >
-          <Text fontSize="2xl" fontWeight="bold" color="purple.400">
-            dumpet.fun
-          </Text>
-          <Button colorScheme="purple" variant="outline">
-            Connect Wallet
-          </Button>
-        </Flex>
+        <AppHeader />
 
         <Flex
           w="100%"

@@ -7,9 +7,17 @@ import LoginModal from "./LoginModal"
 export default function AppHeader() {
   return (
     <ChakraProvider>
-      <Flex w="full" justify="space-between" align="center" paddingX={[0, 8]}>
-        <Text fontSize="3xl" color="#7023b6" fontWeight="bold">
-          Dumpet
+      {/* <Flex w="full" justify="space-between" align="center" paddingX={[0, 8]}> */}
+      <Flex
+          justify="space-between"
+          w="100%"
+          // maxW="1200px"
+          paddingY={4}
+          paddingX={[0, 8]}
+          align="center"
+        >
+        <Text fontSize="2xl" color="purple.400" fontWeight="bold">
+          dumpet
         </Text>
         <Flex gap={4} alignItems="center">
           <Link
@@ -17,7 +25,7 @@ export default function AppHeader() {
             rel="noopener noreferrer"
             href="https://t.me/dumpetdotfun"
           >
-            <TelegramIcon strokeColor="#7023b6" size={18} />
+            <TelegramIcon strokeColor="#9F7AEA" size={18} />
           </Link>
 
           <Link
@@ -25,7 +33,7 @@ export default function AppHeader() {
             rel="noopener noreferrer"
             href="https://x.com/dumpetdotfun"
           >
-            <TwitterIcon strokeColor="#7023b6" size={18} />
+            <TwitterIcon strokeColor="#9F7AEA" size={18} />
           </Link>
 
           <Flex paddingX={[0, 2]}></Flex>
@@ -33,7 +41,7 @@ export default function AppHeader() {
           <LoginModal />
         </Flex>
       </Flex>
-      <Divider />
+      <Divider borderColor="purple.400" />
       <Flex paddingY={8}></Flex>
     </ChakraProvider>
   )

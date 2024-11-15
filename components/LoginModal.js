@@ -35,7 +35,7 @@ const LoginModal = () => {
       typeof userAddress === "string" &&
       userAddress.length > 0 ? (
         <Flex _hover={{ cursor: "pointer" }} onClick={onOpen}>
-          <UserIcon strokeColor="#7023b6" size={34} />
+          <UserIcon strokeColor="#9F7AEA" size={34} />
         </Flex>
       ) : (
         <Flex
@@ -50,7 +50,7 @@ const LoginModal = () => {
             })
           }}
         >
-          <WalletIcon strokeColor="#7023b6" size={34} />
+          <WalletIcon strokeColor="#9F7AEA" size={34} />
         </Flex>
       )}
 
