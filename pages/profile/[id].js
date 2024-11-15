@@ -14,17 +14,8 @@ import {
   Flex,
   useToast,
   Text,
-  Table,
-  Thead,
-  Tr,
-  Th,
-  Tbody,
-  Td,
   Divider,
-  TableContainer,
-  IconButton,
 } from "@chakra-ui/react"
-import { AddIcon, DeleteIcon, EditIcon, UpDownIcon } from "@chakra-ui/icons"
 import AppHeader from "@/components/AppHeader"
 import { useAppContext } from "@/context/AppContext"
 
@@ -54,7 +45,6 @@ export default function Home({ _id = null }) {
   }, [])
 
   useEffect(() => {
-    console.log("pid", pid)
     if (pid) {
       ;(async () => {
         await hasWaitFor()
@@ -64,7 +54,6 @@ export default function Home({ _id = null }) {
   }, [pid])
 
   const hasWaitFor = async () => {
-    console.log("hasWaitFor")
     try {
       const _result = await dryrun({
         process: MAIN_PROCESS_ID,
@@ -76,28 +65,17 @@ export default function Home({ _id = null }) {
           },
         ],
       })
-      console.log("_result", _result)
-      if (handleMessageResultError(_result)) return
       const jsonData = JSON.parse(_result?.Messages[0]?.Data)
-      console.log("jsonData", jsonData)
       setIsPending(jsonData.HasWaitFor)
-      if (jsonData.HasWaitFor) {
-        toast({
-          description: "Market creation is pending",
-          status: "info",
-          duration: 2000,
-          isClosable: true,
-          position: "top",
-        })
-      } else {
-        toast({
-          description: "No pending market creation",
-          status: "info",
-          duration: 2000,
-          isClosable: true,
-          position: "top",
-        })
-      }
+      toast({
+        description: jsonData.HasWaitFor
+          ? "Pending market creation"
+          : "No pending market creation",
+        status: "info",
+        duration: 2000,
+        isClosable: true,
+        position: "top",
+      })
     } catch (error) {
       console.error(error)
     }
@@ -115,10 +93,7 @@ export default function Home({ _id = null }) {
           },
         ],
       })
-      console.log("_result", _result)
-      if (handleMessageResultError(_result)) return
       const jsonData = JSON.parse(_result?.Messages[0]?.Data)
-      console.log("jsonData", jsonData)
       setUserMarkets(jsonData.Markets)
     } catch (error) {
       console.error(error)
@@ -126,77 +101,75 @@ export default function Home({ _id = null }) {
   }
 
   return (
-    <>
-      <ChakraProvider>
-        <Flex
-          direction="column"
-          align="center"
-          p={4}
-          bg="#1a1a2e" // Dark purple background
-          minHeight="100vh"
-          color="white"
-        >
-          <AppHeader />
+    <ChakraProvider>
+      <Flex
+        direction="column"
+        align="center"
+        p={4}
+        bg="#1a1a2e" // Dark purple background
+        minHeight="100vh"
+        color="white"
+      >
+        <AppHeader />
 
-          <Flex
-            flexDirection="column"
-            gap={4}
-            align="center"
-            borderRadius="md"
+        <Flex
+          flexDirection="column"
+          gap={4}
+          align="center"
+          borderRadius="md"
+          width="100%"
+          maxW="lg"
+        >
+          <Flex paddingY={4}></Flex>
+          {isPending && (
+            <Text color="red.500">You have a pending market creation</Text>
+          )}
+          <Button
             width="100%"
-            maxW="lg"
+            colorScheme="purple"
+            bg="#7023b6"
+            onClick={hasWaitFor}
           >
-            {isPending && <Text color="red.500">Pending market creation</Text>}
-            <Button
-              width="100%"
-              colorScheme="purple"
-              bg="#7023b6"
-              onClick={hasWaitFor}
-            >
-              Check Pending Market
-            </Button>
-            {userMarkets?.length > 0 ? (
-              <>
-                <TableContainer width="100%" maxW="lg">
-                  <Table size="sm">
-                    <Thead>
-                      <Tr>
-                        <Th>Market Tx Id</Th>
-                      </Tr>
-                    </Thead>
-                    <Tbody>
-                      {userMarkets.map((record, index) => (
-                        <Tr key={index}>
-                          <Td textAlign="left">
-                            <Text
-                              as="a"
-                              href={`/tx/${record}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              color="#7023b6"
-                              textDecoration="underline"
-                              _hover={{ cursor: "pointer" }}
-                            >
-                              {record}
-                            </Text>
-                          </Td>
-                        </Tr>
-                      ))}
-                    </Tbody>
-                  </Table>
-                </TableContainer>
-              </>
-            ) : (
-              <>
-                <Text color="#7023b6">No market found</Text>
-                <Flex paddingY={8}></Flex>
-              </>
-            )}
-          </Flex>
+            Check Pending Market
+          </Button>
 
           <Flex paddingY={8}></Flex>
+          {userMarkets?.length > 0 ? (
+            <Flex direction="column" width="100%" maxW="lg">
+              <Text fontSize="xs" color="gray.400" paddingBottom={2}>
+                MARKET TX ID
+              </Text>
+              {userMarkets.map((record, index) => (
+                <Flex
+                  key={index}
+                  align="center"
+                  justify="space-between"
+                  py={2}
+                  px={4}
+                  bg="#1a1a2e"
+                  _hover={{ bg: "#3e3e5e" }}
+                >
+                  <Text
+                    as="a"
+                    href={`/tx/${record}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    color="whiteAlpha.800"
+                    textDecoration="underline"
+                    _hover={{ cursor: "pointer" }}
+                  >
+                    {record}
+                  </Text>
+                </Flex>
+              ))}
+            </Flex>
+          ) : (
+            <Text color="#7023b6">No market found</Text>
+          )}
         </Flex>
-      </ChakraProvider>
-    </>
+
+        <Flex paddingY={8}></Flex>
+      </Flex>
+    </ChakraProvider>
   )
 }
