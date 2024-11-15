@@ -129,13 +129,15 @@ export default function Home({ _id = null }) {
     <>
       <ChakraProvider>
         <Flex
-          flexDirection="column"
-          alignItems="center"
-          p={5}
-          bg="#f3f0fa"
-          minH="100vh"
+          direction="column"
+          align="center"
+          p={4}
+          bg="#1a1a2e" // Dark purple background
+          minHeight="100vh"
+          color="white"
         >
           <AppHeader />
+
           <Flex
             flexDirection="column"
             gap={4}
@@ -145,8 +147,13 @@ export default function Home({ _id = null }) {
             maxW="lg"
           >
             {isPending && <Text color="red.500">Pending market creation</Text>}
-            <Button width="100%" colorScheme="purple" onClick={hasWaitFor}>
-              hasWaitFor
+            <Button
+              width="100%"
+              colorScheme="purple"
+              bg="#7023b6"
+              onClick={hasWaitFor}
+            >
+              Check Pending Market
             </Button>
             {userMarkets?.length > 0 ? (
               <>
@@ -186,6 +193,8 @@ export default function Home({ _id = null }) {
               </>
             )}
           </Flex>
+
+          <Flex paddingY={8}></Flex>
         </Flex>
       </ChakraProvider>
     </>
