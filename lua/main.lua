@@ -780,7 +780,7 @@ end)
 
 Handlers.add("List", Handlers.utils.hasMatchingTag("Action", "List"), function(msg)
     local success, err = pcall(function()
-        local order = msg.Tags.Order or "asc"
+        local order = msg.Tags.Order or "desc"
         local limit = tonumber(msg.Tags.Limit) or 10
         local page = tonumber(msg.Tags.Page) or 1
 

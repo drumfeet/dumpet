@@ -7,6 +7,7 @@ import {
   useToast,
   FormControl,
   FormHelperText,
+  Heading,
 } from "@chakra-ui/react"
 import { createDataItemSigner, message, result } from "@permaweb/aoconnect"
 import { Link } from "arnext"
@@ -106,11 +107,12 @@ export default function Home() {
     <>
       <ChakraProvider>
         <Flex
-          flexDirection="column"
-          alignItems="center"
-          p={5}
-          bg="#f3f0fa"
-          minH="100vh"
+          direction="column"
+          align="center"
+          p={4}
+          bg="#1a1a2e" // Dark purple background
+          minHeight="100vh"
+          color="white"
         >
           <AppHeader />
 
@@ -122,20 +124,34 @@ export default function Home() {
             width="100%"
             maxW="lg"
           >
+            <Heading as="h1" size="lg" textAlign="center">
+              Create Market
+            </Heading>
+            <Flex paddingY={4}></Flex>
+
             <FormControl>
               <FormHelperText fontSize="xs">Title</FormHelperText>
               <Input
                 placeholder="Title"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
+                bg="#2d2d44" // Slightly lighter than the page background
+                color="white" // White text for contrast
+                focusBorderColor="#7023b6" // Vibrant purple border on focus
+                _placeholder={{ color: "gray.400" }}
               />
             </FormControl>
+
             <FormControl>
               <FormHelperText fontSize="xs">Duration</FormHelperText>
               <Input
                 placeholder="Duration"
                 value={duration}
                 onChange={(e) => setDuration(e.target.value)}
+                bg="#2d2d44"
+                color="white"
+                focusBorderColor="#7023b6"
+                _placeholder={{ color: "gray.400" }}
               />
             </FormControl>
             <FormControl>
@@ -144,6 +160,10 @@ export default function Home() {
                 placeholder="Token txid"
                 value={tokenTxId}
                 onChange={(e) => setTokenTxId(e.target.value)}
+                bg="#2d2d44"
+                color="white"
+                focusBorderColor="#7023b6"
+                _placeholder={{ color: "gray.400" }}
               />
             </FormControl>
             <FormControl>
@@ -152,6 +172,10 @@ export default function Home() {
                 placeholder="Option A"
                 value={optionA}
                 onChange={(e) => setOptionA(e.target.value)}
+                bg="#2d2d44"
+                color="white"
+                focusBorderColor="#7023b6"
+                _placeholder={{ color: "gray.400" }}
               />
             </FormControl>
             <FormControl>
@@ -160,11 +184,17 @@ export default function Home() {
                 placeholder="Option B"
                 value={optionB}
                 onChange={(e) => setOptionB(e.target.value)}
+                bg="#2d2d44"
+                color="white"
+                focusBorderColor="#7023b6"
+                _placeholder={{ color: "gray.400" }}
               />
             </FormControl>
+            <Flex paddingY={4}></Flex>
             <Button
               width="100%"
               colorScheme="purple"
+              bg="#7023b6" // Primary purple
               onClick={async (event) => {
                 const button = event.target
                 button.disabled = true
@@ -172,7 +202,7 @@ export default function Home() {
                 button.disabled = false
               }}
             >
-              Create Bet
+              Create
             </Button>
             {isConnected &&
               typeof userAddress === "string" &&
