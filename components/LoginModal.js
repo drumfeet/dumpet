@@ -82,15 +82,15 @@ const LoginModal = () => {
 
           <ModalFooter>
             <Flex gap={4}>
-              <Button bg="#213743" color="white" _hover={{ bg: "#213743" }}>
-                <Link
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href={`/profile/${userAddress}`}
-                >
+              <Link
+                target="_blank"
+                rel="noopener noreferrer"
+                href={`/profile/${userAddress}`}
+              >
+                <Button bg="#213743" color="white" _hover={{ bg: "#213743" }}>
                   Profile
-                </Link>
-              </Button>
+                </Button>
+              </Link>
 
               <Button
                 bg="#213743"
