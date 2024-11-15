@@ -81,19 +81,21 @@ export default function HomePage() {
       >
         <AppHeader />
 
-        <Flex
-          w="100%"
-          maxW="800px"
-          bg="purple.500" // Vibrant purple for the banner
-          p={4}
-          borderRadius="md"
-          align="center"
-          justify="center"
-        >
-          <Text fontSize="lg" fontWeight="bold" textAlign="center">
-            CREATE DUMB BET
-          </Text>
-        </Flex>
+        <Link target="_blank" rel="noopener noreferrer" href="/create">
+          <Flex
+            w="100%"
+            maxW="800px"
+            bg="purple.500" // Vibrant purple for the banner
+            p={4}
+            borderRadius="md"
+            align="center"
+            justify="center"
+          >
+            <Text fontSize="lg" fontWeight="bold" textAlign="center">
+              CREATE DUMB BET
+            </Text>
+          </Flex>
+        </Link>
 
         <Flex paddingY={4}></Flex>
 
