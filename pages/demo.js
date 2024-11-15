@@ -49,7 +49,15 @@ export default function HomePage() {
           </Text>
         </Flex>
 
-        <Box w="250px" bg="#212121" p={4} borderRadius="md" textAlign="center">
+        <Box
+          w="250px"
+          border="1px solid"
+          borderColor="purple.700"
+          //  bg="#2b2b4b"
+          p={4}
+          borderRadius="md"
+          textAlign="center"
+        >
           <Text fontSize="md" fontWeight="bold" color="purple.300" mb={2}>
             TITLE
           </Text>
