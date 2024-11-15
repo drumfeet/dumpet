@@ -174,6 +174,15 @@ export default function Home() {
                 color="white"
                 focusBorderColor="#7023b6"
                 _placeholder={{ color: "gray.400" }}
+                sx={{
+                  "&::-webkit-calendar-picker-indicator": {
+                    color: "white", // Change icon color
+                    filter: "invert(1)", // Optional: invert for light/dark mode
+                  },
+                  "&::-webkit-datetime-edit": {
+                    color: "white", // Adjust text color inside input
+                  },
+                }}
               />
             </FormControl>
             <FormControl>
