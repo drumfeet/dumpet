@@ -100,34 +100,40 @@ export default function HomePage() {
         <Flex paddingY={4}></Flex>
 
         {randomMarket && (
-          <Flex
-            flexDirection="column"
-            gap={2}
-            w="250px"
-            border="1px solid"
-            borderColor="purple.700"
-            paddingX={4}
-            paddingY={8}
-            borderRadius="md"
-            textAlign="center"
+          <Link
+            target="_blank"
+            rel="noopener noreferrer"
+            href={`/tx/${randomMarket.ProcessId}`}
           >
-            <Text fontSize="md" fontWeight="bold" color="purple.300">
-              {randomMarket?.Title}
-            </Text>
-            <Text fontSize="sm">{randomMarket?.OptionA}</Text>
-            <Text fontSize="sm">vs</Text>
-            <Text fontSize="sm">{randomMarket?.OptionB}</Text>
-            <Flex flexDirection="column">
-              <Text fontSize="xs" color="gray.400">
-                Expires on:
+            <Flex
+              flexDirection="column"
+              gap={2}
+              w="250px"
+              border="1px solid"
+              borderColor="purple.700"
+              paddingX={4}
+              paddingY={8}
+              borderRadius="md"
+              textAlign="center"
+            >
+              <Text fontSize="md" fontWeight="bold" color="purple.300">
+                {randomMarket?.Title}
               </Text>
-              <Text fontSize="xs" color="gray.400">
-                {randomMarket?.Duration
-                  ? formatUnixTimestamp(randomMarket?.Duration)
-                  : ""}
-              </Text>
+              <Text fontSize="sm">{randomMarket?.OptionA}</Text>
+              <Text fontSize="sm">vs</Text>
+              <Text fontSize="sm">{randomMarket?.OptionB}</Text>
+              <Flex flexDirection="column">
+                <Text fontSize="xs" color="gray.400">
+                  Expires on:
+                </Text>
+                <Text fontSize="xs" color="gray.400">
+                  {randomMarket?.Duration
+                    ? formatUnixTimestamp(randomMarket?.Duration)
+                    : ""}
+                </Text>
+              </Flex>
             </Flex>
-          </Flex>
+          </Link>
         )}
 
         <Flex paddingY={4}></Flex>
