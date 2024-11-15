@@ -101,8 +101,8 @@ export default function HomePage() {
             w="250px"
             border="1px solid"
             borderColor="purple.700"
-            //  bg="#2b2b4b"
-            p={4}
+            paddingX={4}
+            paddingY={8}
             borderRadius="md"
             textAlign="center"
           >
@@ -127,68 +127,51 @@ export default function HomePage() {
 
         <Flex paddingY={4}></Flex>
 
-        {/* Content Cards */}
-        <Flex wrap="wrap" justify="center" gap={4} maxW="1200px">
-          {[
-            {
-              title: "MOODENG PREDICTED...",
-              description:
-                "Moo Deng has accurately predicted the US election 2024.",
-              mcap: "$3,116.13",
-              time: "1 week ago",
-            },
-            {
-              title: "Empress Kamaltoe",
-              description: "A failed VP according to equity and inclusion.",
-              mcap: "$3,116.13",
-              time: "2 weeks ago",
-            },
-            {
-              title: "Tonald Drump",
-              description: "In the reverse world.",
-              mcap: "$3,116.13",
-              time: "2 weeks ago",
-            },
-            {
-              title: "AISaf",
-              description: "A project based on AI.",
-              mcap: "$3,120.39",
-              time: "3 weeks ago",
-            },
-            {
-              title: "Duke Memecoin",
-              description: "Probably the best decision for a memecoin.",
-              mcap: "$3,119.17",
-              time: "3 weeks ago",
-            },
-            {
-              title: "SOPHIA",
-              description: "Sophia first activated on Feb 14, 2016.",
-              mcap: "$3,116.13",
-              time: "1 month ago",
-            },
-          ].map((card, index) => (
-            <Flex
-              flexDirection="column"
-              gap={2}
-              key={index}
-              w="250px"
-              border="1px solid"
-              borderColor="purple.700"
-              p={4}
-              borderRadius="md"
-              textAlign="center"
-            >
-              <Text fontSize="md" fontWeight="bold" color="purple.300">
-                {card.title}
-              </Text>
-              <Text fontSize="sm">{card.description}</Text>
-              <Text fontSize="xs" color="gray.400">
-                {card.mcap} | {card.time}
-              </Text>
+        {markets && markets.length > 0 && (
+          <>
+            <Flex wrap="wrap" justify="center" gap={4} maxW="1200px">
+              {markets.map((market, index) => (
+                <Link
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href={`/tx/${market.ProcessId}`}
+                  key={index}
+                >
+                  <Flex
+                    flexDirection="column"
+                    gap={2}
+                    w="250px"
+                    border="1px solid"
+                    borderColor="purple.700"
+                    paddingX={4}
+                    paddingY={8}
+                    borderRadius="md"
+                    textAlign="center"
+                  >
+                    <Text fontSize="md" fontWeight="bold" color="purple.300">
+                      {market.Title}
+                    </Text>
+                    <Text fontSize="sm">{market.OptionA}</Text>
+                    <Text fontSize="sm">vs</Text>
+                    <Text fontSize="sm">{market.OptionB}</Text>
+                    <Flex flexDirection="column">
+                      <Text fontSize="xs" color="gray.400">
+                        Expires on:
+                      </Text>
+                      <Text fontSize="xs" color="gray.400">
+                        {market.Duration
+                          ? formatUnixTimestamp(market.Duration)
+                          : ""}
+                      </Text>
+                    </Flex>
+                  </Flex>
+                </Link>
+              ))}
             </Flex>
-          ))}
-        </Flex>
+          </>
+        )}
+
+        <Flex paddingY={8}></Flex>
       </Flex>
     </ChakraProvider>
   )
