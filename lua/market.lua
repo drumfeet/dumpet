@@ -101,8 +101,7 @@ Handlers.add("CancelVote", Handlers.utils.hasMatchingTag("Action", "CancelVote")
     local originalBalanceVoteB = nil
     local originalTotalBalanceVoteA = nil
     local originalTotalBalanceVoteB = nil
-
-    -- TODO: apply cancel fee
+    local originalMainProcessBalance = nil
 
     local success, err = pcall(function()
         -- Check if Balances[msg.From] has enough balance to cancel votes
@@ -119,22 +118,36 @@ Handlers.add("CancelVote", Handlers.utils.hasMatchingTag("Action", "CancelVote")
         originalBalanceVoteB = senderBalanceVoteB
         originalTotalBalanceVoteA = TotalBalanceVoteA
         originalTotalBalanceVoteB = TotalBalanceVoteB
+        originalMainProcessBalance = Balances[MainProcessId] or "0"
 
-        -- Perform balance updates
+        -- Calculate the total votes being canceled
+        local totalVotesToCancel = utils.add(senderBalanceVoteA, senderBalanceVoteB)
+
+        -- Calculate the cancel fee (1 percent of the total votes being canceled)
+        local cancelFee = utils.toBalanceValue(math.floor(utils.toNumber(totalVotesToCancel) * 0.01))
+
+        -- Refund the user's canceled vote balances after deducting the fee
+        local refundAmount = utils.subtract(totalVotesToCancel, cancelFee)
+
+        -- Update balances for the user and MainProcessId
+        Balances[msg.From] = utils.add(Balances[msg.From] or "0", refundAmount)
+        Balances[MainProcessId] = utils.add(originalMainProcessBalance, cancelFee)
+
+        -- Nullify user's votes and update total balances
         BalancesVoteA[msg.From] = nil
         BalancesVoteB[msg.From] = nil
         TotalBalanceVoteA = utils.subtract(TotalBalanceVoteA, senderBalanceVoteA)
         TotalBalanceVoteB = utils.subtract(TotalBalanceVoteB, senderBalanceVoteB)
 
-        -- Refund the user's canceled vote balances to their general balance
-        local updatedBalance = utils.add(Balances[msg.From] or "0", utils.add(senderBalanceVoteA, senderBalanceVoteB))
-        Balances[msg.From] = updatedBalance
-
+        -- Prepare response data
         local _data = {
             From = msg.From,
-            NewBalance = updatedBalance,
+            RefundAmount = refundAmount,
+            CancelFee = cancelFee,
+            NewBalance = Balances[msg.From],
             TotalBalanceVoteA = TotalBalanceVoteA,
-            TotalBalanceVoteB = TotalBalanceVoteB
+            TotalBalanceVoteB = TotalBalanceVoteB,
+            MainProcessBalance = Balances[MainProcessId]
         }
         printData("CancelVotes _data", _data)
 
@@ -157,6 +170,9 @@ Handlers.add("CancelVote", Handlers.utils.hasMatchingTag("Action", "CancelVote")
         end
         if originalTotalBalanceVoteB then
             TotalBalanceVoteB = originalTotalBalanceVoteB
+        end
+        if originalMainProcessBalance then
+            Balances[MainProcessId] = originalMainProcessBalance
         end
 
         sendErrorMessage(msg, 'An unexpected error occurred: ' .. tostring(err))

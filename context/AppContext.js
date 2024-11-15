@@ -69,7 +69,7 @@ export const AppContextProvider = ({ children }) => {
     )
     console.log("errorTag", errorTag)
     if (errorTag) {
-      const errorMsg = _result.Messages[0]?.Data ?? "An error occurred" //_result.Messages[0]?.Tags[6].value
+      const errorMsg = _result.Messages[0]?.Data ?? errorTag.value
       toast({
         description: errorMsg,
         status: "error",
@@ -93,7 +93,7 @@ export const AppContextProvider = ({ children }) => {
         setUserAddress,
         multiplyByPower,
         divideByPower,
-        handleMessageResultError
+        handleMessageResultError,
       }}
     >
       {children}
