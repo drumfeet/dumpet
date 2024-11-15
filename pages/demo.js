@@ -18,6 +18,8 @@ export default function HomePage() {
   const toast = useToast()
   const [markets, setMarkets] = useState([])
   const [randomMarket, setRandomMarket] = useState(null)
+  const [hasMore, setHasMore] = useState(false)
+  const [nextPage, setNextPage] = useState(1)
 
   const { handleMessageResultError } = useAppContext()
 
@@ -28,17 +30,22 @@ export default function HomePage() {
     })()
   }, [])
 
-  const fetchMarkets = async () => {
+  async function fetchMarkets(nextPage = 1) {
     try {
       const _result = await dryrun({
         process: MAIN_PROCESS_ID,
-        tags: [{ name: "Action", value: "List" }],
+        tags: [
+          { name: "Action", value: "List" },
+          { name: "Page", value: nextPage.toString() },
+        ],
       })
 
-      console.log(_result.Messages[0])
-      const jsonData = JSON.parse(_result.Messages[0].Data)
-      console.log(jsonData)
+      console.log("_result", _result)
+      const jsonData = JSON.parse(_result?.Messages[0]?.Data)
+      console.log("jsonData", jsonData)
       setMarkets(jsonData.Markets)
+      setHasMore(jsonData.HasMore)
+      if (jsonData?.NextPage) setNextPage(jsonData.NextPage)
     } catch (error) {
       console.error(error)
     }
@@ -62,7 +69,6 @@ export default function HomePage() {
 
   function formatUnixTimestamp(timestamp) {
     const date = new Date(Number(timestamp))
-    console.log(date)
     return date.toUTCString()
   }
 
@@ -169,6 +175,25 @@ export default function HomePage() {
               ))}
             </Flex>
           </>
+        )}
+
+        <Flex paddingY={4}></Flex>
+
+        {hasMore && (
+          <Button
+            colorScheme="purple"
+            onClick={async () => {
+              await fetchMarkets(nextPage)
+            }}
+          >
+            Fetch More
+          </Button>
+        )}
+
+        {!hasMore && (
+          <Text fontSize="sm" color="gray.400">
+            No more markets to fetch.
+          </Text>
         )}
 
         <Flex paddingY={8}></Flex>
