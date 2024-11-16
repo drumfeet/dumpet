@@ -107,7 +107,7 @@ export default function Home() {
           </Flex>
         </Link>
 
-        <Flex paddingY={4}></Flex>
+        <Flex paddingY={8}></Flex>
 
         {randomMarket && (
           <Link
@@ -157,7 +157,17 @@ export default function Home() {
           </Link>
         )}
 
-        <Flex paddingY={4}></Flex>
+        <Flex
+          paddingTop={20}
+          paddingBottom={2}
+          w="100%"
+          maxW="1050px"
+          justifyContent="flex-start"
+        >
+          {/* <Text fontSize="xs" color="gray.400" paddingBottom={2}>
+            Most Recent
+          </Text> */}
+        </Flex>
 
         {markets && markets.length > 0 && (
           <>
