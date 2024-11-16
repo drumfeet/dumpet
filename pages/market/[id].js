@@ -166,7 +166,7 @@ export default function Home({ _id = null }) {
   const updateUserBalances = async (jsonData = {}) => {
     setUserDepositBalance(Number(jsonData?.UserDepositBalance))
     setUserBalanceVoteA(jsonData?.BalanceVoteA)
-    setUserBalanceVoteB(divideByPower(jsonData?.BalanceVoteB) || "0")
+    setUserBalanceVoteB(jsonData?.BalanceVoteB)
     // setWalletBalance(Number(divideByPower(jsonData?.WalletBalance) || "0"))
 
     console.log("updateUserBalances() jsonData", jsonData)
@@ -355,6 +355,58 @@ export default function Home({ _id = null }) {
     }
   }
 
+  const voteB = async () => {
+    const _connected = await connectWallet()
+    if (_connected.success === false) {
+      return
+    }
+
+    const _amount = multiplyByPower(amountOfVote)
+    console.log("_amount", _amount)
+
+    try {
+      const messageId = await message({
+        process: pid,
+        tags: [
+          {
+            name: "Action",
+            value: "VoteB",
+          },
+          {
+            name: "Quantity",
+            value: _amount.toString(),
+          },
+        ],
+        signer: createDataItemSigner(globalThis.arweaveWallet),
+      })
+      console.log("messageId", messageId)
+
+      const _result = await result({
+        message: messageId,
+        process: pid,
+      })
+      console.log("_result", _result)
+      if (handleMessageResultError(_result)) return
+
+      const jsonData = JSON.parse(_result?.Messages[0]?.Data)
+      console.log("jsonData", jsonData)
+
+      setTotalBalanceVoteB(jsonData?.TotalBalanceVoteB)
+      setUserBalanceVoteB(jsonData?.BalanceVoteB)
+      setUserDepositBalance(Number(jsonData?.NewBalance))
+
+      toast({
+        description: "Vote B success",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+        position: "top",
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   return (
     <ChakraProvider>
       <Flex
@@ -455,7 +507,7 @@ export default function Home({ _id = null }) {
                     </Text>
                   </Flex>
                   <Text fontSize="xs" color="gray.400">
-                    Your Total VoteB: {userBalanceVoteB}
+                    Your Total VoteB: {divideByPower(userBalanceVoteB)}
                   </Text>
                   <Flex
                     cursor="pointer"
@@ -463,9 +515,7 @@ export default function Home({ _id = null }) {
                     borderRadius="md"
                     justifyContent="center"
                     paddingY={4}
-                    onClick={() => {
-                      console.log("Vote")
-                    }}
+                    onClick={voteB}
                   >
                     <Text fontWeight="bold">Vote</Text>
                   </Flex>
