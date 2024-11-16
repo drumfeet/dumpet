@@ -15,12 +15,13 @@ local utils = {
     end
 }
 
-Balances = Balances or {}
-TotalBalances = TotalBalances or "0"
-BalancesVoteA = BalancesVoteA or {}
-BalancesVoteB = BalancesVoteB or {}
-TotalBalanceVoteA = TotalBalanceVoteA or "0"
-TotalBalanceVoteB = TotalBalanceVoteB or "0"
+Balances = Balances or {}                    -- table of balances from users that deposited to this market process
+TotalBalances = TotalBalances or "0"         -- total balance deposited to this market process
+BalancesVoteA = BalancesVoteA or {}          -- table of balances from users that voted OptionA
+BalancesVoteB = BalancesVoteB or {}          -- table of balance from users that voted OptionB
+TotalBalanceVoteA = TotalBalanceVoteA or "0" -- total amount of votes for OptionA
+TotalBalanceVoteB = TotalBalanceVoteB or "0" -- total amount of votes for OptionB
+-- AllVotesTotalBalance = AllVotesTotalBalance or "0" -- total amount of votes for OptionA and OptionB
 BASE_UNIT = BASE_UNIT or 10
 Denomination = Denomination or 12
 MarketInfo = MarketInfo or {}
@@ -83,7 +84,21 @@ Handlers.add("GetCreator", Handlers.utils.hasMatchingTag("Action", "GetCreator")
 end)
 
 Handlers.add("GetMarketInfo", Handlers.utils.hasMatchingTag("Action", "GetMarketInfo"), function(msg)
-    ao.send({ Target = msg.From, Data = json.encode(MarketInfo) })
+    ao.send({
+        Target = msg.From,
+        Data = json.encode({
+            MarketInfo = MarketInfo,
+            BalancesVoteA = BalancesVoteA,
+            BalancesVoteB = BalancesVoteB,
+            TotalBalanceVoteA = TotalBalanceVoteA,
+            TotalBalanceVoteB = TotalBalanceVoteB,
+            BASE_UNIT = BASE_UNIT,
+            Denomination = Denomination,
+            Creator = Creator,
+            MainProcessId = MainProcessId,
+
+        })
+    })
 end)
 
 Handlers.add("GetTokenTxId", Handlers.utils.hasMatchingTag("Action", "GetTokenTxId"), function(msg)
@@ -315,6 +330,10 @@ Handlers.add("VoteB", Handlers.utils.hasMatchingTag("Action", "VoteB"), function
 
         sendErrorMessage(msg, 'An unexpected error occurred: ' .. tostring(err))
     end
+end)
+
+Handlers.add("AllVotesBalances", Handlers.utils.hasMatchingTag("Action", "AllVotesBalances"), function(msg)
+    ao.send({ Target = msg.From, Data = json.encode({ BalancesVoteA = BalancesVoteA, BalancesVoteB = BalancesVoteB }) })
 end)
 
 Handlers.add("TotalBalanceVoteA", Handlers.utils.hasMatchingTag("Action", "TotalBalanceVoteA"), function(msg)

@@ -149,9 +149,17 @@ export default function Home({ _id = null }) {
       setJsonData(_jsonData)
       setTokenTxId(_jsonData?.TokenTxId)
       console.log("TokenTxId", _jsonData?.TokenTxId)
+      updateBalances(_jsonData)
     } catch (error) {
       console.error(error)
     }
+  }
+
+  const updateBalances = async (jsonData = {}) => {
+    setTotalBalanceVoteA(jsonData?.TotalBalanceVoteA || "0")
+    setTotalBalanceVoteB(jsonData?.TotalBalanceVoteB || "0")
+
+    console.log("updateBalances() jsonData", jsonData)
   }
 
   return (
@@ -240,7 +248,7 @@ export default function Home({ _id = null }) {
                     textAlign="center"
                     fontWeight="bold"
                   >
-                    {jsonData?.OptionA}
+                    {jsonData?.MarketInfo?.OptionA}
                   </Text>
 
                   <Flex justifyContent="center" paddingY={4} marginBottom={2}>
@@ -276,20 +284,22 @@ export default function Home({ _id = null }) {
                     textAlign="center"
                     fontWeight="bold"
                   >
-                    {jsonData?.OptionB}
+                    {jsonData?.MarketInfo?.OptionB}
                   </Text>
                 </Flex>
                 <Flex paddingY={4}></Flex>
                 <FormControl>
                   <FormHelperText fontSize="xs">Title</FormHelperText>
                   <Text maxW="lg" color="whiteAlpha.800">
-                    {jsonData?.Title}
+                    {jsonData?.MarketInfo?.Title}
                   </Text>
                 </FormControl>
                 <FormControl>
                   <FormHelperText fontSize="xs">Expires on</FormHelperText>
                   <Text maxW="lg" color="whiteAlpha.800">
-                    {formatUnixTimestamp(jsonData?.Duration).toString()}
+                    {formatUnixTimestamp(
+                      jsonData?.MarketInfo?.Duration
+                    ).toString()}
                   </Text>
                 </FormControl>
 
@@ -324,7 +334,7 @@ export default function Home({ _id = null }) {
                   <Link
                     target="_blank"
                     rel="noopener noreferrer"
-                    href={`https://www.ao.link/#/token/${jsonData?.TokenTxId}`}
+                    href={`https://www.ao.link/#/token/${jsonData?.MarketInfo?.TokenTxId}`}
                   >
                     <Flex
                       alignItems="center"
@@ -337,7 +347,7 @@ export default function Home({ _id = null }) {
                         display={{ base: "none", md: "block" }}
                       />
                       <Box wordBreak="break-word" whiteSpace="normal">
-                        {jsonData?.TokenTxId}
+                        {jsonData?.MarketInfo?.TokenTxId}
                       </Box>
                     </Flex>
                   </Link>
@@ -372,7 +382,7 @@ export default function Home({ _id = null }) {
                   <Link
                     target="_blank"
                     rel="noopener noreferrer"
-                    href={`https://viewblock.io/arweave/block/${jsonData?.BlockHeight}`}
+                    href={`https://viewblock.io/arweave/block/${jsonData?.MarketInfo?.BlockHeight}`}
                   >
                     <Flex
                       alignItems="center"
@@ -385,7 +395,7 @@ export default function Home({ _id = null }) {
                         display={{ base: "none", md: "block" }}
                       />
                       <Box wordBreak="break-word" whiteSpace="normal">
-                        {jsonData?.BlockHeight}
+                        {jsonData?.MarketInfo?.BlockHeight}
                       </Box>
                     </Flex>
                   </Link>
@@ -394,7 +404,7 @@ export default function Home({ _id = null }) {
                 <FormControl>
                   <FormHelperText fontSize="xs">Block Timestamp</FormHelperText>
                   <Text maxW="lg" color="whiteAlpha.800">
-                    {formatUnixTimestamp(jsonData?.Timestamp)}
+                    {formatUnixTimestamp(jsonData?.MarketInfo?.Timestamp)}
                   </Text>
                 </FormControl>
               </Flex>
@@ -416,10 +426,10 @@ export default function Home({ _id = null }) {
                   mb="8"
                 >
                   <Text fontSize="2xl" textAlign="center" fontWeight="bold">
-                    {jsonData?.OptionA}
+                    {jsonData?.MarketInfo?.OptionA}
                   </Text>
                   <Text color="pink.400" textAlign="center">
-                    TOTAL VOTES: 4,235,746
+                    TOTAL VOTES: {totalBalanceVoteA}
                   </Text>
 
                   <Flex paddingY={2}></Flex>
@@ -437,10 +447,10 @@ export default function Home({ _id = null }) {
                   </Flex>
 
                   <Text fontSize="2xl" textAlign="center" fontWeight="bold">
-                    {jsonData?.OptionB}
+                    {jsonData?.MarketInfo?.OptionB}
                   </Text>
                   <Text color="pink.400" textAlign="center">
-                    TOTAL VOTES: 4,235,746
+                    TOTAL VOTES: {totalBalanceVoteB}
                   </Text>
 
                   {/* Deposit section */}
