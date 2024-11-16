@@ -18,6 +18,10 @@ import {
   NumberIncrementStepper,
   NumberDecrementStepper,
   Box,
+  Skeleton,
+  VStack,
+  Stack,
+  Spinner,
 } from "@chakra-ui/react"
 import {
   createDataItemSigner,
@@ -156,8 +160,7 @@ export default function Home({ _id = null }) {
         direction="column"
         align="center"
         p={4}
-        bg="#1a1a2e" // Dark purple background
-        // bg="blue"
+        bg="#1a1a2e"
         minHeight="100vh"
         color="white"
         flex={1}
@@ -171,395 +174,381 @@ export default function Home({ _id = null }) {
           justify="center"
           padding="4"
           p={4}
-          bg="#1a1a2e" // Dark purple background
+          bg="#1a1a2e"
           minHeight="100vh"
           color="white"
           width="100%"
         >
-          {/* Left Pane Section */}
-          <Flex
-            direction="column"
-            width={{ base: "100%", md: "50%" }}
-            paddingX="4"
-          >
-            <Flex
-              direction="column"
-              //   align="center"
-              //   padding={{ base: "4", md: "8" }}
-              //   mb="8"
-            >
-              <FormControl>
-                <FormHelperText fontSize="xs" color="gray.400">
-                  Amount of Vote
-                </FormHelperText>
-                <NumberInput
-                  focusBorderColor="#7023b6" // Vibrant purple border on focus
-                  precision={2}
-                  value={amountOfVote}
-                  min={1}
-                  onChange={(e) => {
-                    setAmountOfVote(e)
-                  }}
-                >
-                  <NumberInputField
-                    bg="#2d2d44" // Slightly lighter than the page background
-                    borderColor="#2d2d44"
-                    borderRadius="none"
-                  />
-                  <NumberInputStepper>
-                    <NumberIncrementStepper
-                      borderColor="#2d2d44"
-                      color="gray.200"
-                    />
-                    <NumberDecrementStepper
-                      borderColor="#2d2d44"
-                      color="gray.200"
-                    />
-                  </NumberInputStepper>
-                </NumberInput>
-              </FormControl>
-
-              <Flex paddingY={2}></Flex>
-              <Text fontSize="xs" color="gray.400">
-                Your Total VoteA: 0
-              </Text>
+          {jsonData ? (
+            <>
+              {/* Left Pane Section */}
               <Flex
-                cursor="pointer"
-                bg="#7023b6"
-                borderRadius="md"
-                justifyContent="center"
-                paddingY={4}
-                onClick={() => {
-                  console.log("Vote")
-                }}
+                direction="column"
+                width={{ base: "100%", md: "50%" }}
+                paddingX="4"
               >
-                <Text fontWeight="bold">Vote</Text>
-              </Flex>
-              <Text
-                fontSize={{ base: "lg", md: "2xl" }}
-                textAlign="center"
-                fontWeight="bold"
-              >
-                {jsonData?.OptionA}
-              </Text>
+                <Flex direction="column">
+                  <FormControl>
+                    <FormHelperText fontSize="xs" color="gray.400">
+                      Amount of Vote
+                    </FormHelperText>
+                    <NumberInput
+                      focusBorderColor="#7023b6"
+                      precision={2}
+                      value={amountOfVote}
+                      min={1}
+                      onChange={(e) => {
+                        setAmountOfVote(e)
+                      }}
+                    >
+                      <NumberInputField
+                        bg="#2d2d44"
+                        borderColor="#2d2d44"
+                        borderRadius="none"
+                      />
+                      <NumberInputStepper>
+                        <NumberIncrementStepper
+                          borderColor="#2d2d44"
+                          color="gray.200"
+                        />
+                        <NumberDecrementStepper
+                          borderColor="#2d2d44"
+                          color="gray.200"
+                        />
+                      </NumberInputStepper>
+                    </NumberInput>
+                  </FormControl>
 
-              <Flex justifyContent="center" paddingY={4} marginBottom={2}>
-                <Text
-                  fontSize="sm"
-                  color="gray.400"
-                  border="1px solid"
-                  borderColor="purple"
-                  borderRadius="md"
-                  paddingX={4}
-                >
-                  versus
-                </Text>
+                  <Flex paddingY={2}></Flex>
+                  <Text fontSize="xs" color="gray.400">
+                    Your Total VoteA: 0
+                  </Text>
+                  <Flex
+                    cursor="pointer"
+                    bg="#7023b6"
+                    borderRadius="md"
+                    justifyContent="center"
+                    paddingY={4}
+                    onClick={() => {
+                      console.log("Vote")
+                    }}
+                  >
+                    <Text fontWeight="bold">Vote</Text>
+                  </Flex>
+                  <Text
+                    fontSize={{ base: "lg", md: "2xl" }}
+                    textAlign="center"
+                    fontWeight="bold"
+                  >
+                    {jsonData?.OptionA}
+                  </Text>
+
+                  <Flex justifyContent="center" paddingY={4} marginBottom={2}>
+                    <Text
+                      fontSize="sm"
+                      color="gray.400"
+                      border="1px solid"
+                      borderColor="purple"
+                      borderRadius="md"
+                      paddingX={4}
+                    >
+                      versus
+                    </Text>
+                  </Flex>
+                  <Text fontSize="xs" color="gray.400">
+                    Your Total VoteB: 0
+                  </Text>
+                  <Flex
+                    cursor="pointer"
+                    bg="#7023b6"
+                    borderRadius="md"
+                    justifyContent="center"
+                    paddingY={4}
+                    onClick={() => {
+                      console.log("Vote")
+                    }}
+                  >
+                    <Text fontWeight="bold">Vote</Text>
+                  </Flex>
+
+                  <Text
+                    fontSize={{ base: "lg", md: "2xl" }}
+                    textAlign="center"
+                    fontWeight="bold"
+                  >
+                    {jsonData?.OptionB}
+                  </Text>
+                </Flex>
+                <Flex paddingY={4}></Flex>
+                <FormControl>
+                  <FormHelperText fontSize="xs">Title</FormHelperText>
+                  <Text maxW="lg" color="whiteAlpha.800">
+                    {jsonData?.Title}
+                  </Text>
+                </FormControl>
+                <FormControl>
+                  <FormHelperText fontSize="xs">Expires on</FormHelperText>
+                  <Text maxW="lg" color="whiteAlpha.800">
+                    {formatUnixTimestamp(jsonData?.Duration).toString()}
+                  </Text>
+                </FormControl>
+
+                <FormControl>
+                  <FormHelperText fontSize="xs">
+                    Market ProcessId
+                  </FormHelperText>
+                  <Link
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href={`https://www.ao.link/#/entity/${pid}`}
+                  >
+                    <Flex
+                      alignItems="center"
+                      color="whiteAlpha.800"
+                      maxW="100%"
+                      wrap="wrap"
+                    >
+                      <ExternalLinkIcon
+                        marginRight={4}
+                        display={{ base: "none", md: "block" }}
+                      />
+                      <Box wordBreak="break-word" whiteSpace="normal">
+                        {pid}
+                      </Box>
+                    </Flex>
+                  </Link>
+                </FormControl>
+
+                <FormControl>
+                  <FormHelperText fontSize="xs">Token TxId</FormHelperText>
+                  <Link
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href={`https://www.ao.link/#/token/${jsonData?.TokenTxId}`}
+                  >
+                    <Flex
+                      alignItems="center"
+                      color="whiteAlpha.800"
+                      maxW="100%"
+                      wrap="wrap"
+                    >
+                      <ExternalLinkIcon
+                        marginRight={4}
+                        display={{ base: "none", md: "block" }}
+                      />
+                      <Box wordBreak="break-word" whiteSpace="normal">
+                        {jsonData?.TokenTxId}
+                      </Box>
+                    </Flex>
+                  </Link>
+                </FormControl>
+
+                <FormControl>
+                  <FormHelperText fontSize="xs">Creator</FormHelperText>
+                  <Link
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href={`https://www.ao.link/#/entity/${jsonData?.Creator}`}
+                  >
+                    <Flex
+                      alignItems="center"
+                      color="whiteAlpha.800"
+                      maxW="100%"
+                      wrap="wrap"
+                    >
+                      <ExternalLinkIcon
+                        marginRight={4}
+                        display={{ base: "none", md: "block" }}
+                      />
+                      <Box wordBreak="break-word" whiteSpace="normal">
+                        {jsonData?.Creator}
+                      </Box>
+                    </Flex>
+                  </Link>
+                </FormControl>
+
+                <FormControl>
+                  <FormHelperText fontSize="xs">BlockHeight</FormHelperText>
+                  <Link
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href={`https://viewblock.io/arweave/block/${jsonData?.BlockHeight}`}
+                  >
+                    <Flex
+                      alignItems="center"
+                      color="whiteAlpha.800"
+                      maxW="100%"
+                      wrap="wrap"
+                    >
+                      <ExternalLinkIcon
+                        marginRight={4}
+                        display={{ base: "none", md: "block" }}
+                      />
+                      <Box wordBreak="break-word" whiteSpace="normal">
+                        {jsonData?.BlockHeight}
+                      </Box>
+                    </Flex>
+                  </Link>
+                </FormControl>
+
+                <FormControl>
+                  <FormHelperText fontSize="xs">Block Timestamp</FormHelperText>
+                  <Text maxW="lg" color="whiteAlpha.800">
+                    {formatUnixTimestamp(jsonData?.Timestamp)}
+                  </Text>
+                </FormControl>
               </Flex>
-              <Text fontSize="xs" color="gray.400">
-                Your Total VoteB: 0
-              </Text>
+
+              {/* Right Pane Section */}
               <Flex
-                cursor="pointer"
-                bg="#7023b6"
-                borderRadius="md"
-                justifyContent="center"
-                paddingY={4}
-                onClick={() => {
-                  console.log("Vote")
-                }}
+                marginTop={{ base: "20", md: "0" }}
+                direction="column"
+                width={{ base: "100%", md: "50%" }}
+                padding="4"
+                bgColor="purple.800"
+                borderRadius={{ base: "md", md: "small" }}
               >
-                <Text fontWeight="bold">Vote</Text>
-              </Flex>
+                <Flex
+                  direction="column"
+                  paddingX={{ base: "4", md: "8" }}
+                  paddingTop={{ base: "4", md: "20" }}
+                  paddingBottom={{ base: "4", md: "8" }}
+                  mb="8"
+                >
+                  <Text fontSize="2xl" textAlign="center" fontWeight="bold">
+                    {jsonData?.OptionA}
+                  </Text>
+                  <Text color="pink.400" textAlign="center">
+                    TOTAL VOTES: 4,235,746
+                  </Text>
 
-              <Text
-                fontSize={{ base: "lg", md: "2xl" }}
-                textAlign="center"
-                fontWeight="bold"
-              >
-                {jsonData?.OptionB}
-              </Text>
+                  <Flex paddingY={2}></Flex>
+                  <Flex justifyContent="center" paddingY={4} marginBottom={2}>
+                    <Text
+                      fontSize="sm"
+                      color="gray.400"
+                      border="1px solid"
+                      borderColor="purple"
+                      borderRadius="md"
+                      paddingX={4}
+                    >
+                      versus
+                    </Text>
+                  </Flex>
+
+                  <Text fontSize="2xl" textAlign="center" fontWeight="bold">
+                    {jsonData?.OptionB}
+                  </Text>
+                  <Text color="pink.400" textAlign="center">
+                    TOTAL VOTES: 4,235,746
+                  </Text>
+
+                  {/* Deposit section */}
+                  <Flex paddingY={{ base: "8", md: "20" }}></Flex>
+                  <FormControl>
+                    <FormHelperText fontSize="xs" color="gray.400">
+                      Amount
+                    </FormHelperText>
+                    <NumberInput
+                      focusBorderColor="#7023b6"
+                      precision={2}
+                      value={amountOfVote}
+                      min={1}
+                      onChange={(e) => {
+                        setAmountOfVote(e)
+                      }}
+                    >
+                      <NumberInputField
+                        bg="#2d2d44"
+                        borderColor="#2d2d44"
+                        borderRadius="none"
+                      />
+                      <NumberInputStepper>
+                        <NumberIncrementStepper
+                          borderColor="#2d2d44"
+                          color="gray.200"
+                        />
+                        <NumberDecrementStepper
+                          borderColor="#2d2d44"
+                          color="gray.200"
+                        />
+                      </NumberInputStepper>
+                    </NumberInput>
+                  </FormControl>
+                  <Button marginTop="4" colorScheme="purple">
+                    Deposit
+                  </Button>
+                  <Button marginTop="4" colorScheme="purple">
+                    Withdraw
+                  </Button>
+                  {/* Balances */}
+                  <Flex paddingY={4}></Flex>
+                  <FormControl>
+                    <FormHelperText fontSize="xs">
+                      Your Wallet Balance
+                    </FormHelperText>
+                    {userBalance >= 0 ? (
+                      <Text maxW="lg">{userBalance}</Text>
+                    ) : (
+                      <Text maxW="lg">-</Text>
+                    )}
+                  </FormControl>
+                  <FormControl>
+                    <FormHelperText fontSize="xs">
+                      Your Deposit Balance
+                    </FormHelperText>
+                    {userBalance >= 0 ? (
+                      <Text maxW="lg">{userBalance}</Text>
+                    ) : (
+                      <Text maxW="lg">-</Text>
+                    )}
+                  </FormControl>
+
+                  <Flex paddingY={4}></Flex>
+
+                  <Flex paddingY={4}></Flex>
+                  <Flex
+                    cursor="pointer"
+                    bg="#7023b6"
+                    borderRadius="md"
+                    justifyContent="center"
+                    paddingY={4}
+                    onClick={() => {
+                      console.log("Vote")
+                    }}
+                  >
+                    <Text fontWeight="bold">Cancel my votes</Text>
+                  </Flex>
+
+                  <Flex paddingY={4}></Flex>
+                  <Flex
+                    cursor="pointer"
+                    bg="#d53f8c"
+                    borderRadius="md"
+                    justifyContent="center"
+                    paddingY={4}
+                    onClick={() => {
+                      console.log("Vote")
+                    }}
+                  >
+                    <Text fontWeight="bold">Conclude</Text>
+                  </Flex>
+
+                  {/* Withdraw Rewards */}
+                </Flex>
+              </Flex>
+            </>
+          ) : (
+            <Flex justifyContent="center">
+              <Spinner
+                thickness="4px"
+                speed="0.65s"
+                emptyColor="gray.200"
+                color="purple.500"
+                size="xl"
+              />
             </Flex>
-            <Flex paddingY={4}></Flex>
-            <FormControl>
-              <FormHelperText fontSize="xs">Title</FormHelperText>
-              <Text maxW="lg" color="whiteAlpha.800">
-                {jsonData?.Title}
-              </Text>
-            </FormControl>
-            <FormControl>
-              <FormHelperText fontSize="xs">Expires on</FormHelperText>
-              <Text maxW="lg" color="whiteAlpha.800">
-                {formatUnixTimestamp(jsonData?.Duration).toString()}
-              </Text>
-            </FormControl>
-
-            <FormControl>
-              <FormHelperText fontSize="xs">Market ProcessId</FormHelperText>
-              <Link
-                target="_blank"
-                rel="noopener noreferrer"
-                href={`https://www.ao.link/#/entity/${pid}`}
-              >
-                <Flex
-                  alignItems="center"
-                  color="whiteAlpha.800"
-                  maxW="100%"
-                  wrap="wrap"
-                >
-                  <ExternalLinkIcon
-                    marginRight={4}
-                    display={{ base: "none", md: "block" }}
-                  />
-                  <Box wordBreak="break-word" whiteSpace="normal">
-                    {pid}
-                  </Box>
-                </Flex>
-              </Link>
-            </FormControl>
-
-            <FormControl>
-              <FormHelperText fontSize="xs">Token TxId</FormHelperText>
-              <Link
-                target="_blank"
-                rel="noopener noreferrer"
-                href={`https://www.ao.link/#/token/${jsonData?.TokenTxId}`}
-              >
-                <Flex
-                  alignItems="center"
-                  color="whiteAlpha.800"
-                  maxW="100%"
-                  wrap="wrap"
-                >
-                  <ExternalLinkIcon
-                    marginRight={4}
-                    display={{ base: "none", md: "block" }}
-                  />
-                  <Box wordBreak="break-word" whiteSpace="normal">
-                    {jsonData?.TokenTxId}
-                  </Box>
-                </Flex>
-              </Link>
-            </FormControl>
-
-            <FormControl>
-              <FormHelperText fontSize="xs">Creator</FormHelperText>
-              <Link
-                target="_blank"
-                rel="noopener noreferrer"
-                href={`https://www.ao.link/#/entity/${jsonData?.Creator}`}
-              >
-                <Flex
-                  alignItems="center"
-                  color="whiteAlpha.800"
-                  maxW="100%"
-                  wrap="wrap"
-                >
-                  <ExternalLinkIcon
-                    marginRight={4}
-                    display={{ base: "none", md: "block" }}
-                  />
-                  <Box wordBreak="break-word" whiteSpace="normal">
-                    {jsonData?.Creator}
-                  </Box>
-                </Flex>
-              </Link>
-            </FormControl>
-
-            <FormControl>
-              <FormHelperText fontSize="xs">BlockHeight</FormHelperText>
-              <Link
-                target="_blank"
-                rel="noopener noreferrer"
-                href={`https://viewblock.io/arweave/block/${jsonData?.BlockHeight}`}
-              >
-                <Flex
-                  alignItems="center"
-                  color="whiteAlpha.800"
-                  maxW="100%"
-                  wrap="wrap"
-                >
-                  <ExternalLinkIcon
-                    marginRight={4}
-                    display={{ base: "none", md: "block" }}
-                  />
-                  <Box wordBreak="break-word" whiteSpace="normal">
-                    {jsonData?.BlockHeight}
-                  </Box>
-                </Flex>
-              </Link>
-            </FormControl>
-
-            <FormControl>
-              <FormHelperText fontSize="xs">Block Timestamp</FormHelperText>
-              <Text maxW="lg" color="whiteAlpha.800">
-                {formatUnixTimestamp(jsonData?.Timestamp)}
-              </Text>
-            </FormControl>
-          </Flex>
-
-          {/* Right Pane Section */}
-          <Flex
-            marginTop={{ base: "20", md: "0" }}
-            direction="column"
-            width={{ base: "100%", md: "50%" }}
-            padding="4"
-            bgColor="purple.800"
-            borderRadius={{ base: "md", md: "small" }}
-          >
-            <Flex
-              direction="column"
-              //   align="center"
-              paddingX={{ base: "4", md: "8" }}
-              paddingTop={{ base: "4", md: "20" }}
-              paddingBottom={{ base: "4", md: "8" }}
-              mb="8"
-            >
-              <Text fontSize="2xl" textAlign="center" fontWeight="bold">
-                {jsonData?.OptionA}
-              </Text>
-              <Text color="pink.400" textAlign="center">
-                TOTAL VOTES: 4,235,746
-              </Text>
-
-              <Flex paddingY={2}></Flex>
-              <Flex justifyContent="center" paddingY={4} marginBottom={2}>
-                <Text
-                  fontSize="sm"
-                  color="gray.400"
-                  border="1px solid"
-                  borderColor="purple"
-                  borderRadius="md"
-                  paddingX={4}
-                >
-                  versus
-                </Text>
-              </Flex>
-
-              <Text fontSize="2xl" textAlign="center" fontWeight="bold">
-                {jsonData?.OptionB}
-              </Text>
-              <Text color="pink.400" textAlign="center">
-                TOTAL VOTES: 4,235,746
-              </Text>
-
-              {/* Deposit section */}
-              <Flex paddingY={{ base: "8", md: "20" }}></Flex>
-              <FormControl>
-                <FormHelperText fontSize="xs" color="gray.400">
-                  Amount
-                </FormHelperText>
-                <NumberInput
-                  focusBorderColor="#7023b6" // Vibrant purple border on focus
-                  precision={2}
-                  value={amountOfVote}
-                  min={1}
-                  onChange={(e) => {
-                    setAmountOfVote(e)
-                  }}
-                >
-                  <NumberInputField
-                    bg="#2d2d44" // Slightly lighter than the page background
-                    borderColor="#2d2d44"
-                    borderRadius="none"
-                  />
-                  <NumberInputStepper>
-                    <NumberIncrementStepper
-                      borderColor="#2d2d44"
-                      color="gray.200"
-                    />
-                    <NumberDecrementStepper
-                      borderColor="#2d2d44"
-                      color="gray.200"
-                    />
-                  </NumberInputStepper>
-                </NumberInput>
-              </FormControl>
-              <Button marginTop="4" colorScheme="purple">
-                Deposit
-              </Button>
-              <Button marginTop="4" colorScheme="purple">
-                Withdraw
-              </Button>
-              {/* Balances */}
-              <Flex paddingY={4}></Flex>
-              <FormControl>
-                <FormHelperText fontSize="xs">
-                  Your Wallet Balance
-                </FormHelperText>
-                {userBalance >= 0 ? (
-                  <Text maxW="lg">{userBalance}</Text>
-                ) : (
-                  <Text maxW="lg">-</Text>
-                )}
-              </FormControl>
-              <FormControl>
-                <FormHelperText fontSize="xs">
-                  Your Deposit Balance
-                </FormHelperText>
-                {userBalance >= 0 ? (
-                  <Text maxW="lg">{userBalance}</Text>
-                ) : (
-                  <Text maxW="lg">-</Text>
-                )}
-              </FormControl>
-
-              <Flex paddingY={4}></Flex>
-
-              {/* <Flex paddingY={4}></Flex>
-              <FormControl>
-                <FormHelperText fontSize="xs">Your VoteA Amount</FormHelperText>
-                {userBalanceVoteA >= 0 ? (
-                  <Text maxW="lg">{userBalanceVoteA}</Text>
-                ) : (
-                  <Text maxW="lg">-</Text>
-                )}
-                <FormHelperText fontSize="xs">Your VoteB Amount</FormHelperText>
-                {userBalanceVoteA >= 0 ? (
-                  <Text maxW="lg">{userBalanceVoteA}</Text>
-                ) : (
-                  <Text maxW="lg">-</Text>
-                )}
-                <Button
-                  colorScheme="purple"
-                  w="100%"
-                  maxW="lg"
-                  // onClick={getUserBalanceVoteA}
-                >
-                  Count my vote
-                </Button>
-              </FormControl> */}
-
-              <Flex paddingY={4}></Flex>
-              <Flex
-                cursor="pointer"
-                bg="#7023b6"
-                borderRadius="md"
-                justifyContent="center"
-                paddingY={4}
-                onClick={() => {
-                  console.log("Vote")
-                }}
-              >
-                <Text fontWeight="bold">Cancel my votes</Text>
-              </Flex>
-
-              <Flex paddingY={4}></Flex>
-              <Flex
-                cursor="pointer"
-                bg="#d53f8c"
-                borderRadius="md"
-                justifyContent="center"
-                paddingY={4}
-                onClick={() => {
-                  console.log("Vote")
-                }}
-              >
-                <Text fontWeight="bold">Conclude</Text>
-              </Flex>
-
-              {/* Withdraw Rewards */}
-            </Flex>
-          </Flex>
+          )}
         </Flex>
       </Flex>
     </ChakraProvider>
