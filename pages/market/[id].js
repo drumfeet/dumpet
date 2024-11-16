@@ -56,7 +56,7 @@ export default function Home({ _id = null }) {
   const [jsonData, setJsonData] = useState()
   const [amount, setAmount] = useState(1)
   const [amountOfVote, setAmountOfVote] = useState(1)
-  const [userDepositBalance, setUserDepositBalance] = useState(null)
+  const [userDepositBalance, setUserDepositBalance] = useState(null) // must be a number
   const [walletBalance, setWalletBalance] = useState(null)
   const [userBalanceVoteA, setUserBalanceVoteA] = useState(0)
   const [userBalanceVoteB, setUserBalanceVoteB] = useState(0)
@@ -158,14 +158,14 @@ export default function Home({ _id = null }) {
 
   const updateBalances = async (jsonData = {}) => {
     setTotalBalanceVoteA(jsonData?.TotalBalanceVoteA)
-    setTotalBalanceVoteB(jsonData?.TotalBalanceVoteB || "0")
+    setTotalBalanceVoteB(jsonData?.TotalBalanceVoteB)
 
     console.log("updateBalances() jsonData", jsonData)
   }
 
   const updateUserBalances = async (jsonData = {}) => {
-    setUserDepositBalance(divideByPower(jsonData?.UserDepositBalance || "0"))
-    setUserBalanceVoteA(divideByPower(jsonData?.BalanceVoteA) || "0")
+    setUserDepositBalance(Number(jsonData?.UserDepositBalance))
+    setUserBalanceVoteA(jsonData?.BalanceVoteA)
     setUserBalanceVoteB(divideByPower(jsonData?.BalanceVoteB) || "0")
     // setWalletBalance(Number(divideByPower(jsonData?.WalletBalance) || "0"))
 
@@ -234,9 +234,11 @@ export default function Home({ _id = null }) {
       console.log("_result", _result)
       if (handleMessageResultError(_result)) return
 
-      const _updatedBalance = multiplyByPower(userDepositBalance) + _amount
+      console.log("userDepositBalance", userDepositBalance)
+      console.log("_amount", _amount)
+      const _updatedBalance = userDepositBalance + _amount
       console.log("_updatedBalance", _updatedBalance)
-      setUserDepositBalance(divideByPower(_updatedBalance))
+      setUserDepositBalance(_updatedBalance)
 
       toast({
         description: "Deposit success",
@@ -283,9 +285,11 @@ export default function Home({ _id = null }) {
       console.log("_result", _result)
       if (handleMessageResultError(_result)) return
 
-      const _updatedBalance = multiplyByPower(userDepositBalance) - _amount
+      console.log("userDepositBalance", userDepositBalance)
+      console.log("_amount", _amount)
+      const _updatedBalance = userDepositBalance - _amount
       console.log("_updatedBalance", _updatedBalance)
-      setUserDepositBalance(divideByPower(_updatedBalance))
+      setUserDepositBalance(_updatedBalance)
 
       toast({
         description: "Withdraw success",
@@ -336,8 +340,8 @@ export default function Home({ _id = null }) {
       console.log("jsonData", jsonData)
 
       setTotalBalanceVoteA(jsonData?.TotalBalanceVoteA)
-      setUserBalanceVoteA(divideByPower(jsonData?.BalanceVoteA))
-      setUserDepositBalance(divideByPower(jsonData?.NewBalance))
+      setUserBalanceVoteA(jsonData?.BalanceVoteA)
+      setUserDepositBalance(Number(jsonData?.NewBalance))
 
       toast({
         description: "Vote A success",
@@ -418,7 +422,7 @@ export default function Home({ _id = null }) {
 
                   <Flex paddingY={2}></Flex>
                   <Text fontSize="xs" color="gray.400">
-                    Your Total VoteA: {userBalanceVoteA}
+                    Your Total VoteA: {divideByPower(userBalanceVoteA)}
                   </Text>
                   <Flex
                     cursor="pointer"
@@ -685,7 +689,7 @@ export default function Home({ _id = null }) {
                       Your Deposit Balance
                     </FormHelperText>
                     <Text maxW="lg" color="whiteAlpha.800">
-                      {userDepositBalance ?? "-"}
+                      {divideByPower(userDepositBalance) ?? "-"}
                     </Text>
                   </FormControl>
 
