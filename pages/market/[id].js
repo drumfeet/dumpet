@@ -56,8 +56,8 @@ export default function Home({ _id = null }) {
   const [jsonData, setJsonData] = useState()
   const [amount, setAmount] = useState(1)
   const [amountOfVote, setAmountOfVote] = useState(1)
-  const [userDepositBalance, setUserDepositBalance] = useState(-1)
-  const [walletBalance, setWalletBalance] = useState(-1)
+  const [userDepositBalance, setUserDepositBalance] = useState(null)
+  const [walletBalance, setWalletBalance] = useState(null)
   const [userBalanceVoteA, setUserBalanceVoteA] = useState(0)
   const [userBalanceVoteB, setUserBalanceVoteB] = useState(0)
   const [totalBalanceVoteA, setTotalBalanceVoteA] = useState(-1)
@@ -157,18 +157,16 @@ export default function Home({ _id = null }) {
   }
 
   const updateBalances = async (jsonData = {}) => {
-    setTotalBalanceVoteA(jsonData?.TotalBalanceVoteA || "0")
+    setTotalBalanceVoteA(jsonData?.TotalBalanceVoteA)
     setTotalBalanceVoteB(jsonData?.TotalBalanceVoteB || "0")
 
     console.log("updateBalances() jsonData", jsonData)
   }
 
   const updateUserBalances = async (jsonData = {}) => {
-    setUserDepositBalance(
-      Number(divideByPower(jsonData?.UserDepositBalance) || "0")
-    )
-    setUserBalanceVoteA(Number(divideByPower(jsonData?.BalanceVoteA) || "0"))
-    setUserBalanceVoteB(Number(divideByPower(jsonData?.BalanceVoteB) || "0"))
+    setUserDepositBalance(divideByPower(jsonData?.UserDepositBalance || "0"))
+    setUserBalanceVoteA(divideByPower(jsonData?.BalanceVoteA) || "0")
+    setUserBalanceVoteB(divideByPower(jsonData?.BalanceVoteB) || "0")
     // setWalletBalance(Number(divideByPower(jsonData?.WalletBalance) || "0"))
 
     console.log("updateUserBalances() jsonData", jsonData)
@@ -236,16 +234,9 @@ export default function Home({ _id = null }) {
       console.log("_result", _result)
       if (handleMessageResultError(_result)) return
 
-      const _quantity = _result?.Messages?.[0]?.Tags.find(
-        (tag) => tag.name === "Quantity"
-      )
-      console.log("Quantity", _quantity)
-      if (_quantity) {
-        const _updatedBalance =
-          multiplyByPower(userDepositBalance || 0) + Number(_quantity.value)
-        console.log("_updatedBalance", _updatedBalance)
-        setUserDepositBalance(divideByPower(_updatedBalance))
-      }
+      const _updatedBalance = multiplyByPower(userDepositBalance) + _amount
+      console.log("_updatedBalance", _updatedBalance)
+      setUserDepositBalance(divideByPower(_updatedBalance))
 
       toast({
         description: "Deposit success",
@@ -292,19 +283,64 @@ export default function Home({ _id = null }) {
       console.log("_result", _result)
       if (handleMessageResultError(_result)) return
 
-      const _quantity = _result?.Messages?.[0]?.Tags.find(
-        (tag) => tag.name === "Quantity"
-      )
-      console.log("Quantity", _quantity)
-      if (_quantity) {
-        const _updatedBalance =
-          multiplyByPower(userDepositBalance || 0) - Number(_quantity.value)
-        console.log("_updatedBalance", _updatedBalance)
-        setUserDepositBalance(divideByPower(_updatedBalance))
-      }
+      const _updatedBalance = multiplyByPower(userDepositBalance) - _amount
+      console.log("_updatedBalance", _updatedBalance)
+      setUserDepositBalance(divideByPower(_updatedBalance))
 
       toast({
         description: "Withdraw success",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+        position: "top",
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const voteA = async () => {
+    const _connected = await connectWallet()
+    if (_connected.success === false) {
+      return
+    }
+
+    const _amount = multiplyByPower(amountOfVote)
+    console.log("_amount", _amount)
+
+    try {
+      const messageId = await message({
+        process: pid,
+        tags: [
+          {
+            name: "Action",
+            value: "VoteA",
+          },
+          {
+            name: "Quantity",
+            value: _amount.toString(),
+          },
+        ],
+        signer: createDataItemSigner(globalThis.arweaveWallet),
+      })
+      console.log("messageId", messageId)
+
+      const _result = await result({
+        message: messageId,
+        process: pid,
+      })
+      console.log("_result", _result)
+      if (handleMessageResultError(_result)) return
+
+      const jsonData = JSON.parse(_result?.Messages[0]?.Data)
+      console.log("jsonData", jsonData)
+
+      setTotalBalanceVoteA(jsonData?.TotalBalanceVoteA)
+      setUserBalanceVoteA(divideByPower(jsonData?.BalanceVoteA))
+      setUserDepositBalance(divideByPower(jsonData?.NewBalance))
+
+      toast({
+        description: "Vote A success",
         status: "success",
         duration: 2000,
         isClosable: true,
@@ -390,9 +426,7 @@ export default function Home({ _id = null }) {
                     borderRadius="md"
                     justifyContent="center"
                     paddingY={4}
-                    onClick={() => {
-                      console.log("Vote")
-                    }}
+                    onClick={voteA}
                   >
                     <Text fontWeight="bold">Vote</Text>
                   </Flex>
@@ -582,7 +616,7 @@ export default function Home({ _id = null }) {
                     {jsonData?.MarketInfo?.OptionA}
                   </Text>
                   <Text color="pink.400" textAlign="center">
-                    TOTAL VOTES: {totalBalanceVoteA}
+                    TOTAL VOTES: {divideByPower(totalBalanceVoteA)}
                   </Text>
 
                   <Flex paddingY={2}></Flex>
@@ -603,7 +637,7 @@ export default function Home({ _id = null }) {
                     {jsonData?.MarketInfo?.OptionB}
                   </Text>
                   <Text color="pink.400" textAlign="center">
-                    TOTAL VOTES: {totalBalanceVoteB}
+                    TOTAL VOTES: {divideByPower(totalBalanceVoteB)}
                   </Text>
 
                   {/* Deposit section */}
@@ -645,31 +679,14 @@ export default function Home({ _id = null }) {
                   <Button marginTop="4" colorScheme="purple" onClick={withdraw}>
                     Withdraw
                   </Button>
-                  {/* Balances */}
-                  {/* <Flex paddingY={4}></Flex>
-                  <FormControl>
-                    <FormHelperText fontSize="xs">
-                      Your Wallet Balance
-                    </FormHelperText>
-                    {walletBalance >= 0 ? (
-                      <Text maxW="lg">{walletBalance}</Text>
-                    ) : (
-                      <Text maxW="lg">-</Text>
-                    )}
-                  </FormControl> */}
+
                   <FormControl>
                     <FormHelperText fontSize="xs" color="gray.400">
                       Your Deposit Balance
                     </FormHelperText>
-                    {userDepositBalance >= 0 ? (
-                      <Text maxW="lg" color="whiteAlpha.800">
-                        {userDepositBalance}
-                      </Text>
-                    ) : (
-                      <Text maxW="lg" color="whiteAlpha.800">
-                        -
-                      </Text>
-                    )}
+                    <Text maxW="lg" color="whiteAlpha.800">
+                      {userDepositBalance ?? "-"}
+                    </Text>
                   </FormControl>
 
                   <Flex paddingY={4}></Flex>
