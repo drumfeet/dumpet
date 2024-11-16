@@ -88,11 +88,17 @@ export default function Home({ _id = null }) {
     }
   }, [pid])
 
+  useEffect(() => {
+    console.log("pid", pid)
+    if (isConnected) {
+      ;(async () => {
+        // await getUserBalanceVoteA() and getUserBalanceVoteB()
+      })()
+    }
+  }, [isConnected])
+
   function formatUnixTimestamp(timestamp) {
     try {
-      // Log input for debugging
-      console.log("timestamp:", timestamp)
-
       // Ensure the timestamp is a number or a numeric string
       const parsedTimestamp = Number(timestamp)
       if (isNaN(parsedTimestamp)) {
@@ -182,8 +188,44 @@ export default function Home({ _id = null }) {
               //   padding={{ base: "4", md: "8" }}
               //   mb="8"
             >
+              <FormControl
+              //   border="1px solid #805ad5"
+              //   borderRadius="md"
+              //   padding={4}
+              >
+                <FormHelperText fontSize="xs" color="gray.400">
+                  Amount of Vote
+                </FormHelperText>
+                <NumberInput
+                  focusBorderColor="#7023b6" // Vibrant purple border on focus
+                  precision={2}
+                  value={amountOfVote}
+                  min={1}
+                  onChange={(e) => {
+                    setAmountOfVote(e)
+                  }}
+                >
+                  <NumberInputField
+                    bg="#2d2d44" // Slightly lighter than the page background
+                    borderColor="#2d2d44"
+                    borderRadius="none"
+                  />
+                  <NumberInputStepper>
+                    <NumberIncrementStepper
+                      borderColor="#2d2d44"
+                      color="gray.200"
+                    />
+                    <NumberDecrementStepper
+                      borderColor="#2d2d44"
+                      color="gray.200"
+                    />
+                  </NumberInputStepper>
+                </NumberInput>
+              </FormControl>
+
+              <Flex paddingY={2}></Flex>
               <Text fontSize="xs" color="gray.400">
-                Total Votes: 0 AR
+                Your Total VoteA: 0
               </Text>
               <Flex
                 cursor="pointer"
@@ -214,7 +256,7 @@ export default function Home({ _id = null }) {
                 </Text>
               </Flex>
               <Text fontSize="xs" color="gray.400">
-                Total Votes: 0 AR
+                Your Total VoteB: 0
               </Text>
               <Flex
                 cursor="pointer"
@@ -353,16 +395,18 @@ export default function Home({ _id = null }) {
 
           {/* Right Pane Section */}
           <Flex
+            marginTop={{ base: "20", md: "0" }}
             direction="column"
             width={{ base: "100%", md: "50%" }}
             padding="4"
             bgColor="purple.800"
-            justify="space-between"
+            borderRadius={{ base: "md", md: "small" }}
+            // justify="space-between"
           >
             {/* Urolithin Info Section */}
             <Flex
               direction="column"
-              align="center"
+              //   align="center"
               padding={{ base: "4", md: "8" }}
               mb="8"
             >
@@ -371,9 +415,84 @@ export default function Home({ _id = null }) {
                 $URO
               </Text>
               <Text>MARKET CAP: $4,235,746</Text>
-              <Button marginTop="4" colorScheme="pink">
-                TRADE ON PUMP&FUN
+              <Button marginTop="4" colorScheme="purple">
+                Deposit
               </Button>
+              <Button marginTop="4" colorScheme="purple">
+                Withdraw
+              </Button>
+
+              <Flex paddingY={4}></Flex>
+              <FormControl>
+                <FormHelperText fontSize="xs">
+                  Your Deposit Balance
+                </FormHelperText>
+                {userBalance >= 0 ? (
+                  <Text maxW="lg">{userBalance}</Text>
+                ) : (
+                  <Text maxW="lg">-</Text>
+                )}
+                <Button
+                  colorScheme="purple"
+                  w="100%"
+                  maxW="lg"
+                  // onClick={getBalance}
+                >
+                  Get user balance
+                </Button>
+              </FormControl>
+
+              <Flex paddingY={4}></Flex>
+              <FormControl>
+                <FormHelperText fontSize="xs">Your VoteA Amount</FormHelperText>
+                {userBalanceVoteA >= 0 ? (
+                  <Text maxW="lg">{userBalanceVoteA}</Text>
+                ) : (
+                  <Text maxW="lg">-</Text>
+                )}
+                <FormHelperText fontSize="xs">Your VoteB Amount</FormHelperText>
+                {userBalanceVoteA >= 0 ? (
+                  <Text maxW="lg">{userBalanceVoteA}</Text>
+                ) : (
+                  <Text maxW="lg">-</Text>
+                )}
+                <Button
+                  colorScheme="purple"
+                  w="100%"
+                  maxW="lg"
+                  // onClick={getUserBalanceVoteA}
+                >
+                  Count my vote
+                </Button>
+              </FormControl>
+
+              <Flex paddingY={4}></Flex>
+              <Flex
+                cursor="pointer"
+                bg="#7023b6"
+                borderRadius="md"
+                justifyContent="center"
+                paddingY={4}
+                onClick={() => {
+                  console.log("Vote")
+                }}
+              >
+                <Text fontWeight="bold">Cancel my votes</Text>
+              </Flex>
+
+              <Flex paddingY={4}></Flex>
+              <Flex
+                cursor="pointer"
+                bg="#d53f8c"
+                borderRadius="md"
+                justifyContent="center"
+                paddingY={4}
+                onClick={() => {
+                  console.log("Vote")
+                }}
+              >
+                <Text fontWeight="bold">Conclude</Text>
+              </Flex>
             </Flex>
 
             {/* Additional Info Section */}
