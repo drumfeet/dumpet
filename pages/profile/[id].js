@@ -157,6 +157,7 @@ export default function Home({ _id = null }) {
                     color="whiteAlpha.800"
                     textDecoration="underline"
                     _hover={{ cursor: "pointer" }}
+                    textUnderlineOffset={5}
                   >
                     {record}
                   </Text>
