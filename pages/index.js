@@ -66,7 +66,17 @@ export default function Home() {
 
   function formatUnixTimestamp(timestamp) {
     const date = new Date(Number(timestamp))
-    return date.toUTCString()
+    const options = {
+      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone, // Use the local timezone
+      weekday: "short",
+      month: "short",
+      day: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false, // 24-hour format
+    }
+    return new Intl.DateTimeFormat("en-US", options).format(date)
   }
 
   return (
