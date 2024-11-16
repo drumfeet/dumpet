@@ -151,7 +151,7 @@ export default function Home({ _id = null }) {
                 >
                   <Text
                     as="a"
-                    href={`/tx/${record}`}
+                    href={`/market/${record}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     color="whiteAlpha.800"

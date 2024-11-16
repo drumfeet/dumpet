@@ -113,7 +113,7 @@ export default function Home() {
           <Link
             target="_blank"
             rel="noopener noreferrer"
-            href={`/tx/${randomMarket.ProcessId}`}
+            href={`/market/${randomMarket.ProcessId}`}
           >
             <Flex
               flexDirection="column"
@@ -176,7 +176,7 @@ export default function Home() {
                 <Link
                   target="_blank"
                   rel="noopener noreferrer"
-                  href={`/tx/${market.ProcessId}`}
+                  href={`/market/${market.ProcessId}`}
                   key={index}
                 >
                   <Flex
