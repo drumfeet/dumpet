@@ -46,6 +46,7 @@ export async function getStaticProps({ params: { id } }) {
 }
 
 const DUMPET_TOKEN_TXID = "fzkhRptIvW3tJ7Dz7NFgt2DnZTJVKnwtzEOuURjfXrQ"
+const DEFAULT_PRECISION = 12
 
 export default function Home({ _id = null }) {
   const toast = useToast()
@@ -198,6 +199,122 @@ export default function Home({ _id = null }) {
     }
   }
 
+  const deposit = async () => {
+    const _connected = await connectWallet()
+    if (_connected.success === false) {
+      return
+    }
+
+    const _amount = multiplyByPower(amount)
+    console.log("_amount", _amount)
+
+    try {
+      const messageId = await message({
+        process: DUMPET_TOKEN_TXID,
+        tags: [
+          {
+            name: "Action",
+            value: "Transfer",
+          },
+          {
+            name: "Quantity",
+            value: _amount.toString(),
+          },
+          {
+            name: "Recipient",
+            value: pid,
+          },
+        ],
+        signer: createDataItemSigner(globalThis.arweaveWallet),
+      })
+      console.log("messageId", messageId)
+
+      const _result = await result({
+        message: messageId,
+        process: DUMPET_TOKEN_TXID,
+      })
+      console.log("_result", _result)
+      if (handleMessageResultError(_result)) return
+
+      const _quantity = _result?.Messages?.[0]?.Tags.find(
+        (tag) => tag.name === "Quantity"
+      )
+      console.log("Quantity", _quantity)
+      if (_quantity) {
+        const _updatedBalance =
+          multiplyByPower(userDepositBalance || 0) + Number(_quantity.value)
+        console.log("_updatedBalance", _updatedBalance)
+        setUserDepositBalance(divideByPower(_updatedBalance))
+      }
+
+      toast({
+        description: "Deposit success",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+        position: "top",
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const withdraw = async () => {
+    const _connected = await connectWallet()
+    if (_connected.success === false) {
+      return
+    }
+
+    const _amount = multiplyByPower(amount)
+    console.log("_amount", _amount)
+
+    try {
+      const messageId = await message({
+        process: pid,
+        tags: [
+          {
+            name: "Action",
+            value: "Withdraw",
+          },
+          {
+            name: "Quantity",
+            value: _amount.toString(),
+          },
+        ],
+        signer: createDataItemSigner(globalThis.arweaveWallet),
+      })
+      console.log("messageId", messageId)
+
+      const _result = await result({
+        message: messageId,
+        process: pid,
+      })
+      console.log("_result", _result)
+      if (handleMessageResultError(_result)) return
+
+      const _quantity = _result?.Messages?.[0]?.Tags.find(
+        (tag) => tag.name === "Quantity"
+      )
+      console.log("Quantity", _quantity)
+      if (_quantity) {
+        const _updatedBalance =
+          multiplyByPower(userDepositBalance || 0) - Number(_quantity.value)
+        console.log("_updatedBalance", _updatedBalance)
+        setUserDepositBalance(divideByPower(_updatedBalance))
+      }
+
+      toast({
+        description: "Withdraw success",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+        position: "top",
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   return (
     <ChakraProvider>
       <Flex
@@ -238,7 +355,7 @@ export default function Home({ _id = null }) {
                     </FormHelperText>
                     <NumberInput
                       focusBorderColor="#7023b6"
-                      precision={2}
+                      precision={DEFAULT_PRECISION}
                       value={amountOfVote}
                       min={1}
                       onChange={(e) => {
@@ -497,11 +614,12 @@ export default function Home({ _id = null }) {
                     </FormHelperText>
                     <NumberInput
                       focusBorderColor="#7023b6"
-                      precision={2}
-                      value={amountOfVote}
+                      precision={DEFAULT_PRECISION}
+                      value={amount}
                       min={1}
                       onChange={(e) => {
-                        setAmountOfVote(e)
+                        console.log("e", e)
+                        setAmount(e)
                       }}
                     >
                       <NumberInputField
@@ -521,14 +639,14 @@ export default function Home({ _id = null }) {
                       </NumberInputStepper>
                     </NumberInput>
                   </FormControl>
-                  <Button marginTop="4" colorScheme="purple">
+                  <Button marginTop="4" colorScheme="purple" onClick={deposit}>
                     Deposit
                   </Button>
-                  <Button marginTop="4" colorScheme="purple">
+                  <Button marginTop="4" colorScheme="purple" onClick={withdraw}>
                     Withdraw
                   </Button>
                   {/* Balances */}
-                  <Flex paddingY={4}></Flex>
+                  {/* <Flex paddingY={4}></Flex>
                   <FormControl>
                     <FormHelperText fontSize="xs">
                       Your Wallet Balance
@@ -538,15 +656,19 @@ export default function Home({ _id = null }) {
                     ) : (
                       <Text maxW="lg">-</Text>
                     )}
-                  </FormControl>
+                  </FormControl> */}
                   <FormControl>
-                    <FormHelperText fontSize="xs">
+                    <FormHelperText fontSize="xs" color="gray.400">
                       Your Deposit Balance
                     </FormHelperText>
                     {userDepositBalance >= 0 ? (
-                      <Text maxW="lg">{userDepositBalance}</Text>
+                      <Text maxW="lg" color="whiteAlpha.800">
+                        {userDepositBalance}
+                      </Text>
                     ) : (
-                      <Text maxW="lg">-</Text>
+                      <Text maxW="lg" color="whiteAlpha.800">
+                        -
+                      </Text>
                     )}
                   </FormControl>
 
@@ -569,7 +691,8 @@ export default function Home({ _id = null }) {
                   <Flex paddingY={4}></Flex>
                   <Flex
                     cursor="pointer"
-                    bg="#d53f8c"
+                    // bg="#d53f8c"
+                    bg="#7023b6"
                     borderRadius="md"
                     justifyContent="center"
                     paddingY={4}
