@@ -529,6 +529,54 @@ Handlers.add("UserBalanceVoteB", Handlers.utils.hasMatchingTag("Action", "UserBa
     end
 end)
 
+Handlers.add("UserBalancesAllVotes", Handlers.utils.hasMatchingTag("Action", "UserBalancesAllVotes"), function(msg)
+    local function getBalance(balances, msg)
+        if msg.Tags.Recipient and balances[msg.Tags.Recipient] then
+            return balances[msg.Tags.Recipient]
+        elseif msg.Tags.Target and balances[msg.Tags.Target] then
+            return balances[msg.Tags.Target]
+        elseif balances[msg.From] then
+            return balances[msg.From]
+        end
+        return "0"
+    end
+
+    local balA = getBalance(BalancesVoteA, msg)
+    local balB = getBalance(BalancesVoteB, msg)
+    local userDepositBalance = getBalance(Balances, msg)
+
+    local account = msg.Tags.Recipient or msg.From
+    local _userBalanceAllVotes = utils.add(balA, balB)
+    local _data = {
+        UserDepositBalance = userDepositBalance,
+        BalanceVoteA = balA,
+        BalanceVoteB = balB,
+        UserBalanceAllVotes = _userBalanceAllVotes,
+        Account = account,
+    }
+
+    if msg.reply then
+        msg.reply({
+            UserDepositBalance = userDepositBalance,
+            BalanceVoteA = balA,
+            BalanceVoteB = balB,
+            UserBalanceAllVotes = _userBalanceAllVotes,
+            Account = account,
+            Data = json.encode(_data)
+        })
+    else
+        Send({
+            Target = msg.From,
+            UserDepositBalance = userDepositBalance,
+            BalanceVoteA = balA,
+            BalanceVoteB = balB,
+            UserBalanceAllVotes = _userBalanceAllVotes,
+            Account = account,
+            Data = json.encode(_data)
+        })
+    end
+end)
+
 Handlers.add("Withdraw", Handlers.utils.hasMatchingTag("Action", "Withdraw"), function(msg)
     local success, err = pcall(function()
         -- Validate that msg.Tags.Quantity is a valid string representing a number greater than 0

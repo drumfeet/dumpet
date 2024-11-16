@@ -55,10 +55,10 @@ export default function Home({ _id = null }) {
   const [jsonData, setJsonData] = useState()
   const [amount, setAmount] = useState(1)
   const [amountOfVote, setAmountOfVote] = useState(1)
-  const [userBalance, setUserBalance] = useState(-1)
+  const [userDepositBalance, setUserDepositBalance] = useState(-1)
   const [walletBalance, setWalletBalance] = useState(-1)
-  const [userBalanceVoteA, setUserBalanceVoteA] = useState(-1)
-  const [userBalanceVoteB, setUserBalanceVoteB] = useState(-1)
+  const [userBalanceVoteA, setUserBalanceVoteA] = useState(0)
+  const [userBalanceVoteB, setUserBalanceVoteB] = useState(0)
   const [totalBalanceVoteA, setTotalBalanceVoteA] = useState(-1)
   const [totalBalanceVoteB, setTotalBalanceVoteB] = useState(-1)
   const [totalVotersBalance, setTotalVotersBalance] = useState(-1)
@@ -96,7 +96,7 @@ export default function Home({ _id = null }) {
     console.log("pid", pid)
     if (isConnected) {
       ;(async () => {
-        // await getUserBalanceVoteA() and getUserBalanceVoteB()
+        await getUserBalancesAllVotes()
       })()
     }
   }, [isConnected])
@@ -160,6 +160,42 @@ export default function Home({ _id = null }) {
     setTotalBalanceVoteB(jsonData?.TotalBalanceVoteB || "0")
 
     console.log("updateBalances() jsonData", jsonData)
+  }
+
+  const updateUserBalances = async (jsonData = {}) => {
+    setUserDepositBalance(
+      Number(divideByPower(jsonData?.UserDepositBalance) || "0")
+    )
+    setUserBalanceVoteA(Number(divideByPower(jsonData?.BalanceVoteA) || "0"))
+    setUserBalanceVoteB(Number(divideByPower(jsonData?.BalanceVoteB) || "0"))
+    // setWalletBalance(Number(divideByPower(jsonData?.WalletBalance) || "0"))
+
+    console.log("updateUserBalances() jsonData", jsonData)
+  }
+
+  const getUserBalancesAllVotes = async () => {
+    const _connected = await connectWallet()
+    if (_connected.success === false) {
+      return
+    }
+    const _userAddress = _connected.userAddress
+
+    try {
+      console.log("UserBalancesAllVotes pid", pid)
+      const _result = await dryrun({
+        process: pid,
+        tags: [
+          { name: "Action", value: "UserBalancesAllVotes" },
+          { name: "Recipient", value: _userAddress },
+        ],
+      })
+      console.log("UserBalancesAllVotes _result", _result)
+      const jsonData = JSON.parse(_result?.Messages[0]?.Data)
+      console.log("UserBalancesAllVotes jsonData", jsonData)
+      updateUserBalances(jsonData)
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   return (
@@ -229,7 +265,7 @@ export default function Home({ _id = null }) {
 
                   <Flex paddingY={2}></Flex>
                   <Text fontSize="xs" color="gray.400">
-                    Your Total VoteA: 0
+                    Your Total VoteA: {userBalanceVoteA}
                   </Text>
                   <Flex
                     cursor="pointer"
@@ -264,7 +300,7 @@ export default function Home({ _id = null }) {
                     </Text>
                   </Flex>
                   <Text fontSize="xs" color="gray.400">
-                    Your Total VoteB: 0
+                    Your Total VoteB: {userBalanceVoteB}
                   </Text>
                   <Flex
                     cursor="pointer"
@@ -497,8 +533,8 @@ export default function Home({ _id = null }) {
                     <FormHelperText fontSize="xs">
                       Your Wallet Balance
                     </FormHelperText>
-                    {userBalance >= 0 ? (
-                      <Text maxW="lg">{userBalance}</Text>
+                    {walletBalance >= 0 ? (
+                      <Text maxW="lg">{walletBalance}</Text>
                     ) : (
                       <Text maxW="lg">-</Text>
                     )}
@@ -507,8 +543,8 @@ export default function Home({ _id = null }) {
                     <FormHelperText fontSize="xs">
                       Your Deposit Balance
                     </FormHelperText>
-                    {userBalance >= 0 ? (
-                      <Text maxW="lg">{userBalance}</Text>
+                    {userDepositBalance >= 0 ? (
+                      <Text maxW="lg">{userDepositBalance}</Text>
                     ) : (
                       <Text maxW="lg">-</Text>
                     )}
