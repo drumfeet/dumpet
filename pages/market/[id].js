@@ -188,11 +188,7 @@ export default function Home({ _id = null }) {
               //   padding={{ base: "4", md: "8" }}
               //   mb="8"
             >
-              <FormControl
-              //   border="1px solid #805ad5"
-              //   borderRadius="md"
-              //   padding={4}
-              >
+              <FormControl>
                 <FormHelperText fontSize="xs" color="gray.400">
                   Amount of Vote
                 </FormHelperText>
@@ -239,7 +235,11 @@ export default function Home({ _id = null }) {
               >
                 <Text fontWeight="bold">Vote</Text>
               </Flex>
-              <Text fontSize={{ base: "lg", md: "2xl" }} textAlign="center">
+              <Text
+                fontSize={{ base: "lg", md: "2xl" }}
+                textAlign="center"
+                fontWeight="bold"
+              >
                 {jsonData?.OptionA}
               </Text>
 
@@ -271,7 +271,11 @@ export default function Home({ _id = null }) {
                 <Text fontWeight="bold">Vote</Text>
               </Flex>
 
-              <Text fontSize={{ base: "lg", md: "2xl" }} textAlign="center">
+              <Text
+                fontSize={{ base: "lg", md: "2xl" }}
+                textAlign="center"
+                fontWeight="bold"
+              >
                 {jsonData?.OptionB}
               </Text>
             </Flex>
@@ -401,28 +405,93 @@ export default function Home({ _id = null }) {
             padding="4"
             bgColor="purple.800"
             borderRadius={{ base: "md", md: "small" }}
-            // justify="space-between"
           >
-            {/* Urolithin Info Section */}
             <Flex
               direction="column"
               //   align="center"
-              padding={{ base: "4", md: "8" }}
+              paddingX={{ base: "4", md: "8" }}
+              paddingTop={{ base: "4", md: "20" }}
+              paddingBottom={{ base: "4", md: "8" }}
               mb="8"
             >
-              <Text fontSize="2xl">Urolithin A</Text>
-              <Text fontSize="lg" color="pink.400">
-                $URO
+              <Text fontSize="2xl" textAlign="center" fontWeight="bold">
+                {jsonData?.OptionA}
               </Text>
-              <Text>MARKET CAP: $4,235,746</Text>
+              <Text color="pink.400" textAlign="center">
+                TOTAL VOTES: 4,235,746
+              </Text>
+
+              <Flex paddingY={2}></Flex>
+              <Flex justifyContent="center" paddingY={4} marginBottom={2}>
+                <Text
+                  fontSize="sm"
+                  color="gray.400"
+                  border="1px solid"
+                  borderColor="purple"
+                  borderRadius="md"
+                  paddingX={4}
+                >
+                  versus
+                </Text>
+              </Flex>
+
+              <Text fontSize="2xl" textAlign="center" fontWeight="bold">
+                {jsonData?.OptionB}
+              </Text>
+              <Text color="pink.400" textAlign="center">
+                TOTAL VOTES: 4,235,746
+              </Text>
+
+              {/* Deposit section */}
+              <Flex paddingY={{ base: "8", md: "20" }}></Flex>
+              <FormControl>
+                <FormHelperText fontSize="xs" color="gray.400">
+                  Amount
+                </FormHelperText>
+                <NumberInput
+                  focusBorderColor="#7023b6" // Vibrant purple border on focus
+                  precision={2}
+                  value={amountOfVote}
+                  min={1}
+                  onChange={(e) => {
+                    setAmountOfVote(e)
+                  }}
+                >
+                  <NumberInputField
+                    bg="#2d2d44" // Slightly lighter than the page background
+                    borderColor="#2d2d44"
+                    borderRadius="none"
+                  />
+                  <NumberInputStepper>
+                    <NumberIncrementStepper
+                      borderColor="#2d2d44"
+                      color="gray.200"
+                    />
+                    <NumberDecrementStepper
+                      borderColor="#2d2d44"
+                      color="gray.200"
+                    />
+                  </NumberInputStepper>
+                </NumberInput>
+              </FormControl>
               <Button marginTop="4" colorScheme="purple">
                 Deposit
               </Button>
               <Button marginTop="4" colorScheme="purple">
                 Withdraw
               </Button>
-
+              {/* Balances */}
               <Flex paddingY={4}></Flex>
+              <FormControl>
+                <FormHelperText fontSize="xs">
+                  Your Wallet Balance
+                </FormHelperText>
+                {userBalance >= 0 ? (
+                  <Text maxW="lg">{userBalance}</Text>
+                ) : (
+                  <Text maxW="lg">-</Text>
+                )}
+              </FormControl>
               <FormControl>
                 <FormHelperText fontSize="xs">
                   Your Deposit Balance
@@ -432,17 +501,11 @@ export default function Home({ _id = null }) {
                 ) : (
                   <Text maxW="lg">-</Text>
                 )}
-                <Button
-                  colorScheme="purple"
-                  w="100%"
-                  maxW="lg"
-                  // onClick={getBalance}
-                >
-                  Get user balance
-                </Button>
               </FormControl>
 
               <Flex paddingY={4}></Flex>
+
+              {/* <Flex paddingY={4}></Flex>
               <FormControl>
                 <FormHelperText fontSize="xs">Your VoteA Amount</FormHelperText>
                 {userBalanceVoteA >= 0 ? (
@@ -464,7 +527,7 @@ export default function Home({ _id = null }) {
                 >
                   Count my vote
                 </Button>
-              </FormControl>
+              </FormControl> */}
 
               <Flex paddingY={4}></Flex>
               <Flex
@@ -493,18 +556,8 @@ export default function Home({ _id = null }) {
               >
                 <Text fontWeight="bold">Conclude</Text>
               </Flex>
-            </Flex>
 
-            {/* Additional Info Section */}
-            <Flex
-              direction="column"
-              align="center"
-              padding={{ base: "4", md: "8" }}
-            >
-              <Text>TYPE: W1118</Text>
-              <Text>TEMPERATURE: 25°C</Text>
-              <Text>HUMIDITY: 70%</Text>
-              <Text>DOSAGE: 80UM</Text>
+              {/* Withdraw Rewards */}
             </Flex>
           </Flex>
         </Flex>
