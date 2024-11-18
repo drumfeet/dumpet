@@ -45,7 +45,7 @@ export async function getStaticProps({ params: { id } }) {
   return { props: { pid: await getID(id) } }
 }
 
-const DUMPET_TOKEN_TXID = "fzkhRptIvW3tJ7Dz7NFgt2DnZTJVKnwtzEOuURjfXrQ"
+const DUMPET_TOKEN_TXID = "QD3R6Qes15eQqIN_TK5s7ttawzAiX8ucYI2AUXnuS18"
 const DEFAULT_PRECISION = 12
 
 export default function Home({ _id = null }) {

@@ -1,11 +1,52 @@
-import { Button, ChakraProvider, Flex } from "@chakra-ui/react"
+import { Button, ChakraProvider, Flex, useToast } from "@chakra-ui/react"
 import { Link } from "arnext"
 import TelegramIcon from "./icons/TelegramIcon"
 import TwitterIcon from "./icons/TwitterIcon"
+import { useAppContext } from "@/context/AppContext"
+import { createDataItemSigner, message, result } from "@permaweb/aoconnect"
+
+const DUMPET_TOKEN_TXID = "QD3R6Qes15eQqIN_TK5s7ttawzAiX8ucYI2AUXnuS18"
 
 export default function SubHeader() {
+  const { connectWallet, handleMessageResultError } = useAppContext()
+  const toast = useToast()
+
   const airdrop = async () => {
-    console.log("airdrop")
+    const _connected = await connectWallet()
+    if (_connected.success === false) {
+      return
+    }
+
+    try {
+      const messageId = await message({
+        process: DUMPET_TOKEN_TXID,
+        tags: [
+          {
+            name: "Action",
+            value: "Airdrop",
+          },
+        ],
+        signer: createDataItemSigner(globalThis.arweaveWallet),
+      })
+      console.log("messageId", messageId)
+
+      const _result = await result({
+        message: messageId,
+        process: DUMPET_TOKEN_TXID,
+      })
+      console.log("_result", _result)
+      if (handleMessageResultError(_result)) return
+
+      toast({
+        description: "You received an airdrop",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+        position: "top",
+      })
+    } catch (error) {
+      console.error(error)
+    }
   }
   return (
     <ChakraProvider>

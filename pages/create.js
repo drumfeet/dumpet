@@ -23,6 +23,7 @@ import AppHeader from "@/components/AppHeader"
 import WalletIcon from "@/components/icons/WalletIcon"
 import UserIcon from "@/components/icons/UserIcon"
 
+const DUMPET_TOKEN_TXID = "QD3R6Qes15eQqIN_TK5s7ttawzAiX8ucYI2AUXnuS18"
 const MAIN_PROCESS_ID = "yC4kFwIGERjmLx5qSxEa0MX87sFuqRDFbWUqEedVOZo"
 
 export default function Home() {
@@ -38,9 +39,7 @@ export default function Home() {
     return `${year}-${month}-${day}T${hours}:${minutes}` // Format without seconds
   })
 
-  const [tokenTxId, setTokenTxId] = useState(
-    "fzkhRptIvW3tJ7Dz7NFgt2DnZTJVKnwtzEOuURjfXrQ"
-  )
+  const [tokenTxId, setTokenTxId] = useState(DUMPET_TOKEN_TXID)
   const [optionA, setOptionA] = useState("")
   const [optionB, setOptionB] = useState("")
   const [isPending, setIsPending] = useState(false)
