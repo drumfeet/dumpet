@@ -6,7 +6,7 @@ import { dryrun } from "@permaweb/aoconnect"
 import { Link } from "arnext"
 import { useEffect, useState } from "react"
 
-const MAIN_PROCESS_ID = "yC4kFwIGERjmLx5qSxEa0MX87sFuqRDFbWUqEedVOZo"
+const MAIN_PROCESS_ID = "jIRuxblllcBIDUmYbrbbEI90nJs40duNA6wR6NkYVvI"
 
 export default function Home() {
   const toast = useToast()

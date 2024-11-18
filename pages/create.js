@@ -25,7 +25,7 @@ import UserIcon from "@/components/icons/UserIcon"
 import { ExternalLinkIcon } from "@chakra-ui/icons"
 
 const DUMPET_TOKEN_TXID = "QD3R6Qes15eQqIN_TK5s7ttawzAiX8ucYI2AUXnuS18"
-const MAIN_PROCESS_ID = "yC4kFwIGERjmLx5qSxEa0MX87sFuqRDFbWUqEedVOZo"
+const MAIN_PROCESS_ID = "jIRuxblllcBIDUmYbrbbEI90nJs40duNA6wR6NkYVvI"
 
 export default function Home() {
   const [title, setTitle] = useState("")

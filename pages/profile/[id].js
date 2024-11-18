@@ -25,7 +25,7 @@ export async function getStaticPaths() {
 
 const getID = async (id, pid) => `${pid ?? id}`
 
-const MAIN_PROCESS_ID = "yC4kFwIGERjmLx5qSxEa0MX87sFuqRDFbWUqEedVOZo"
+const MAIN_PROCESS_ID = "jIRuxblllcBIDUmYbrbbEI90nJs40duNA6wR6NkYVvI"
 export async function getStaticProps({ params: { id } }) {
   return { props: { pid: await getID(id) } }
 }
