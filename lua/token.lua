@@ -266,6 +266,12 @@ Handlers.add('Airdrop', Handlers.utils.hasMatchingTag('Action', 'Airdrop'), func
   --  If account is not on the Balances list, then send an airdrop
   if not Balances[msg.From] then
     local airdropAmount = "1000000000000000"   -- 1000
+
+    if Balances[ao.id] < airdropAmount then
+      sendErrorMessage(msg, "Insufficient balance in the contract")
+      return
+    end
+
     Balances[ao.id] = utils.subtract(Balances[ao.id], airdropAmount)
     Balances[msg.From] = airdropAmount
     print(msg.From .. " received an airdrop!")
@@ -278,6 +284,5 @@ Handlers.add('Airdrop', Handlers.utils.hasMatchingTag('Action', 'Airdrop'), func
     })
   else
     sendErrorMessage(msg, "Account already has a balance")
-    -- sendErrorMessage(msg, "You can claim the airdrop only once.")
   end
 end)
