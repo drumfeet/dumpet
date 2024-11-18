@@ -655,10 +655,10 @@ Handlers.add("Conclude", Handlers.utils.hasMatchingTag("Action", "Conclude"), fu
         end
 
         -- TODO: uncomment this block
-        -- if timestamp < duration_num then
-        --     sendErrorMessage(msg, 'Market duration has not yet expired.')
-        --     return
-        -- end
+        if timestamp < duration_num then
+            sendErrorMessage(msg, 'Market duration has not yet expired.')
+            return
+        end
 
         -- Determine the winning side
         local winner, winnerBalances, winnerTotal
@@ -679,9 +679,17 @@ Handlers.add("Conclude", Handlers.utils.hasMatchingTag("Action", "Conclude"), fu
         end
 
         if utils.toNumber(winnerTotal) == 0 or utils.toNumber(loserTotal) == 0 then
-            -- TODO: disolve the market and return all funds to the voters Balances
-            -- MarketInfo.Concluded = true
-            sendErrorMessage(msg, 'Error in concluding: Total balance for reward calculation is zero.')
+            -- distribute back all funds to the voters balances
+            for voter, balance in pairs(winnerBalances) do
+                Balances[voter] = utils.add(Balances[voter] or "0", balance)
+            end
+
+            for voter, balance in pairs(loserBalances) do
+                Balances[voter] = utils.add(Balances[voter] or "0", balance)
+            end
+
+            sendErrorMessage(msg, 'Market concluded without a winner; funds have been returned to all participants.')
+            MarketInfo.Concluded = true
             return
         end
 
@@ -690,7 +698,9 @@ Handlers.add("Conclude", Handlers.utils.hasMatchingTag("Action", "Conclude"), fu
         for voter, balance in pairs(winnerBalances) do
             local proportion = utils.toNumber(balance) / utils.toNumber(winnerTotal)
             local reward = proportion * utils.toNumber(loserTotal)
+            -- add the reward to the voter's balances
             Balances[voter] = utils.add(Balances[voter] or "0", utils.toBalanceValue(reward))
+            -- return the voter's original vote balances
             Balances[voter] = utils.add(Balances[voter] or "0", balance)
         end
 
