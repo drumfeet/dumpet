@@ -36,7 +36,7 @@ export default function Home({ _id = null }) {
   const [pid, setPid] = useState(_id)
   const [isPending, setIsPending] = useState(false)
   const [userMarkets, setUserMarkets] = useState([])
-  const { handleMessageResultError } = useAppContext()
+  const { handleMessageResultError, connectWallet } = useAppContext()
 
   useEffect(() => {
     ;(async () => {
@@ -72,6 +72,47 @@ export default function Home({ _id = null }) {
           ? "You have a pending market creation"
           : "No pending market creation",
         status: "info",
+        duration: 2000,
+        isClosable: true,
+        position: "top",
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const resetWaitFor = async () => {
+    const _connected = await connectWallet()
+    if (_connected.success === false) {
+      return
+    }
+
+    try {
+      const messageId = await message({
+        process: MAIN_PROCESS_ID,
+        tags: [
+          {
+            name: "Action",
+            value: "ResetWaitFor",
+          },
+        ],
+        signer: createDataItemSigner(globalThis.arweaveWallet),
+      })
+      console.log("messageId", messageId)
+
+      const _result = await result({
+        message: messageId,
+        process: MAIN_PROCESS_ID,
+      })
+      console.log("_result", _result)
+      if (handleMessageResultError(_result)) return
+
+      const jsonData = _result?.Messages[0]?.Data
+      console.log("jsonData", jsonData)
+      await hasWaitFor()
+      toast({
+        description: jsonData,
+        status: "success",
         duration: 2000,
         isClosable: true,
         position: "top",
@@ -130,7 +171,16 @@ export default function Home({ _id = null }) {
             bg="#7023b6"
             onClick={hasWaitFor}
           >
-            Check My Pending Market
+            Check Pending Market
+          </Button>
+
+          <Button
+            width="100%"
+            colorScheme="purple"
+            bg="#7023b6"
+            onClick={resetWaitFor}
+          >
+            Reset Pending Market
           </Button>
 
           <Flex paddingY={8}></Flex>

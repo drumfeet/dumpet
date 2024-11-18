@@ -944,6 +944,16 @@ Handlers.add("HasWaitFor", Handlers.utils.hasMatchingTag("Action", "HasWaitFor")
     ao.send({ Target = msg.From, Data = _data })
 end)
 
+Handlers.add("ResetWaitFor", Handlers.utils.hasMatchingTag("Action", "ResetWaitFor"), function(msg)
+    if not isSenderWaiting(msg.From) then
+        sendErrorMessage(msg, 'You do not have a market in progress!')
+        return
+    end
+
+    WaitFor[msg.From] = nil
+    ao.send({ Target = msg.From, Data = "Reset pending market success!" })
+end)
+
 Handlers.add("Creators", Handlers.utils.hasMatchingTag("Action", "Creators"), function(msg)
     ao.send({ Target = msg.From, Data = json.encode(Creators) })
 end)

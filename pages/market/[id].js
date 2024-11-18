@@ -473,6 +473,13 @@ export default function Home({ _id = null }) {
 
       const jsonData = JSON.parse(_result?.Messages[0]?.Data)
       console.log("jsonData", jsonData)
+      toast({
+        description: jsonData.Message,
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+        position: "top",
+      })
     } catch (error) {
       console.error(error)
     }
