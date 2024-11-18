@@ -56,8 +56,8 @@ Variant = "0.0.3"
 
 -- token should be idempotent and not change previous state updates
 Denomination = Denomination or 12
-Balances = Balances or { [ao.id] = utils.toBalanceValue(21000000 * 10 ^ Denomination) }
-TotalSupply = TotalSupply or utils.toBalanceValue(21000000 * 10 ^ Denomination)
+Balances = Balances or { [ao.id] = utils.toBalanceValue(1000000 * 10 ^ Denomination) }
+TotalSupply = TotalSupply or utils.toBalanceValue(1000000 * 10 ^ Denomination)
 -- Name = Name or 'DUMPET'
 if Name ~= 'DUMPET' then Name = 'DUMPET' end
 Ticker = Ticker or 'DUMPET'
