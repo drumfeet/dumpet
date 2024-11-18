@@ -47,9 +47,11 @@ export default function AppHeader() {
           >
             <TwitterIcon strokeColor="#9F7AEA" size={18} />
           </Link> */}
-          <Button leftIcon={<StarIcon />} colorScheme="purple">
-            Create
-          </Button>
+          <Link target="_blank" rel="noopener noreferrer" href="/create">
+            <Button leftIcon={<StarIcon />} colorScheme="purple">
+              Create
+            </Button>
+          </Link>
 
           <Flex paddingX={[0, 2]}></Flex>
 
