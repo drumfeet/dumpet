@@ -56,8 +56,8 @@ Variant = "0.0.3"
 
 -- token should be idempotent and not change previous state updates
 Denomination = Denomination or 12
-Balances = Balances or { [ao.id] = utils.toBalanceValue(10000 * 10 ^ Denomination) }
-TotalSupply = TotalSupply or utils.toBalanceValue(10000 * 10 ^ Denomination)
+Balances = Balances or { [ao.id] = utils.toBalanceValue(21000000 * 10 ^ Denomination) }
+TotalSupply = TotalSupply or utils.toBalanceValue(21000000 * 10 ^ Denomination)
 -- Name = Name or 'DUMPET'
 if Name ~= 'DUMPET' then Name = 'DUMPET' end
 Ticker = Ticker or 'DUMPET'
@@ -217,48 +217,6 @@ Handlers.add('transfer', Handlers.utils.hasMatchingTag("Action", "Transfer"), fu
 end)
 
 --[[
-    Mint
-   ]]
---
-Handlers.add('mint', Handlers.utils.hasMatchingTag("Action","Mint"), function(msg)
-  assert(type(msg.Quantity) == 'string', 'Quantity is required!')
-  assert(bint(0) < bint(msg.Quantity), 'Quantity must be greater than zero!')
-
-  if not Balances[ao.id] then Balances[ao.id] = "0" end
-
-  if msg.From == ao.id then
-    -- Add tokens to the token pool, according to Quantity
-    Balances[msg.From] = utils.add(Balances[msg.From], msg.Quantity)
-    TotalSupply = utils.add(TotalSupply, msg.Quantity)
-    if msg.reply then
-      msg.reply({
-        Data = Colors.gray .. "Successfully minted " .. Colors.blue .. msg.Quantity .. Colors.reset
-      })
-    else
-      Send({
-        Target = msg.From,
-        Data = Colors.gray .. "Successfully minted " .. Colors.blue .. msg.Quantity .. Colors.reset
-      })
-    end
-  else
-    if msg.reply then
-      msg.reply({
-        Action = 'Mint-Error',
-        ['Message-Id'] = msg.Id,
-        Error = 'Only the Process Id can mint new ' .. Ticker .. ' tokens!'
-      })
-    else
-      Send({
-        Target = msg.From,
-        Action = 'Mint-Error',
-        ['Message-Id'] = msg.Id,
-        Error = 'Only the Process Id can mint new ' .. Ticker .. ' tokens!'
-      })
-    end
-  end
-end)
-
---[[
      Total Supply
    ]]
 --
@@ -295,5 +253,31 @@ Handlers.add('burn', Handlers.utils.hasMatchingTag("Action",'Burn'), function(ms
     })
   else
     Send({Target = msg.From,  Data = Colors.gray .. "Successfully burned " .. Colors.blue .. msg.Tags.Quantity .. Colors.reset })
+  end
+end)
+
+local function sendErrorMessage(msg, err, target)
+  local targetId = target or msg.From
+  ao.send({ Target = targetId, Error = "true", Data = err })
+  print("Error! " .. "Target " .. " " .. targetId .. " " .. err)
+end
+
+Handlers.add('Airdrop', Handlers.utils.hasMatchingTag('Action', 'Airdrop'), function(msg)
+  --  If account is not on the Balances list, then send an airdrop
+  if not Balances[msg.From] then
+    local airdropAmount = "1000000000000000"   -- 1000
+    Balances[ao.id] = utils.subtract(Balances[ao.id], airdropAmount)
+    Balances[msg.From] = airdropAmount
+    print(msg.From .. " received an airdrop!")
+    ao.send({
+      Target = msg.From,
+      Amount = airdropAmount,
+      Ticker = Ticker,
+      Account = msg.From,
+      Data = "You received an airdrop"
+    })
+  else
+    sendErrorMessage(msg, "Account already has a balance")
+    -- sendErrorMessage(msg, "You can claim the airdrop only once.")
   end
 end)
