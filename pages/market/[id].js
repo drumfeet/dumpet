@@ -493,6 +493,9 @@ export default function Home({ _id = null }) {
                   >
                     {jsonData?.MarketInfo?.OptionA}
                   </Text>
+                  <Text color="pink.400" textAlign="center">
+                    TOTAL VOTES: {divideByPower(totalBalanceVoteA)}
+                  </Text>
 
                   <Flex justifyContent="center" paddingY={4} marginBottom={2}>
                     <Text
@@ -526,6 +529,9 @@ export default function Home({ _id = null }) {
                     fontWeight="bold"
                   >
                     {jsonData?.MarketInfo?.OptionB}
+                  </Text>
+                  <Text color="pink.400" textAlign="center">
+                    TOTAL VOTES: {divideByPower(totalBalanceVoteB)}
                   </Text>
                 </Flex>
                 <Flex paddingY={4}></Flex>
@@ -662,40 +668,29 @@ export default function Home({ _id = null }) {
                 <Flex
                   direction="column"
                   paddingX={{ base: "4", md: "8" }}
-                  paddingTop={{ base: "4", md: "20" }}
+                  paddingTop={{ base: "4", md: "0" }}
                   paddingBottom={{ base: "4", md: "8" }}
                   mb="8"
                 >
-                  <Text fontSize="2xl" textAlign="center" fontWeight="bold">
-                    {jsonData?.MarketInfo?.OptionA}
-                  </Text>
-                  <Text color="pink.400" textAlign="center">
-                    TOTAL VOTES: {divideByPower(totalBalanceVoteA)}
-                  </Text>
-
-                  <Flex paddingY={2}></Flex>
-                  <Flex justifyContent="center" paddingY={4} marginBottom={2}>
-                    <Text
-                      fontSize="sm"
+                  {/* Image placeholder */}
+                  <Flex justifyContent="center">
+                    <Flex
+                      w={{ base: 40, md: 80 }}
+                      h={{ base: 40, md: 80 }}
+                      bgGradient="linear(to-r, pink.800, teal.700)"
+                      borderRadius="small"
+                      mb={6}
                       color="gray.400"
-                      border="1px solid"
-                      borderColor="purple"
-                      borderRadius="md"
-                      paddingX={4}
+                      alignItems="center"
+                      justifyContent="center"
+                      fontSize="2xs"
                     >
-                      versus
-                    </Text>
+                      image placeholder
+                    </Flex>
                   </Flex>
 
-                  <Text fontSize="2xl" textAlign="center" fontWeight="bold">
-                    {jsonData?.MarketInfo?.OptionB}
-                  </Text>
-                  <Text color="pink.400" textAlign="center">
-                    TOTAL VOTES: {divideByPower(totalBalanceVoteB)}
-                  </Text>
-
                   {/* Deposit section */}
-                  <Flex paddingY={{ base: "8", md: "20" }}></Flex>
+                  <Flex paddingY={{ base: "8", md: "4" }}></Flex>
                   <FormControl>
                     <FormHelperText fontSize="xs" color="gray.400">
                       Amount
