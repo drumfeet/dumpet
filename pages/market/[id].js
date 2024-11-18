@@ -407,6 +407,48 @@ export default function Home({ _id = null }) {
     }
   }
 
+  const cancelVote = async () => {
+    const _connected = await connectWallet()
+    if (_connected.success === false) {
+      return
+    }
+
+    try {
+      const messageId = await message({
+        process: pid,
+        tags: [{ name: "Action", value: "CancelVote" }],
+        signer: createDataItemSigner(globalThis.arweaveWallet),
+      })
+      console.log("messageId", messageId)
+
+      const _result = await result({
+        message: messageId,
+        process: pid, // market processId
+      })
+      console.log("_result", _result)
+      if (handleMessageResultError(_result)) return
+
+      const jsonData = JSON.parse(_result?.Messages[0]?.Data)
+      console.log("jsonData", jsonData)
+
+      setTotalBalanceVoteA(jsonData?.TotalBalanceVoteA)
+      setTotalBalanceVoteB(jsonData?.TotalBalanceVoteB)
+      setUserBalanceVoteA(0)
+      setUserBalanceVoteB(0)
+      setUserDepositBalance(Number(jsonData?.NewBalance))
+
+      toast({
+        description: "Cancel Vote success",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+        position: "top",
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   return (
     <ChakraProvider>
       <Flex
@@ -747,9 +789,7 @@ export default function Home({ _id = null }) {
                     borderRadius="md"
                     justifyContent="center"
                     paddingY={4}
-                    onClick={() => {
-                      console.log("Vote")
-                    }}
+                    onClick={cancelVote}
                   >
                     <Text fontWeight="bold">Cancel my votes</Text>
                   </Flex>
