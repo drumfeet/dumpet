@@ -11,10 +11,17 @@ import {
   Text,
   Box,
 } from "@chakra-ui/react"
-import { createDataItemSigner, message, result } from "@permaweb/aoconnect"
+import {
+  createDataItemSigner,
+  message,
+  result,
+  dryrun,
+} from "@permaweb/aoconnect"
 import { Link } from "arnext"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import AppHeader from "@/components/AppHeader"
+import WalletIcon from "@/components/icons/WalletIcon"
+import UserIcon from "@/components/icons/UserIcon"
 
 const MAIN_PROCESS_ID = "yC4kFwIGERjmLx5qSxEa0MX87sFuqRDFbWUqEedVOZo"
 
@@ -36,6 +43,7 @@ export default function Home() {
   )
   const [optionA, setOptionA] = useState("")
   const [optionB, setOptionB] = useState("")
+  const [isPending, setIsPending] = useState(false)
   const toast = useToast()
 
   const {
@@ -47,6 +55,38 @@ export default function Home() {
     setUserAddress,
     handleMessageResultError,
   } = useAppContext()
+
+  useEffect(() => {
+    ;(async () => {
+      if (isConnected) {
+        await hasWaitFor()
+      }
+    })()
+  }, [isConnected])
+
+  const hasWaitFor = async (pid = null) => {
+    if (pid === null) return
+
+    try {
+      const _result = await dryrun({
+        process: MAIN_PROCESS_ID,
+        tags: [
+          { name: "Action", value: "HasWaitFor" },
+          {
+            name: "ProfileId",
+            value: pid, // user wallet address
+          },
+        ],
+      })
+      console.log("hasWaitFor() _result", _result)
+      if (handleMessageResultError(_result)) return
+      const jsonData = JSON.parse(_result?.Messages[0]?.Data)
+      console.log("hasWaitFor() jsonData", jsonData)
+      setIsPending(jsonData.HasWaitFor)
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
   const createMarket = async () => {
     const _connected = await connectWallet()
@@ -100,11 +140,12 @@ export default function Home() {
 
       if (handleMessageResultError(_result)) return
 
+      await hasWaitFor(_connected.userAddress)
       toast({
         title: "Pending market creation",
         description: "View your profile to see the list of markets you created",
         status: "success",
-        duration: 4000,
+        duration: 5000,
         isClosable: true,
         position: "top",
       })
@@ -250,22 +291,46 @@ export default function Home() {
               Create
             </Button>
             <Flex paddingY={2}></Flex>
-            {isConnected &&
-              typeof userAddress === "string" &&
-              userAddress.length > 0 && (
+
+            {isConnected ? (
+              <>
+                {isPending && (
+                  <Text color="red.500">
+                    You have a pending market creation
+                  </Text>
+                )}
                 <Box width="100%">
                   <Link href={`/profile/${userAddress}`} passHref>
                     <Button
-                      as="a"
                       width="100%"
                       colorScheme="purple"
                       bg="#7023b6"
+                      rightIcon={<UserIcon />}
                     >
-                      View Profile
+                      View My Profile
                     </Button>
                   </Link>
                 </Box>
-              )}
+              </>
+            ) : (
+              <>
+                <Button
+                  rightIcon={<WalletIcon />}
+                  width="100%"
+                  colorScheme="purple"
+                  bg="#7023b6"
+                  onClick={async () => {
+                    await connectWallet()
+                  }}
+                >
+                  Connect Wallet
+                </Button>
+              </>
+            )}
+
+            {/* {isConnected &&
+              typeof userAddress === "string" &&
+              userAddress.length > 0 && <></>} */}
           </Flex>
 
           <Flex paddingY={8}></Flex>

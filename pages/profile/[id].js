@@ -61,7 +61,7 @@ export default function Home({ _id = null }) {
           { name: "Action", value: "HasWaitFor" },
           {
             name: "ProfileId",
-            value: pid,
+            value: pid, // user wallet address
           },
         ],
       })
@@ -69,7 +69,7 @@ export default function Home({ _id = null }) {
       setIsPending(jsonData.HasWaitFor)
       toast({
         description: jsonData.HasWaitFor
-          ? "Pending market creation"
+          ? "You have a pending market creation"
           : "No pending market creation",
         status: "info",
         duration: 2000,
@@ -130,7 +130,7 @@ export default function Home({ _id = null }) {
             bg="#7023b6"
             onClick={hasWaitFor}
           >
-            Check Pending Market
+            Check My Pending Market
           </Button>
 
           <Flex paddingY={8}></Flex>
