@@ -449,6 +449,68 @@ export default function Home({ _id = null }) {
     }
   }
 
+  const conclude = async () => {
+    const _connected = await connectWallet()
+    if (_connected.success === false) {
+      return
+    }
+
+    try {
+      console.log("conclude pid", pid)
+      const messageId = await message({
+        process: pid,
+        tags: [{ name: "Action", value: "Conclude" }],
+        signer: createDataItemSigner(globalThis.arweaveWallet),
+      })
+      console.log("messageId", messageId)
+
+      const _result = await result({
+        message: messageId,
+        process: pid,
+      })
+      console.log("_result", _result)
+      if (handleMessageResultError(_result)) return
+
+      const jsonData = JSON.parse(_result?.Messages[0]?.Data)
+      console.log("jsonData", jsonData)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const withdrawRewards = async () => {
+    const _connected = await connectWallet()
+    if (_connected.success === false) {
+      return
+    }
+
+    try {
+      const messageId = await message({
+        process: pid,
+        tags: [{ name: "Action", value: "WithdrawRewards" }],
+        signer: createDataItemSigner(globalThis.arweaveWallet),
+      })
+      console.log("messageId", messageId)
+
+      const _result = await result({
+        message: messageId,
+        process: pid,
+      })
+      console.log("_result", _result)
+      if (handleMessageResultError(_result)) return
+
+      toast({
+        description: "Withdraw AO success",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+        position: "top",
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   return (
     <ChakraProvider>
       <Flex
@@ -802,14 +864,28 @@ export default function Home({ _id = null }) {
                     borderRadius="md"
                     justifyContent="center"
                     paddingY={4}
-                    onClick={() => {
-                      console.log("Vote")
-                    }}
+                    onClick={conclude}
                   >
                     <Text fontWeight="bold">Conclude</Text>
                   </Flex>
 
-                  {/* Withdraw Rewards */}
+                  <Flex paddingY={4}></Flex>
+                  <FormControl>
+                    <FormHelperText fontSize="xs" color="gray.400">
+                      *Creator only
+                    </FormHelperText>
+                    <Flex
+                      cursor="pointer"
+                      // bg="#d53f8c"
+                      bg="#7023b6"
+                      borderRadius="md"
+                      justifyContent="center"
+                      paddingY={4}
+                      onClick={withdrawRewards}
+                    >
+                      <Text fontWeight="bold">Withdraw AO</Text>
+                    </Flex>
+                  </FormControl>
                 </Flex>
               </Flex>
             </>
