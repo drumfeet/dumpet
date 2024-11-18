@@ -1,8 +1,18 @@
-import { ChakraProvider, Divider, Flex, Text } from "@chakra-ui/react"
+import { Button, ChakraProvider, Divider, Flex, Text } from "@chakra-ui/react"
 import { Link } from "arnext"
 import TelegramIcon from "./icons/TelegramIcon"
 import TwitterIcon from "./icons/TwitterIcon"
 import LoginModal from "./LoginModal"
+import {
+  AddIcon,
+  InfoOutlineIcon,
+  PlusSquareIcon,
+  SmallAddIcon,
+  StarIcon,
+  ViewIcon,
+} from "@chakra-ui/icons"
+import AirdropIcon from "./icons/AirdropIcon"
+import SubHeader from "./SubHeader"
 
 export default function AppHeader() {
   return (
@@ -22,7 +32,7 @@ export default function AppHeader() {
           </Text>
         </Link>
         <Flex gap={4} alignItems="center">
-          <Link
+          {/* <Link
             target="_blank"
             rel="noopener noreferrer"
             href="https://t.me/dumpetdotfun"
@@ -36,7 +46,10 @@ export default function AppHeader() {
             href="https://x.com/dumpetdotfun"
           >
             <TwitterIcon strokeColor="#9F7AEA" size={18} />
-          </Link>
+          </Link> */}
+          <Button leftIcon={<StarIcon />} colorScheme="purple">
+            Create
+          </Button>
 
           <Flex paddingX={[0, 2]}></Flex>
 
@@ -44,7 +57,7 @@ export default function AppHeader() {
         </Flex>
       </Flex>
       <Divider borderColor="purple.400" />
-      <Flex paddingY={8}></Flex>
+      {/* <Flex paddingY={8}></Flex> */}
     </ChakraProvider>
   )
 }

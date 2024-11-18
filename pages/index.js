@@ -1,4 +1,5 @@
 import AppHeader from "@/components/AppHeader"
+import SubHeader from "@/components/SubHeader"
 import { useAppContext } from "@/context/AppContext"
 import { Button, ChakraProvider, Flex, useToast, Text } from "@chakra-ui/react"
 import { dryrun } from "@permaweb/aoconnect"
@@ -90,6 +91,8 @@ export default function Home() {
         color="white"
       >
         <AppHeader />
+        <SubHeader />
+        <Flex paddingY={8}></Flex>
 
         <Link target="_blank" rel="noopener noreferrer" href="/create">
           <Flex

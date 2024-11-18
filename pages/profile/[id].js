@@ -152,6 +152,7 @@ export default function Home({ _id = null }) {
         color="white"
       >
         <AppHeader />
+        <Flex paddingY={8}></Flex>
 
         <Flex
           flexDirection="column"

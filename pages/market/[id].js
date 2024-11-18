@@ -530,6 +530,7 @@ export default function Home({ _id = null }) {
         flex={1}
       >
         <AppHeader />
+        <Flex paddingY={8}></Flex>
         <Flex
           direction={{ base: "column", md: "row" }}
           flex={1}
