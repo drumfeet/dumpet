@@ -188,7 +188,7 @@ export default function Home({ _id = null }) {
           {userMarkets?.length > 0 ? (
             <Flex direction="column" width="100%" maxW="lg">
               <Text fontSize="xs" color="gray.400" paddingBottom={2}>
-                MARKET TX ID
+                MARKET PROCESS ID
               </Text>
               {userMarkets.map((record, index) => (
                 <Flex
