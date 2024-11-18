@@ -22,6 +22,7 @@ import { useEffect, useState } from "react"
 import AppHeader from "@/components/AppHeader"
 import WalletIcon from "@/components/icons/WalletIcon"
 import UserIcon from "@/components/icons/UserIcon"
+import { ExternalLinkIcon } from "@chakra-ui/icons"
 
 const DUMPET_TOKEN_TXID = "QD3R6Qes15eQqIN_TK5s7ttawzAiX8ucYI2AUXnuS18"
 const MAIN_PROCESS_ID = "yC4kFwIGERjmLx5qSxEa0MX87sFuqRDFbWUqEedVOZo"
@@ -229,7 +230,17 @@ export default function Home() {
               />
             </FormControl>
             <FormControl>
-              <FormHelperText fontSize="xs">Token TxId</FormHelperText>
+              <Flex gap={2} alignItems="center">
+                <FormHelperText fontSize="xs">Token ProcessId</FormHelperText>
+                <Link
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href={`https://www.ao.link/#/token/${tokenTxId}`}
+                >
+                  <ExternalLinkIcon boxSize={4} color="gray.400" />
+                </Link>
+              </Flex>
+
               <Input
                 placeholder="Token txid"
                 value={tokenTxId}
