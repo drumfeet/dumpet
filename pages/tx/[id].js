@@ -15,6 +15,12 @@ import {
   useToast,
   Text,
   Divider,
+  Tabs,
+  TabList,
+  Tab,
+  TabPanels,
+  TabPanel,
+  Box,
 } from "@chakra-ui/react"
 import AppHeader from "@/components/AppHeader"
 import { useAppContext } from "@/context/AppContext"
@@ -195,39 +201,60 @@ export default function Home({ _id = null }) {
           </Button>
 
           <Flex paddingY={8}></Flex>
-          {userMarkets?.length > 0 ? (
-            <Flex direction="column" width="100%" maxW="lg">
-              <Text fontSize="xs" color="gray.400" paddingBottom={2}>
-                MARKET PROCESS ID
-              </Text>
-              {userMarkets.map((record, index) => (
-                <Flex
-                  key={index}
-                  align="center"
-                  justify="space-between"
-                  py={2}
-                  px={4}
-                  bg="#1a1a2e"
-                  _hover={{ bg: "#3e3e5e" }}
-                >
-                  <Text
-                    as="a"
-                    href={`/market/${record}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    color="whiteAlpha.800"
-                    textDecoration="underline"
-                    _hover={{ cursor: "pointer" }}
-                    textUnderlineOffset={5}
-                  >
-                    {record}
-                  </Text>
-                </Flex>
-              ))}
-            </Flex>
-          ) : (
-            <Text color="#7023b6">No market found</Text>
-          )}
+
+          <Tabs
+            isFitted
+            //  variant="solid-rounded"
+            colorScheme="purple"
+            variant="line"
+            w="100%"
+          >
+            <TabList colorScheme="purple">
+              <Tab>Created</Tab>
+              <Tab>Transacted</Tab>
+            </TabList>
+            <TabPanels>
+              <TabPanel>
+                {userMarkets?.length > 0 ? (
+                  <Flex direction="column" width="100%" maxW="lg">
+                    <Text fontSize="xs" color="gray.400" paddingBottom={2}>
+                      MARKET PROCESS ID
+                    </Text>
+                    {userMarkets.map((record, index) => (
+                      <Flex
+                        key={index}
+                        align="center"
+                        justify="space-between"
+                        py={2}
+                        px={4}
+                        bg="#1a1a2e"
+                        _hover={{ bg: "#3e3e5e" }}
+                      >
+                        <Text
+                          isTruncated
+                          as="a"
+                          href={`/market/${record}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          color="whiteAlpha.800"
+                          textDecoration="underline"
+                          _hover={{ cursor: "pointer" }}
+                          textUnderlineOffset={5}
+                        >
+                          {record}
+                        </Text>
+                      </Flex>
+                    ))}
+                  </Flex>
+                ) : (
+                  <Text color="#7023b6">No market found</Text>
+                )}
+              </TabPanel>
+              <TabPanel>
+                <p>two!</p>
+              </TabPanel>
+            </TabPanels>
+          </Tabs>
         </Flex>
 
         <Flex paddingY={8}></Flex>
