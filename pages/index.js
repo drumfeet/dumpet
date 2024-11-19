@@ -56,9 +56,10 @@ export default function Home() {
         tags: [{ name: "Action", value: "RandomMarket" }],
       })
       console.log(_result?.Messages[0])
+      console.log("fetchRandomMarket _result", _result)
       if (handleMessageResultError(_result)) return
       const jsonData = JSON.parse(_result?.Messages[0]?.Data)
-      console.log("jsonData", jsonData)
+      console.log("fetchRandomMarket jsonData", jsonData)
       setRandomMarket(jsonData)
     } catch (error) {
       console.error(error)
@@ -94,7 +95,10 @@ export default function Home() {
         <SubHeader />
         <Flex paddingY={8}></Flex>
 
-        <Link target="_blank" rel="noopener noreferrer" href="/create">
+        <Link
+          // target="_blank" rel="noopener noreferrer"
+          href="/create"
+        >
           <Flex
             w="100%"
             maxW="800px"
