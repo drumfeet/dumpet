@@ -69,13 +69,16 @@ Handlers.add("Users", Handlers.utils.hasMatchingTag("Action", "Users"), function
 end)
 
 Handlers.add("User", Handlers.utils.hasMatchingTag("Action", "User"), function(msg)
-    if (msg.Tags.ProfileId) then
-        if (Users[msg.Tags.ProfileId]) then
-            Send({ Target = msg.From, Data = json.encode(Users[msg.Tags.ProfileId]) })
-        end
-    elseif msg.Tags.Target and Users[msg.Tags.Target] then
-        Send({ Target = msg.From, Data = json.encode(Users[msg.Tags.Target]) })
-    elseif Users[msg.From] then
-        Send({ Target = msg.From, Data = json.encode(Users[msg.Tags.From]) })
+    if type(msg.Tags.ProfileId) ~= 'string' or msg.Tags.ProfileId:match("^%s*$") then
+        sendErrorMessage(msg, 'ProfileId is required and must be a non-empty string!')
+        return
     end
+
+    local markets = Users[msg.Tags.ProfileId] or {}
+    local _data = json.encode({
+        Target = msg.From,
+        ProfileId = msg.Tags.ProfileId,
+        Markets = markets
+    })
+    ao.send({ Target = msg.From, Data = _data })
 end)
