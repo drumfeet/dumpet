@@ -129,10 +129,17 @@ export default function Home() {
               borderRadius="md"
               textAlign="center"
             >
-              <Text fontSize="md" fontWeight="bold" color="purple.300">
+              <Text
+                fontSize="md"
+                fontWeight="bold"
+                color="purple.300"
+                isTruncated
+              >
                 {randomMarket?.Title}
               </Text>
-              <Text fontSize="sm">{randomMarket?.OptionA}</Text>
+              <Text fontSize="sm" isTruncated>
+                {randomMarket?.OptionA}
+              </Text>
               <Flex justifyContent="center">
                 <Text
                   fontSize="sm"
@@ -145,7 +152,9 @@ export default function Home() {
                   versus
                 </Text>
               </Flex>
-              <Text fontSize="sm">{randomMarket?.OptionB}</Text>
+              <Text fontSize="sm" isTruncated>
+                {randomMarket?.OptionB}
+              </Text>
               <Flex flexDirection="column">
                 <Text fontSize="xs" color="gray.400">
                   Expires on:
@@ -193,10 +202,17 @@ export default function Home() {
                     borderRadius="md"
                     textAlign="center"
                   >
-                    <Text fontSize="md" fontWeight="bold" color="purple.300">
+                    <Text
+                      fontSize="md"
+                      fontWeight="bold"
+                      color="purple.300"
+                      isTruncated
+                    >
                       {market.Title}
                     </Text>
-                    <Text fontSize="sm">{market.OptionA}</Text>
+                    <Text fontSize="sm" isTruncated>
+                      {market.OptionA}
+                    </Text>
                     <Flex justifyContent="center">
                       <Text
                         fontSize="sm"
@@ -209,7 +225,9 @@ export default function Home() {
                         versus
                       </Text>
                     </Flex>
-                    <Text fontSize="sm">{market.OptionB}</Text>
+                    <Text fontSize="sm" isTruncated>
+                      {market.OptionB}
+                    </Text>
                     <Flex flexDirection="column">
                       <Text fontSize="xs" color="gray.400">
                         Expires on:
