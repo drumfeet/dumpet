@@ -15,6 +15,12 @@ import {
   useToast,
   Text,
   Divider,
+  Tabs,
+  TabList,
+  Tab,
+  TabPanels,
+  TabPanel,
+  Box,
 } from "@chakra-ui/react"
 import AppHeader from "@/components/AppHeader"
 import { useAppContext } from "@/context/AppContext"
@@ -26,6 +32,7 @@ export async function getStaticPaths() {
 const getID = async (id, pid) => `${pid ?? id}`
 
 const MAIN_PROCESS_ID = "jIRuxblllcBIDUmYbrbbEI90nJs40duNA6wR6NkYVvI"
+const USERTX_PROCESS_ID = "566F7MCrrBhr87n7Hs5JKyEQeRlAT9A14G4OWxfS4kQ"
 export async function getStaticProps({ params: { id } }) {
   return { props: { pid: await getID(id) } }
 }
@@ -36,6 +43,7 @@ export default function Home({ _id = null }) {
   const [pid, setPid] = useState(_id)
   const [isPending, setIsPending] = useState(false)
   const [userMarkets, setUserMarkets] = useState([])
+  const [userTransactions, setUserTransactions] = useState([])
   const { handleMessageResultError, connectWallet } = useAppContext()
 
   useEffect(() => {
@@ -49,6 +57,7 @@ export default function Home({ _id = null }) {
       ;(async () => {
         await hasWaitFor()
         await fetchMarkets()
+        await fetchUser()
       })()
     }
   }, [pid])
@@ -135,7 +144,29 @@ export default function Home({ _id = null }) {
         ],
       })
       const jsonData = JSON.parse(_result?.Messages[0]?.Data)
+      console.log("fetchMarkets jsonData", jsonData)
       setUserMarkets(jsonData.Markets)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const fetchUser = async () => {
+    try {
+      const _result = await dryrun({
+        process: USERTX_PROCESS_ID,
+        tags: [
+          { name: "Action", value: "User" },
+          {
+            name: "ProfileId",
+            value: pid,
+          },
+        ],
+      })
+      // console.log("_result", _result)
+      const jsonData = JSON.parse(_result?.Messages[0]?.Data)
+      console.log("fetchUser jsonData", jsonData)
+      setUserTransactions(jsonData?.Markets)
     } catch (error) {
       console.error(error)
     }
@@ -195,39 +226,87 @@ export default function Home({ _id = null }) {
           </Button>
 
           <Flex paddingY={8}></Flex>
-          {userMarkets?.length > 0 ? (
-            <Flex direction="column" width="100%" maxW="lg">
-              <Text fontSize="xs" color="gray.400" paddingBottom={2}>
-                MARKET PROCESS ID
-              </Text>
-              {userMarkets.map((record, index) => (
-                <Flex
-                  key={index}
-                  align="center"
-                  justify="space-between"
-                  py={2}
-                  px={4}
-                  bg="#1a1a2e"
-                  _hover={{ bg: "#3e3e5e" }}
-                >
-                  <Text
-                    as="a"
-                    href={`/market/${record}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    color="whiteAlpha.800"
-                    textDecoration="underline"
-                    _hover={{ cursor: "pointer" }}
-                    textUnderlineOffset={5}
-                  >
-                    {record}
-                  </Text>
-                </Flex>
-              ))}
-            </Flex>
-          ) : (
-            <Text color="#7023b6">No market found</Text>
-          )}
+
+          <Tabs isFitted colorScheme="purple" variant="line" w="100%">
+            <TabList>
+              <Tab>Created</Tab>
+              <Tab>Transacted</Tab>
+            </TabList>
+            <TabPanels>
+              <TabPanel>
+                {userMarkets?.length > 0 ? (
+                  <Flex direction="column" width="100%" maxW="lg">
+                    <Text fontSize="xs" color="gray.400" paddingBottom={2}>
+                      MARKET PROCESS ID
+                    </Text>
+                    {userMarkets.map((record, index) => (
+                      <Flex
+                        key={index}
+                        align="center"
+                        justify="space-between"
+                        py={2}
+                        px={4}
+                        bg="#1a1a2e"
+                        _hover={{ bg: "#3e3e5e" }}
+                      >
+                        <Text
+                          isTruncated
+                          as="a"
+                          href={`/market/${record}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          color="whiteAlpha.800"
+                          textDecoration="underline"
+                          _hover={{ cursor: "pointer" }}
+                          textUnderlineOffset={5}
+                        >
+                          {record}
+                        </Text>
+                      </Flex>
+                    ))}
+                  </Flex>
+                ) : (
+                  <Text color="#7023b6">No market found</Text>
+                )}
+              </TabPanel>
+              <TabPanel>
+                {userTransactions?.length > 0 ? (
+                  <Flex direction="column" width="100%" maxW="lg">
+                    <Text fontSize="xs" color="gray.400" paddingBottom={2}>
+                      MARKET PROCESS ID
+                    </Text>
+                    {userTransactions?.map((record, index) => (
+                      <Flex
+                        key={index}
+                        align="center"
+                        justify="space-between"
+                        py={2}
+                        px={4}
+                        bg="#1a1a2e"
+                        _hover={{ bg: "#3e3e5e" }}
+                      >
+                        <Text
+                          isTruncated
+                          as="a"
+                          href={`/market/${record.MarketProcessId}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          color="whiteAlpha.800"
+                          textDecoration="underline"
+                          _hover={{ cursor: "pointer" }}
+                          textUnderlineOffset={5}
+                        >
+                          {record.Title}
+                        </Text>
+                      </Flex>
+                    ))}
+                  </Flex>
+                ) : (
+                  <Text color="#7023b6">No transaction found</Text>
+                )}
+              </TabPanel>
+            </TabPanels>
+          </Tabs>
         </Flex>
 
         <Flex paddingY={8}></Flex>
