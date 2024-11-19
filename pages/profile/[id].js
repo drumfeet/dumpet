@@ -132,6 +132,7 @@ export default function Home({ _id = null }) {
   }
 
   const fetchMarkets = async () => {
+    console.log("fetchMarkets")
     try {
       const _result = await dryrun({
         process: MAIN_PROCESS_ID,
@@ -152,6 +153,7 @@ export default function Home({ _id = null }) {
   }
 
   const fetchUser = async () => {
+    console.log("fetchUser")
     try {
       const _result = await dryrun({
         process: USERTX_PROCESS_ID,
@@ -226,7 +228,19 @@ export default function Home({ _id = null }) {
 
           <Flex paddingY={8}></Flex>
 
-          <Tabs isFitted colorScheme="purple" variant="line" w="100%">
+          <Tabs
+            isFitted
+            colorScheme="purple"
+            variant="line"
+            w="100%"
+            onChange={async (index) => {
+              if (index === 0) {
+                await fetchMarkets()
+              } else if (index === 1) {
+                await fetchUser()
+              }
+            }}
+          >
             <TabList>
               <Tab>Created</Tab>
               <Tab>Transacted</Tab>
