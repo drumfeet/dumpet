@@ -145,7 +145,7 @@ export default function Home({ _id = null }) {
       })
       const jsonData = JSON.parse(_result?.Messages[0]?.Data)
       console.log("fetchMarkets jsonData", jsonData)
-      setUserMarkets(jsonData.Markets)
+      setUserMarkets(jsonData?.Markets)
     } catch (error) {
       console.error(error)
     }
@@ -163,7 +163,6 @@ export default function Home({ _id = null }) {
           },
         ],
       })
-      // console.log("_result", _result)
       const jsonData = JSON.parse(_result?.Messages[0]?.Data)
       console.log("fetchUser jsonData", jsonData)
       setUserTransactions(jsonData?.Markets)
@@ -252,7 +251,7 @@ export default function Home({ _id = null }) {
                         <Text
                           isTruncated
                           as="a"
-                          href={`/market/${record}`}
+                          href={`/market/${record?.MarketProcessId}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           color="whiteAlpha.800"
@@ -260,7 +259,7 @@ export default function Home({ _id = null }) {
                           _hover={{ cursor: "pointer" }}
                           textUnderlineOffset={5}
                         >
-                          {record}
+                          {record?.Title}
                         </Text>
                       </Flex>
                     ))}

@@ -851,7 +851,11 @@ end)
         -- Add childProcessId to the creator's list in Creators table
         Creators[msg.From] = Creators[msg.From] or {}
         -- Creators[msg.From][#Creators[msg.From] + 1] = childProcessId
-        table.insert(Creators[msg.From], childProcessId)
+        -- insertion at the beginning of the array table
+        table.insert(Creators[msg.From], 1, {
+            Title = marketInfo.Title,
+            MarketProcessId = childProcessId,
+        })
         printData("Creators[msg.From] Created: ", Creators[msg.From])
 
         ao.send({ Target = msg.From, Data = "Market Created!" })
