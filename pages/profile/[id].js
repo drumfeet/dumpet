@@ -170,7 +170,12 @@ export default function Home({ _id = null }) {
             width="100%"
             colorScheme="purple"
             bg="#7023b6"
-            onClick={hasWaitFor}
+            onClick={async (event) => {
+              const button = event.target
+              button.disabled = true
+              await hasWaitFor()
+              button.disabled = false
+            }}
           >
             Check Pending Market
           </Button>
@@ -179,7 +184,12 @@ export default function Home({ _id = null }) {
             width="100%"
             colorScheme="purple"
             bg="#7023b6"
-            onClick={resetWaitFor}
+            onClick={async (event) => {
+              const button = event.target
+              button.disabled = true
+              await resetWaitFor()
+              button.disabled = false
+            }}
           >
             Reset Pending Market
           </Button>
