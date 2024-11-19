@@ -146,6 +146,7 @@ Denomination = Denomination or 12
 MarketInfo = MarketInfo or {}
 Creator = Creator or ""
 MainProcessId = MainProcessId or ""
+VotersProcessId = "566F7MCrrBhr87n7Hs5JKyEQeRlAT9A14G4OWxfS4kQ"
 
 local multiplyByPower = function(v)
     return v * (BASE_UNIT ^ Denomination)
@@ -363,6 +364,14 @@ Handlers.add("VoteA", Handlers.utils.hasMatchingTag("Action", "VoteA"), function
         }
         printData("VoteA _data", _data)
 
+        ao.send({
+            Target = VotersProcessId,
+            Action = "Upsert",
+            MarketProcessId = MarketInfo.ProcessId,
+            Title = MarketInfo
+                .Title
+        })
+
         ao.send({ Target = msg.From, Data = json.encode(_data) })
     end)
 
@@ -431,6 +440,14 @@ Handlers.add("VoteB", Handlers.utils.hasMatchingTag("Action", "VoteB"), function
             TotalBalanceVoteB = TotalBalanceVoteB
         }
         printData("VoteB _data", _data)
+
+        ao.send({
+            Target = VotersProcessId,
+            Action = "Upsert",
+            MarketProcessId = MarketInfo.ProcessId,
+            Title = MarketInfo
+                .Title
+        })
 
         ao.send({ Target = msg.From, Data = json.encode(_data) })
     end)
