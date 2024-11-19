@@ -588,16 +588,22 @@ export default function Home({ _id = null }) {
                   <Text fontSize="xs" color="gray.400">
                     Your Total VoteA: {divideByPower(userBalanceVoteA)}
                   </Text>
-                  <Flex
+                  <Button
                     cursor="pointer"
-                    bg="#7023b6"
+                    colorScheme="purple"
+                    // bg="#7023b6"
                     borderRadius="md"
                     justifyContent="center"
-                    paddingY={4}
-                    onClick={voteA}
+                    paddingY={8}
+                    onClick={async (event) => {
+                      const button = event.target
+                      button.disabled = true
+                      await voteA()
+                      button.disabled = false
+                    }}
                   >
                     <Text fontWeight="bold">Vote</Text>
-                  </Flex>
+                  </Button>
                   <Text
                     fontSize={{ base: "lg", md: "2xl" }}
                     textAlign="center"
@@ -624,16 +630,22 @@ export default function Home({ _id = null }) {
                   <Text fontSize="xs" color="gray.400">
                     Your Total VoteB: {divideByPower(userBalanceVoteB)}
                   </Text>
-                  <Flex
+                  <Button
                     cursor="pointer"
-                    bg="#7023b6"
+                    colorScheme="purple"
+                    // bg="#7023b6"
                     borderRadius="md"
                     justifyContent="center"
-                    paddingY={4}
-                    onClick={voteB}
+                    paddingY={8}
+                    onClick={async (event) => {
+                      const button = event.target
+                      button.disabled = true
+                      await voteB()
+                      button.disabled = false
+                    }}
                   >
                     <Text fontWeight="bold">Vote</Text>
-                  </Flex>
+                  </Button>
 
                   <Text
                     fontSize={{ base: "lg", md: "2xl" }}
@@ -834,10 +846,28 @@ export default function Home({ _id = null }) {
                       </NumberInputStepper>
                     </NumberInput>
                   </FormControl>
-                  <Button marginTop="4" colorScheme="purple" onClick={deposit}>
+                  <Button
+                    marginTop="4"
+                    colorScheme="purple"
+                    onClick={async (event) => {
+                      const button = event.target
+                      button.disabled = true
+                      await deposit()
+                      button.disabled = false
+                    }}
+                  >
                     Deposit
                   </Button>
-                  <Button marginTop="4" colorScheme="purple" onClick={withdraw}>
+                  <Button
+                    marginTop="4"
+                    colorScheme="purple"
+                    onClick={async (event) => {
+                      const button = event.target
+                      button.disabled = true
+                      await withdraw()
+                      button.disabled = false
+                    }}
+                  >
                     Withdraw
                   </Button>
 
@@ -853,46 +883,65 @@ export default function Home({ _id = null }) {
                   <Flex paddingY={4}></Flex>
 
                   <Flex paddingY={4}></Flex>
-                  <Flex
+                  <Button
                     cursor="pointer"
-                    bg="#7023b6"
+                    colorScheme="purple"
+                    // bg="#7023b6"
                     borderRadius="md"
                     justifyContent="center"
-                    paddingY={4}
-                    onClick={cancelVote}
+                    paddingY={8}
+                    onClick={async (event) => {
+                      const button = event.target
+                      button.disabled = true
+                      await cancelVote()
+                      button.disabled = false
+                    }}
                   >
                     <Text fontWeight="bold">Cancel my votes</Text>
-                  </Flex>
+                  </Button>
 
                   <Flex paddingY={4}></Flex>
-                  <Flex
+                  <Button
                     cursor="pointer"
+                    colorScheme="purple"
                     // bg="#d53f8c"
-                    bg="#7023b6"
+                    // bg="#7023b6"
                     borderRadius="md"
                     justifyContent="center"
-                    paddingY={4}
-                    onClick={conclude}
+                    paddingY={8}
+                    onClick={async (event) => {
+                      const button = event.target
+                      button.disabled = true
+                      await conclude()
+                      button.disabled = false
+                    }}
                   >
                     <Text fontWeight="bold">Conclude</Text>
-                  </Flex>
+                  </Button>
 
                   <Flex paddingY={4}></Flex>
                   <FormControl>
                     <FormHelperText fontSize="xs" color="gray.400">
                       *Creator only
                     </FormHelperText>
-                    <Flex
+                    <Button
+                      w="100%"
                       cursor="pointer"
+                      colorScheme="purple"
                       // bg="#d53f8c"
-                      bg="#7023b6"
+                      // bg="#7023b6"
                       borderRadius="md"
                       justifyContent="center"
-                      paddingY={4}
-                      onClick={withdrawRewards}
+                      paddingY={8}
+                      onClick={async (event) => {
+                        const button = event.target
+                        button.disabled = true
+                        await withdrawRewards()
+                        button.disabled = false
+                      }}
                     >
                       <Text fontWeight="bold">Withdraw AO</Text>
-                    </Flex>
+                    </Button>
                   </FormControl>
                 </Flex>
               </Flex>
