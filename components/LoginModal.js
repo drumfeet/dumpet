@@ -62,6 +62,7 @@ const LoginModal = () => {
         <ModalContent bg="#1a2c38" color="gray.200">
           <ModalHeader>
             <Flex justifyContent="center" alignItems="center" gap={2}>
+              <WalletIcon strokeColor="#ffffff" size={24} />
               Wallet Connected
             </Flex>
           </ModalHeader>
@@ -87,13 +88,18 @@ const LoginModal = () => {
                 rel="noopener noreferrer"
                 href={`/profile/${userAddress}`}
               >
-                <Button bg="#213743" color="white" _hover={{ bg: "#213743" }}>
+                <Button
+                  leftIcon={<UserIcon strokeColor="#ffffff" size={24} />}
+                  variant="outline"
+                  color="white"
+                  _hover={{ bg: "#213743" }}
+                >
                   Profile
                 </Button>
               </Link>
 
               <Button
-                bg="#213743"
+                variant="ghost"
                 color="white"
                 _hover={{ bg: "#213743" }}
                 onClick={async () => {
