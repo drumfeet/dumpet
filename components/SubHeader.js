@@ -4,6 +4,7 @@ import TelegramIcon from "./icons/TelegramIcon"
 import TwitterIcon from "./icons/TwitterIcon"
 import { useAppContext } from "@/context/AppContext"
 import { createDataItemSigner, message, result } from "@permaweb/aoconnect"
+import TrophyIcon from "./icons/TrophyIcon"
 
 const DUMPET_TOKEN_TXID = "QD3R6Qes15eQqIN_TK5s7ttawzAiX8ucYI2AUXnuS18"
 
@@ -72,6 +73,14 @@ export default function SubHeader() {
           <Button variant="link" colorScheme="purple" onClick={airdrop}>
             Airdrop
           </Button>
+
+          <Link
+            target="_blank"
+            rel="noopener noreferrer"
+            href="/leaderboard"
+          >
+            <TrophyIcon strokeColor="#9F7AEA" size={18} />
+          </Link>
 
           <Link
             target="_blank"
