@@ -364,14 +364,6 @@ Handlers.add("VoteA", Handlers.utils.hasMatchingTag("Action", "VoteA"), function
         }
         printData("VoteA _data", _data)
 
-        ao.send({
-            Target = VotersProcessId,
-            Action = "Upsert",
-            MarketProcessId = MarketInfo.ProcessId,
-            Title = MarketInfo
-                .Title
-        })
-
         ao.send({ Target = msg.From, Data = json.encode(_data) })
     end)
 
@@ -440,14 +432,6 @@ Handlers.add("VoteB", Handlers.utils.hasMatchingTag("Action", "VoteB"), function
             TotalBalanceVoteB = TotalBalanceVoteB
         }
         printData("VoteB _data", _data)
-
-        ao.send({
-            Target = VotersProcessId,
-            Action = "Upsert",
-            MarketProcessId = MarketInfo.ProcessId,
-            Title = MarketInfo
-                .Title
-        })
 
         ao.send({ Target = msg.From, Data = json.encode(_data) })
     end)
@@ -751,6 +735,15 @@ Handlers.add("Credit-Notice", Handlers.utils.hasMatchingTag("Action", "Credit-No
         sendErrorMessage(msg, '', msg.Tags.Sender)
         return
     end
+
+    ao.send({
+        Target = VotersProcessId,
+        Action = "Upsert",
+        ProfileId = msg.Tags.Sender,
+        MarketProcessId = MarketInfo.ProcessId,
+        Title = MarketInfo
+            .Title
+    })
 
     if msg.From == MarketInfo.TokenTxId then
         -- if Sender is the process itself
