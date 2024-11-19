@@ -22,6 +22,11 @@ import {
   VStack,
   Stack,
   Spinner,
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionIcon,
+  AccordionPanel,
 } from "@chakra-ui/react"
 import {
   createDataItemSigner,
@@ -33,7 +38,7 @@ import {
 } from "@permaweb/aoconnect"
 import AppHeader from "@/components/AppHeader"
 import { useAppContext } from "@/context/AppContext"
-import { ExternalLinkIcon } from "@chakra-ui/icons"
+import { ExternalLinkIcon, UpDownIcon } from "@chakra-ui/icons"
 
 export async function getStaticPaths() {
   return { paths: [], fallback: "blocking" }
@@ -659,125 +664,154 @@ export default function Home({ _id = null }) {
                   </Text>
                 </Flex>
                 <Flex paddingY={4}></Flex>
-                <FormControl>
-                  <FormHelperText fontSize="xs">Title</FormHelperText>
-                  <Text maxW="lg" color="whiteAlpha.800">
-                    {jsonData?.MarketInfo?.Title}
-                  </Text>
-                </FormControl>
-                <FormControl>
-                  <FormHelperText fontSize="xs">Expires on</FormHelperText>
-                  <Text maxW="lg" color="whiteAlpha.800">
-                    {formatUnixTimestamp(
-                      jsonData?.MarketInfo?.Duration
-                    ).toString()}
-                  </Text>
-                </FormControl>
 
-                <FormControl>
-                  <FormHelperText fontSize="xs">
-                    Market ProcessId
-                  </FormHelperText>
-                  <Link
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    href={`https://www.ao.link/#/entity/${pid}`}
+                <Accordion allowToggle>
+                  <AccordionItem
+                    border="none"
+                    borderTop="1px solid"
+                    borderBottom="2px solid"
+                    borderColor="gray.400"
                   >
-                    <Flex
-                      alignItems="center"
-                      color="whiteAlpha.800"
-                      maxW="100%"
-                      wrap="wrap"
-                    >
-                      <ExternalLinkIcon
-                        marginRight={4}
-                        display={{ base: "none", md: "block" }}
-                      />
-                      <Box wordBreak="break-word" whiteSpace="normal">
-                        {pid}
-                      </Box>
-                    </Flex>
-                  </Link>
-                </FormControl>
+                    <AccordionButton>
+                      <Flex
+                        flex={1}
+                        gap={2}
+                        alignItems="center"
+                        justifyContent="space-between"
+                      >
+                        <Text textAlign="left" fontSize="xs" color="gray.400">
+                          More Info
+                        </Text>
 
-                <FormControl>
-                  <FormHelperText fontSize="xs">Token TxId</FormHelperText>
-                  <Link
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    href={`https://www.ao.link/#/token/${jsonData?.MarketInfo?.TokenTxId}`}
-                  >
-                    <Flex
-                      alignItems="center"
-                      color="whiteAlpha.800"
-                      maxW="100%"
-                      wrap="wrap"
-                    >
-                      <ExternalLinkIcon
-                        marginRight={4}
-                        display={{ base: "none", md: "block" }}
-                      />
-                      <Box wordBreak="break-word" whiteSpace="normal">
-                        {jsonData?.MarketInfo?.TokenTxId}
-                      </Box>
-                    </Flex>
-                  </Link>
-                </FormControl>
-
-                <FormControl>
-                  <FormHelperText fontSize="xs">Creator</FormHelperText>
-                  <Link
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    href={`https://www.ao.link/#/entity/${jsonData?.Creator}`}
-                  >
-                    <Flex
-                      alignItems="center"
-                      color="whiteAlpha.800"
-                      maxW="100%"
-                      wrap="wrap"
-                    >
-                      <ExternalLinkIcon
-                        marginRight={4}
-                        display={{ base: "none", md: "block" }}
-                      />
-                      <Box wordBreak="break-word" whiteSpace="normal">
-                        {jsonData?.Creator}
-                      </Box>
-                    </Flex>
-                  </Link>
-                </FormControl>
-
-                <FormControl>
-                  <FormHelperText fontSize="xs">BlockHeight</FormHelperText>
-                  <Link
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    href={`https://viewblock.io/arweave/block/${jsonData?.MarketInfo?.BlockHeight}`}
-                  >
-                    <Flex
-                      alignItems="center"
-                      color="whiteAlpha.800"
-                      maxW="100%"
-                      wrap="wrap"
-                    >
-                      <ExternalLinkIcon
-                        marginRight={4}
-                        display={{ base: "none", md: "block" }}
-                      />
-                      <Box wordBreak="break-word" whiteSpace="normal">
-                        {jsonData?.MarketInfo?.BlockHeight}
-                      </Box>
-                    </Flex>
-                  </Link>
-                </FormControl>
-
-                <FormControl>
-                  <FormHelperText fontSize="xs">Block Timestamp</FormHelperText>
-                  <Text maxW="lg" color="whiteAlpha.800">
-                    {formatUnixTimestamp(jsonData?.MarketInfo?.Timestamp)}
-                  </Text>
-                </FormControl>
+                        <UpDownIcon color="gray.400" boxSize={3} />
+                      </Flex>
+                    </AccordionButton>
+                    <AccordionPanel pb={4}>
+                      <FormControl>
+                        <FormHelperText fontSize="xs">Title</FormHelperText>
+                        <Text maxW="lg" color="whiteAlpha.800">
+                          {jsonData?.MarketInfo?.Title}
+                        </Text>
+                      </FormControl>
+                      <FormControl>
+                        <FormHelperText fontSize="xs">
+                          Expires on
+                        </FormHelperText>
+                        <Text maxW="lg" color="whiteAlpha.800">
+                          {formatUnixTimestamp(
+                            jsonData?.MarketInfo?.Duration
+                          ).toString()}
+                        </Text>
+                      </FormControl>
+                      <FormControl>
+                        <FormHelperText fontSize="xs">
+                          Market ProcessId
+                        </FormHelperText>
+                        <Link
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          href={`https://www.ao.link/#/entity/${pid}`}
+                        >
+                          <Flex
+                            alignItems="center"
+                            color="whiteAlpha.800"
+                            maxW="100%"
+                            wrap="wrap"
+                          >
+                            <ExternalLinkIcon
+                              marginRight={4}
+                              display={{ base: "none", md: "block" }}
+                            />
+                            <Box wordBreak="break-word" whiteSpace="normal">
+                              {pid}
+                            </Box>
+                          </Flex>
+                        </Link>
+                      </FormControl>
+                      <FormControl>
+                        <FormHelperText fontSize="xs">
+                          Token TxId
+                        </FormHelperText>
+                        <Link
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          href={`https://www.ao.link/#/token/${jsonData?.MarketInfo?.TokenTxId}`}
+                        >
+                          <Flex
+                            alignItems="center"
+                            color="whiteAlpha.800"
+                            maxW="100%"
+                            wrap="wrap"
+                          >
+                            <ExternalLinkIcon
+                              marginRight={4}
+                              display={{ base: "none", md: "block" }}
+                            />
+                            <Box wordBreak="break-word" whiteSpace="normal">
+                              {jsonData?.MarketInfo?.TokenTxId}
+                            </Box>
+                          </Flex>
+                        </Link>
+                      </FormControl>
+                      <FormControl>
+                        <FormHelperText fontSize="xs">Creator</FormHelperText>
+                        <Link
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          href={`https://www.ao.link/#/entity/${jsonData?.Creator}`}
+                        >
+                          <Flex
+                            alignItems="center"
+                            color="whiteAlpha.800"
+                            maxW="100%"
+                            wrap="wrap"
+                          >
+                            <ExternalLinkIcon
+                              marginRight={4}
+                              display={{ base: "none", md: "block" }}
+                            />
+                            <Box wordBreak="break-word" whiteSpace="normal">
+                              {jsonData?.Creator}
+                            </Box>
+                          </Flex>
+                        </Link>
+                      </FormControl>
+                      <FormControl>
+                        <FormHelperText fontSize="xs">
+                          BlockHeight
+                        </FormHelperText>
+                        <Link
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          href={`https://viewblock.io/arweave/block/${jsonData?.MarketInfo?.BlockHeight}`}
+                        >
+                          <Flex
+                            alignItems="center"
+                            color="whiteAlpha.800"
+                            maxW="100%"
+                            wrap="wrap"
+                          >
+                            <ExternalLinkIcon
+                              marginRight={4}
+                              display={{ base: "none", md: "block" }}
+                            />
+                            <Box wordBreak="break-word" whiteSpace="normal">
+                              {jsonData?.MarketInfo?.BlockHeight}
+                            </Box>
+                          </Flex>
+                        </Link>
+                      </FormControl>
+                      <FormControl>
+                        <FormHelperText fontSize="xs">
+                          Block Timestamp
+                        </FormHelperText>
+                        <Text maxW="lg" color="whiteAlpha.800">
+                          {formatUnixTimestamp(jsonData?.MarketInfo?.Timestamp)}
+                        </Text>
+                      </FormControl>
+                    </AccordionPanel>
+                  </AccordionItem>
+                </Accordion>
               </Flex>
 
               {/* Right Pane Section */}
