@@ -64,7 +64,10 @@ export default function SubHeader() {
           justifyContent="center"
           alignItems="center"
         >
-          <Link target="_blank" rel="noopener noreferrer" href="/faq">
+          <Link
+            // target="_blank" rel="noopener noreferrer"
+            href="/faq"
+          >
             <Button variant="link" colorScheme="purple">
               FAQ
             </Button>
@@ -74,11 +77,7 @@ export default function SubHeader() {
             Airdrop
           </Button>
 
-          <Link
-            target="_blank"
-            rel="noopener noreferrer"
-            href="/leaderboard"
-          >
+          <Link target="_blank" rel="noopener noreferrer" href="/leaderboard">
             <TrophyIcon strokeColor="#9F7AEA" size={18} />
           </Link>
 

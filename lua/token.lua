@@ -283,6 +283,6 @@ Handlers.add('Airdrop', Handlers.utils.hasMatchingTag('Action', 'Airdrop'), func
       Data = "You received an airdrop"
     })
   else
-    sendErrorMessage(msg, "Account already has a balance")
+    sendErrorMessage(msg, "Account already had a balance")
   end
 end)
