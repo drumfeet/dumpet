@@ -739,7 +739,7 @@ export default function Home({ _id = null }) {
                           </FormControl>
                           <FormControl>
                             <FormHelperText fontSize="xs">
-                              Token TxId
+                              Token ProcessId
                             </FormHelperText>
                             <Link
                               target="_blank"
