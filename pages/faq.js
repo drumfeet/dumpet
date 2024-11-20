@@ -64,6 +64,10 @@ export default function Home() {
             winners.
           </Text>
           <Text>
+            A 1% fee applies if you cancel your vote before the market
+            concludes.
+          </Text>
+          <Text>
             You can claim a one-time airdrop if your wallet did not previously
             hold a DUMPET token balance.
           </Text>
