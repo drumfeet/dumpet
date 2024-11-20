@@ -77,11 +77,18 @@ export default function Home() {
           </Text>
           <Text>
             The market creator will be able to withdraw this from the process
-            when the mainnet launches.
+            when the AO mainnet launches.
           </Text>
+          <Text>
+            This feature provides greater economic incentive for market
+            creators.
+          </Text>
+          <Text>
+            The range of possible bet ideas are endless. There are NO RULES!
+          </Text>
+          <Text>Forget reality, it&apos;s all about the vote deposits.</Text>
           <Text>I am ready to dumpet!</Text>
         </Flex>
-
         <Flex paddingY={8}></Flex>
 
         <Flex paddingY={8}></Flex>
