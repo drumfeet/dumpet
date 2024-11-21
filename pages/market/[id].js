@@ -30,6 +30,9 @@ import {
 import AppHeader from "@/components/AppHeader"
 import { useAppContext } from "@/context/AppContext"
 import { ExternalLinkIcon, RepeatIcon, UpDownIcon } from "@chakra-ui/icons"
+import { Pie } from "react-chartjs-2"
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js"
+ChartJS.register(ArcElement, Tooltip, Legend) // Register the required components
 
 export async function getStaticPaths() {
   return { paths: [], fallback: "blocking" }
@@ -45,18 +48,6 @@ const DUMPET_TOKEN_TXID = "QD3R6Qes15eQqIN_TK5s7ttawzAiX8ucYI2AUXnuS18"
 const DEFAULT_PRECISION = 12
 
 export default function Home({ _id = null }) {
-  const toast = useToast()
-  const { id } = useParams()
-  const [pid, setPid] = useState(_id)
-  const [jsonData, setJsonData] = useState()
-  const [amount, setAmount] = useState(1)
-  const [amountOfVote, setAmountOfVote] = useState(1)
-  const [userDepositBalance, setUserDepositBalance] = useState(null) // must be a number
-  const [userBalanceVoteA, setUserBalanceVoteA] = useState(0)
-  const [userBalanceVoteB, setUserBalanceVoteB] = useState(0)
-  const [totalBalanceVoteA, setTotalBalanceVoteA] = useState(-1)
-  const [totalBalanceVoteB, setTotalBalanceVoteB] = useState(-1)
-
   const {
     connectWallet,
     disconnectWallet,
@@ -69,6 +60,37 @@ export default function Home({ _id = null }) {
     handleMessageResultError,
   } = useAppContext()
 
+  const toast = useToast()
+  const { id } = useParams()
+  const [pid, setPid] = useState(_id)
+  const [jsonData, setJsonData] = useState()
+  const [amount, setAmount] = useState(1)
+  const [amountOfVote, setAmountOfVote] = useState(1)
+  const [userDepositBalance, setUserDepositBalance] = useState(null) // must be a number
+  const [userBalanceVoteA, setUserBalanceVoteA] = useState(0)
+  const [userBalanceVoteB, setUserBalanceVoteB] = useState(0)
+  const [totalBalanceVoteA, setTotalBalanceVoteA] = useState(0)
+  const [totalBalanceVoteB, setTotalBalanceVoteB] = useState(0)
+  const [optionA, setOptionA] = useState("")
+  const [optionB, setOptionB] = useState("")
+
+  const adjustedData =
+    totalBalanceVoteA <= 0 && totalBalanceVoteB <= 0
+      ? [1, 1]
+      : [divideByPower(totalBalanceVoteA), divideByPower(totalBalanceVoteB)]
+
+  const data = {
+    labels: [optionA, optionB],
+    datasets: [
+      {
+        data: adjustedData,
+        backgroundColor: ["#dc2625", "#2463eb"], // red, blue
+        hoverBackgroundColor: ["#dc2625", "#2463eb"],
+        borderWidth: 0,
+      },
+    ],
+  }
+
   useEffect(() => {
     ;(async () => {
       _id ?? setPid(await getID(id, _id))
@@ -80,8 +102,6 @@ export default function Home({ _id = null }) {
     if (pid) {
       ;(async () => {
         await getMarketInfo()
-        // await getTotalBalanceVoteA()
-        // await getTotalBalanceVoteB()
       })()
     }
   }, [pid])
@@ -141,6 +161,8 @@ export default function Home({ _id = null }) {
       const _jsonData = JSON.parse(result?.Messages[0]?.Data)
       console.log("_jsonData", _jsonData)
       setJsonData(_jsonData)
+      setOptionA(_jsonData?.MarketInfo?.OptionA)
+      setOptionB(_jsonData?.MarketInfo?.OptionB)
       updateBalances(_jsonData)
     } catch (error) {
       console.error(error)
@@ -576,7 +598,7 @@ export default function Home({ _id = null }) {
                       focusBorderColor="#7023b6"
                       precision={DEFAULT_PRECISION}
                       value={amountOfVote}
-                      min={1}
+                      min={0.000000000001}
                       onChange={(e) => {
                         setAmountOfVote(e)
                       }}
@@ -866,12 +888,11 @@ export default function Home({ _id = null }) {
                   paddingBottom={{ base: "4", md: "8" }}
                   mb="8"
                 >
-                  {/* Image placeholder */}
                   <Flex justifyContent="center">
                     <Flex
-                      w={{ base: 40, md: 80 }}
-                      h={{ base: 40, md: 80 }}
-                      bgGradient="linear(to-r, pink.800, teal.700)"
+                      w={{ base: 250, md: 400 }}
+                      h={{ base: 250, md: 400 }}
+                      // bgGradient="linear(to-r, red, teal.700)"
                       borderRadius="small"
                       mb={6}
                       color="gray.400"
@@ -879,7 +900,16 @@ export default function Home({ _id = null }) {
                       justifyContent="center"
                       fontSize="2xs"
                     >
-                      image placeholder
+                      <Pie
+                        data={data}
+                        options={{
+                          plugins: {
+                            tooltip: {
+                              enabled: false, // This will disable the tooltip on hover
+                            },
+                          },
+                        }}
+                      />
                     </Flex>
                   </Flex>
 
