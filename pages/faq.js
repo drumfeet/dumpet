@@ -53,7 +53,7 @@ export default function Home() {
             >
               ArConnect
             </Link>{" "}
-            wallet is required
+            wallet is required.
           </Text>
           <Text>
             Step 1: Select an active market to participate in or create your
