@@ -20,6 +20,7 @@ import {
   AccordionItem,
   AccordionButton,
   AccordionPanel,
+  IconButton,
 } from "@chakra-ui/react"
 import {
   createDataItemSigner,
@@ -32,6 +33,7 @@ import { useAppContext } from "@/context/AppContext"
 import { ExternalLinkIcon, RepeatIcon, UpDownIcon } from "@chakra-ui/icons"
 import { Pie } from "react-chartjs-2"
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js"
+import ShareIcon from "@/components/icons/ShareIcon"
 ChartJS.register(ArcElement, Tooltip, Legend) // Register the required components
 
 export async function getStaticPaths() {
@@ -883,6 +885,23 @@ export default function Home({ _id = null }) {
                 bgColor="purple.800"
                 borderRadius={{ base: "md", md: "small" }}
               >
+                <Flex justifyContent="flex-end">
+                  <IconButton
+                    icon={<ShareIcon strokeColor="#FFFFFF7A" size={24} />}
+                    colorScheme="whiteAlpha"
+                    variant="ghost"
+                    aria-label="Share"
+                    onClick={() => {
+                      const text = `Check out this market on dumpet.fun - `
+                      const url = window.location.href
+                      const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+                        text
+                      )}&url=${encodeURIComponent(url)}`
+                      window.open(twitterUrl, "_blank")
+                    }}
+                  />
+                </Flex>
+
                 <Flex
                   direction="column"
                   paddingX={{ base: "4", md: "8" }}

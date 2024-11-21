@@ -21,9 +21,11 @@ import {
   TabPanels,
   TabPanel,
   Box,
+  IconButton,
 } from "@chakra-ui/react"
 import AppHeader from "@/components/AppHeader"
 import { useAppContext } from "@/context/AppContext"
+import ShareIcon from "@/components/icons/ShareIcon"
 
 export async function getStaticPaths() {
   return { paths: [], fallback: "blocking" }
@@ -227,7 +229,22 @@ export default function Home({ _id = null }) {
           </Button>
 
           <Flex paddingY={8}></Flex>
-
+          <Flex justifyContent="flex-end" w="100%">
+            <IconButton
+              icon={<ShareIcon strokeColor="#FFFFFF7A" size={24} />}
+              colorScheme="whiteAlpha"
+              variant="ghost"
+              aria-label="Share"
+              onClick={() => {
+                const text = `Check out this profile on dumpet.fun - `
+                const url = window.location.href
+                const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+                  text
+                )}&url=${encodeURIComponent(url)}`
+                window.open(twitterUrl, "_blank")
+              }}
+            />
+          </Flex>
           <Tabs
             isFitted
             colorScheme="purple"
@@ -277,6 +294,22 @@ export default function Home({ _id = null }) {
                             {record?.Title}
                           </Text>
                         </Link>
+                        <IconButton
+                          icon={<ShareIcon strokeColor="#FFFFFF7A" size={14} />}
+                          colorScheme="whiteAlpha"
+                          variant="ghost"
+                          aria-label="Share"
+                          onClick={() => {
+                            const text = `Check out this market on dumpet.fun - `
+                            const url =
+                              window.location.origin +
+                              `/market/${record?.MarketProcessId}`
+                            const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+                              text
+                            )}&url=${encodeURIComponent(url)}`
+                            window.open(twitterUrl, "_blank")
+                          }}
+                        />
                       </Flex>
                     ))}
                   </Flex>
@@ -315,6 +348,22 @@ export default function Home({ _id = null }) {
                             {record?.Title}
                           </Text>
                         </Link>
+                        <IconButton
+                          icon={<ShareIcon strokeColor="#FFFFFF7A" size={14} />}
+                          colorScheme="whiteAlpha"
+                          variant="ghost"
+                          aria-label="Share"
+                          onClick={() => {
+                            const text = `Check out this market on dumpet.fun - `
+                            const url =
+                              window.location.origin +
+                              `/market/${record?.MarketProcessId}`
+                            const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+                              text
+                            )}&url=${encodeURIComponent(url)}`
+                            window.open(twitterUrl, "_blank")
+                          }}
+                        />
                       </Flex>
                     ))}
                   </Flex>
