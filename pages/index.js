@@ -214,88 +214,83 @@ export default function Home() {
         </Flex>
 
         {markets && markets.length > 0 && (
-          <>
-            <Flex wrap="wrap" justify="center" gap={4} maxW="1200px">
-              {markets.map((market, index) => (
-                <>
-                  <Flex
-                    flexDirection="column"
-                    w="250px"
-                    border="1px solid"
-                    borderColor="purple.700"
-                    paddingX={4}
-                    paddingBottom={8}
-                    borderRadius="md"
-                    textAlign="center"
-                  >
-                    <Flex w="100%" justify="flex-end">
-                      <IconButton
-                        icon={<ShareIcon strokeColor="#FFFFFF7A" size={14} />}
-                        colorScheme="whiteAlpha"
-                        variant="ghost"
-                        aria-label="Share"
-                        onClick={() => {
-                          const text = `Check out this market on dumpet.fun - `
-                          const url =
-                            window.location.origin +
-                            `/market/${market?.ProcessId}`
-                          const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
-                            text
-                          )}&url=${encodeURIComponent(url)}`
-                          window.open(twitterUrl, "_blank")
-                        }}
-                      />
-                    </Flex>
-                    <Link
-                      // target="_blank"
-                      // rel="noopener noreferrer"
-                      href={`/market/${market.ProcessId}`}
-                      key={index}
+          <Flex wrap="wrap" justify="center" gap={4} maxW="1200px">
+            {markets.map((market, index) => (
+              <Flex
+                key={index}
+                flexDirection="column"
+                w="250px"
+                border="1px solid"
+                borderColor="purple.700"
+                paddingX={4}
+                paddingBottom={8}
+                borderRadius="md"
+                textAlign="center"
+              >
+                <Flex w="100%" justify="flex-end">
+                  <IconButton
+                    icon={<ShareIcon strokeColor="#FFFFFF7A" size={14} />}
+                    colorScheme="whiteAlpha"
+                    variant="ghost"
+                    aria-label="Share"
+                    onClick={() => {
+                      const text = `Check out this market on dumpet.fun - `
+                      const url =
+                        window.location.origin + `/market/${market?.ProcessId}`
+                      const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+                        text
+                      )}&url=${encodeURIComponent(url)}`
+                      window.open(twitterUrl, "_blank")
+                    }}
+                  />
+                </Flex>
+                <Link
+                  // target="_blank"
+                  // rel="noopener noreferrer"
+                  href={`/market/${market.ProcessId}`}
+                >
+                  <Flex flexDirection="column" gap={2}>
+                    <Text
+                      fontSize="md"
+                      fontWeight="bold"
+                      color="purple.300"
+                      isTruncated
                     >
-                      <Flex flexDirection="column" gap={2}>
-                        <Text
-                          fontSize="md"
-                          fontWeight="bold"
-                          color="purple.300"
-                          isTruncated
-                        >
-                          {market.Title}
-                        </Text>
-                        <Text fontSize="sm" isTruncated>
-                          {market.OptionA}
-                        </Text>
-                        <Flex justifyContent="center">
-                          <Text
-                            fontSize="sm"
-                            color="gray.400"
-                            border="1px solid"
-                            borderColor="purple"
-                            borderRadius="md"
-                            paddingX={4}
-                          >
-                            versus
-                          </Text>
-                        </Flex>
-                        <Text fontSize="sm" isTruncated>
-                          {market.OptionB}
-                        </Text>
-                        <Flex flexDirection="column">
-                          <Text fontSize="xs" color="gray.400">
-                            Expires on:
-                          </Text>
-                          <Text fontSize="xs" color="gray.400">
-                            {market.Duration
-                              ? formatUnixTimestamp(market.Duration)
-                              : ""}
-                          </Text>
-                        </Flex>
-                      </Flex>
-                    </Link>
+                      {market.Title}
+                    </Text>
+                    <Text fontSize="sm" isTruncated>
+                      {market.OptionA}
+                    </Text>
+                    <Flex justifyContent="center">
+                      <Text
+                        fontSize="sm"
+                        color="gray.400"
+                        border="1px solid"
+                        borderColor="purple"
+                        borderRadius="md"
+                        paddingX={4}
+                      >
+                        versus
+                      </Text>
+                    </Flex>
+                    <Text fontSize="sm" isTruncated>
+                      {market.OptionB}
+                    </Text>
+                    <Flex flexDirection="column">
+                      <Text fontSize="xs" color="gray.400">
+                        Expires on:
+                      </Text>
+                      <Text fontSize="xs" color="gray.400">
+                        {market.Duration
+                          ? formatUnixTimestamp(market.Duration)
+                          : ""}
+                      </Text>
+                    </Flex>
                   </Flex>
-                </>
-              ))}
-            </Flex>
-          </>
+                </Link>
+              </Flex>
+            ))}
+          </Flex>
         )}
 
         <Flex paddingY={4}></Flex>
