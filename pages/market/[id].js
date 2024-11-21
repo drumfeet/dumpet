@@ -38,7 +38,7 @@ import {
 } from "@permaweb/aoconnect"
 import AppHeader from "@/components/AppHeader"
 import { useAppContext } from "@/context/AppContext"
-import { ExternalLinkIcon, UpDownIcon } from "@chakra-ui/icons"
+import { ExternalLinkIcon, RepeatIcon, UpDownIcon } from "@chakra-ui/icons"
 
 export async function getStaticPaths() {
   return { paths: [], fallback: "blocking" }
@@ -616,9 +616,13 @@ export default function Home({ _id = null }) {
                   >
                     {jsonData?.MarketInfo?.OptionA}
                   </Text>
-                  <Text color="pink.400" textAlign="center">
-                    TOTAL VOTES: {divideByPower(totalBalanceVoteA)}
-                  </Text>
+                  <Flex gap={2} alignItems="center">
+                    <RepeatIcon color="whiteAlpha.500" boxSize={4} />
+
+                    <Text color="pink.400" textAlign="center">
+                      TOTAL VOTES: {divideByPower(totalBalanceVoteA)}
+                    </Text>
+                  </Flex>
 
                   <Flex justifyContent="center" paddingY={4} marginBottom={2}>
                     <Text
@@ -659,9 +663,12 @@ export default function Home({ _id = null }) {
                   >
                     {jsonData?.MarketInfo?.OptionB}
                   </Text>
-                  <Text color="pink.400" textAlign="center">
-                    TOTAL VOTES: {divideByPower(totalBalanceVoteB)}
-                  </Text>
+                  <Flex gap={2} alignItems="center">
+                    <RepeatIcon color="whiteAlpha.500" boxSize={4} />
+                    <Text color="pink.400" textAlign="center">
+                      TOTAL VOTES: {divideByPower(totalBalanceVoteB)}
+                    </Text>
+                  </Flex>
                 </Flex>
                 <Flex paddingY={4}></Flex>
 
@@ -907,8 +914,8 @@ export default function Home({ _id = null }) {
                   >
                     Deposit
                   </Button>
+                  <Flex paddingY={2}></Flex>
                   <Button
-                    marginTop="4"
                     colorScheme="purple"
                     onClick={async (event) => {
                       const button = event.target
@@ -929,16 +936,9 @@ export default function Home({ _id = null }) {
                     </Text>
                   </FormControl>
 
-                  <Flex paddingY={4}></Flex>
-
-                  <Flex paddingY={4}></Flex>
+                  <Flex paddingY={8}></Flex>
                   <Button
-                    cursor="pointer"
                     colorScheme="purple"
-                    // bg="#7023b6"
-                    borderRadius="md"
-                    justifyContent="center"
-                    paddingY={8}
                     onClick={async (event) => {
                       const button = event.target
                       button.disabled = true
@@ -951,13 +951,7 @@ export default function Home({ _id = null }) {
 
                   <Flex paddingY={4}></Flex>
                   <Button
-                    cursor="pointer"
                     colorScheme="purple"
-                    // bg="#d53f8c"
-                    // bg="#7023b6"
-                    borderRadius="md"
-                    justifyContent="center"
-                    paddingY={8}
                     onClick={async (event) => {
                       const button = event.target
                       button.disabled = true
@@ -975,13 +969,7 @@ export default function Home({ _id = null }) {
                     </FormHelperText>
                     <Button
                       w="100%"
-                      cursor="pointer"
                       colorScheme="purple"
-                      // bg="#d53f8c"
-                      // bg="#7023b6"
-                      borderRadius="md"
-                      justifyContent="center"
-                      paddingY={8}
                       onClick={async (event) => {
                         const button = event.target
                         button.disabled = true

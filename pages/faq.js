@@ -43,7 +43,7 @@ export default function Home() {
         <Flex paddingY={8}></Flex>
 
         <Flex gap={4} flexDirection="column" color="whiteAlpha.800">
-          <Text>Dumpet is a popularity contest betting platform.</Text>
+          <Text>dumpet.fun is a popularity contest betting platform.</Text>
           <Text>
             Step 1: Select an active market to participate in or create your
             own.

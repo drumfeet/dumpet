@@ -222,6 +222,7 @@ Handlers.add("VoteA", Handlers.utils.hasMatchingTag("Action", "VoteA"), function
         -- Check if Balances[msg.From] has enough balance to vote
         local senderBalance = Balances[msg.From] or "0"
         if tonumber(senderBalance) < quantity then
+            -- TODO: can also included user balances as response
             sendErrorMessage(msg, "Insufficient balance to vote")
             return
         end
