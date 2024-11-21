@@ -1,6 +1,6 @@
 # dumpet.fun
 
-A popularity contest betting platform.
+A popularity contest duel platform.
 
 Built with [Arweave](https://github.com/ArweaveTeam), [AO](https://github.com/permaweb/ao), [turbo-sdk](https://github.com/ardriveapp/turbo-sdk), and [ArNext](https://github.com/weavedb/arnext)
 
