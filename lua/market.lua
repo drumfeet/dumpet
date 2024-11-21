@@ -338,6 +338,18 @@ Handlers.add("AllVotesBalances", Handlers.utils.hasMatchingTag("Action", "AllVot
     ao.send({ Target = msg.From, Data = json.encode({ BalancesVoteA = BalancesVoteA, BalancesVoteB = BalancesVoteB }) })
 end)
 
+Handlers.add("TotalBalanceAllVotes", Handlers.utils.hasMatchingTag("Action", "TotalBalanceAllVotes"), function(msg)
+    ao.send({
+        Target = msg.From,
+        Data = json.encode({
+            TotalBalanceVoteA = TotalBalanceVoteA,
+            TotalBalanceVoteB =
+                TotalBalanceVoteB,
+            TotalBalanceAllVotes = utils.add(TotalBalanceVoteA, TotalBalanceVoteB)
+        })
+    })
+end)
+
 Handlers.add("TotalBalanceVoteA", Handlers.utils.hasMatchingTag("Action", "TotalBalanceVoteA"), function(msg)
     ao.send({ Target = msg.From, Data = TotalBalanceVoteA })
 end)

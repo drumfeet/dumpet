@@ -341,6 +341,7 @@ Handlers.add("VoteA", Handlers.utils.hasMatchingTag("Action", "VoteA"), function
         -- Check if Balances[msg.From] has enough balance to vote
         local senderBalance = Balances[msg.From] or "0"
         if tonumber(senderBalance) < quantity then
+            -- TODO: can also included user balances as response
             sendErrorMessage(msg, "Insufficient balance to vote")
             return
         end
@@ -454,6 +455,18 @@ end)
 
 Handlers.add("AllVotesBalances", Handlers.utils.hasMatchingTag("Action", "AllVotesBalances"), function(msg)
     ao.send({ Target = msg.From, Data = json.encode({ BalancesVoteA = BalancesVoteA, BalancesVoteB = BalancesVoteB }) })
+end)
+
+Handlers.add("TotalBalanceAllVotes", Handlers.utils.hasMatchingTag("Action", "TotalBalanceAllVotes"), function(msg)
+    ao.send({
+        Target = msg.From,
+        Data = json.encode({
+            TotalBalanceVoteA = TotalBalanceVoteA,
+            TotalBalanceVoteB =
+                TotalBalanceVoteB,
+            TotalBalanceAllVotes = utils.add(TotalBalanceVoteA, TotalBalanceVoteB)
+        })
+    })
 end)
 
 Handlers.add("TotalBalanceVoteA", Handlers.utils.hasMatchingTag("Action", "TotalBalanceVoteA"), function(msg)

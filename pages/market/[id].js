@@ -3,12 +3,9 @@ import { useEffect, useState } from "react"
 import {
   Button,
   ChakraProvider,
-  Divider,
   Flex,
-  Input,
   useToast,
   Text,
-  Heading,
   FormControl,
   FormHelperText,
   Spacer,
@@ -18,22 +15,16 @@ import {
   NumberIncrementStepper,
   NumberDecrementStepper,
   Box,
-  Skeleton,
-  VStack,
-  Stack,
   Spinner,
   Accordion,
   AccordionItem,
   AccordionButton,
-  AccordionIcon,
   AccordionPanel,
 } from "@chakra-ui/react"
 import {
   createDataItemSigner,
-  spawn,
   message,
   result,
-  results,
   dryrun,
 } from "@permaweb/aoconnect"
 import AppHeader from "@/components/AppHeader"
@@ -57,17 +48,14 @@ export default function Home({ _id = null }) {
   const toast = useToast()
   const { id } = useParams()
   const [pid, setPid] = useState(_id)
-  const [tokenTxId, setTokenTxId] = useState("")
   const [jsonData, setJsonData] = useState()
   const [amount, setAmount] = useState(1)
   const [amountOfVote, setAmountOfVote] = useState(1)
   const [userDepositBalance, setUserDepositBalance] = useState(null) // must be a number
-  const [walletBalance, setWalletBalance] = useState(null)
   const [userBalanceVoteA, setUserBalanceVoteA] = useState(0)
   const [userBalanceVoteB, setUserBalanceVoteB] = useState(0)
   const [totalBalanceVoteA, setTotalBalanceVoteA] = useState(-1)
   const [totalBalanceVoteB, setTotalBalanceVoteB] = useState(-1)
-  const [totalVotersBalance, setTotalVotersBalance] = useState(-1)
 
   const {
     connectWallet,
@@ -153,8 +141,6 @@ export default function Home({ _id = null }) {
       const _jsonData = JSON.parse(result?.Messages[0]?.Data)
       console.log("_jsonData", _jsonData)
       setJsonData(_jsonData)
-      setTokenTxId(_jsonData?.TokenTxId)
-      console.log("TokenTxId", _jsonData?.TokenTxId)
       updateBalances(_jsonData)
     } catch (error) {
       console.error(error)
@@ -164,7 +150,6 @@ export default function Home({ _id = null }) {
   const updateBalances = async (jsonData = {}) => {
     setTotalBalanceVoteA(jsonData?.TotalBalanceVoteA)
     setTotalBalanceVoteB(jsonData?.TotalBalanceVoteB)
-
     console.log("updateBalances() jsonData", jsonData)
   }
 
@@ -172,8 +157,6 @@ export default function Home({ _id = null }) {
     setUserDepositBalance(Number(jsonData?.UserDepositBalance))
     setUserBalanceVoteA(jsonData?.BalanceVoteA)
     setUserBalanceVoteB(jsonData?.BalanceVoteB)
-    // setWalletBalance(Number(divideByPower(jsonData?.WalletBalance) || "0"))
-
     console.log("updateUserBalances() jsonData", jsonData)
   }
 
@@ -197,6 +180,33 @@ export default function Home({ _id = null }) {
       const jsonData = JSON.parse(_result?.Messages[0]?.Data)
       console.log("UserBalancesAllVotes jsonData", jsonData)
       updateUserBalances(jsonData)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const getTotalBalanceAllVotes = async () => {
+    try {
+      console.log("getTotalBalanceAllVotes pid", pid)
+      const _result = await dryrun({
+        process: pid,
+        tags: [{ name: "Action", value: "TotalBalanceAllVotes" }],
+      })
+      console.log("getTotalBalanceAllVotes _result", _result)
+
+      if (_result?.Messages[0]?.Data) {
+        const jsonData = JSON.parse(_result?.Messages[0]?.Data)
+        console.log("getTotalBalanceAllVotes jsonData", jsonData)
+        updateBalances(jsonData)
+      }
+
+      toast({
+        description: "Total votes updated",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+        position: "top",
+      })
     } catch (error) {
       console.error(error)
     }
@@ -617,7 +627,9 @@ export default function Home({ _id = null }) {
                     {jsonData?.MarketInfo?.OptionA}
                   </Text>
                   <Flex gap={2} alignItems="center">
-                    <RepeatIcon color="whiteAlpha.500" boxSize={4} />
+                    <Flex onClick={getTotalBalanceAllVotes} cursor="pointer">
+                      <RepeatIcon color="whiteAlpha.500" boxSize={4} />
+                    </Flex>
 
                     <Text color="pink.400" textAlign="center">
                       TOTAL VOTES: {divideByPower(totalBalanceVoteA)}
@@ -664,7 +676,9 @@ export default function Home({ _id = null }) {
                     {jsonData?.MarketInfo?.OptionB}
                   </Text>
                   <Flex gap={2} alignItems="center">
-                    <RepeatIcon color="whiteAlpha.500" boxSize={4} />
+                    <Flex onClick={getTotalBalanceAllVotes} cursor="pointer">
+                      <RepeatIcon color="whiteAlpha.500" boxSize={4} />
+                    </Flex>
                     <Text color="pink.400" textAlign="center">
                       TOTAL VOTES: {divideByPower(totalBalanceVoteB)}
                     </Text>
