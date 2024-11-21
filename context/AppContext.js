@@ -26,9 +26,10 @@ export const AppContextProvider = ({ children }) => {
     } catch (e) {
       console.error("connectWallet() error!", e)
       toast({
-        description: "Something went wrong with your wallet. Please try again.",
+        title: "Install wallet from arconnect.io",
+        description: "Something went wrong. Please reload.",
         status: "error",
-        duration: 2000,
+        duration: 4000,
         isClosable: true,
         position: "top",
       })
@@ -45,7 +46,8 @@ export const AppContextProvider = ({ children }) => {
     } catch (e) {
       console.error("disconnectWallet() error!", e)
       toast({
-        description: "Something went wrong with your wallet. Please try again.",
+        title: "Install wallet from arconnect.io",
+        description: "Something went wrong. Please reload.",
         status: "error",
         duration: 2000,
         isClosable: true,

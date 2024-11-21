@@ -45,6 +45,17 @@ export default function Home() {
         <Flex gap={4} flexDirection="column" color="whiteAlpha.800">
           <Text>dumpet.fun is a popularity contest betting platform.</Text>
           <Text>
+            <Link
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://www.arconnect.io"
+              style={{ textDecoration: "underline" }}
+            >
+              ArConnect
+            </Link>{" "}
+            wallet is required
+          </Text>
+          <Text>
             Step 1: Select an active market to participate in or create your
             own.
           </Text>
@@ -90,7 +101,7 @@ export default function Home() {
           <Text>
             The range of possible bet ideas are endless. There are NO RULES!
           </Text>
-          <Text>Forget reality, it&apos;s all about the vote deposits.</Text>
+          <Text>Forget reality, it&apos;s all about the voter deposits.</Text>
           <Text>I am ready to dumpet!</Text>
         </Flex>
         <Flex paddingY={8}></Flex>
