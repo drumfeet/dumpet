@@ -84,8 +84,8 @@ const LoginModal = () => {
           <ModalFooter>
             <Flex gap={4}>
               <Link
-                target="_blank"
-                rel="noopener noreferrer"
+                // target="_blank"
+                // rel="noopener noreferrer"
                 href={`/profile/${userAddress}`}
               >
                 <Button

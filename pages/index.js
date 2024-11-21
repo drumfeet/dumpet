@@ -118,8 +118,8 @@ export default function Home() {
 
         {randomMarket && (
           <Link
-            target="_blank"
-            rel="noopener noreferrer"
+            // target="_blank"
+            // rel="noopener noreferrer"
             href={`/market/${randomMarket.ProcessId}`}
           >
             <Flex
@@ -190,8 +190,8 @@ export default function Home() {
             <Flex wrap="wrap" justify="center" gap={4} maxW="1200px">
               {markets.map((market, index) => (
                 <Link
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  // target="_blank"
+                  // rel="noopener noreferrer"
                   href={`/market/${market.ProcessId}`}
                   key={index}
                 >

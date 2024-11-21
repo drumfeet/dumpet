@@ -262,19 +262,21 @@ export default function Home({ _id = null }) {
                         bg="#1a1a2e"
                         _hover={{ bg: "#3e3e5e" }}
                       >
-                        <Text
-                          isTruncated
-                          as="a"
+                        <Link
+                          // target="_blank"
+                          // rel="noopener noreferrer"
                           href={`/market/${record?.MarketProcessId}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          color="whiteAlpha.800"
-                          textDecoration="underline"
-                          _hover={{ cursor: "pointer" }}
-                          textUnderlineOffset={5}
                         >
-                          {record?.Title}
-                        </Text>
+                          <Text
+                            isTruncated
+                            color="whiteAlpha.800"
+                            textDecoration="underline"
+                            _hover={{ cursor: "pointer" }}
+                            textUnderlineOffset={5}
+                          >
+                            {record?.Title}
+                          </Text>
+                        </Link>
                       </Flex>
                     ))}
                   </Flex>
@@ -298,19 +300,21 @@ export default function Home({ _id = null }) {
                         bg="#1a1a2e"
                         _hover={{ bg: "#3e3e5e" }}
                       >
-                        <Text
-                          isTruncated
-                          as="a"
-                          href={`/market/${record.MarketProcessId}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          color="whiteAlpha.800"
-                          textDecoration="underline"
-                          _hover={{ cursor: "pointer" }}
-                          textUnderlineOffset={5}
+                        <Link
+                          // target="_blank"
+                          // rel="noopener noreferrer"
+                          href={`/market/${record?.MarketProcessId}`}
                         >
-                          {record.Title}
-                        </Text>
+                          <Text
+                            isTruncated
+                            color="whiteAlpha.800"
+                            textDecoration="underline"
+                            _hover={{ cursor: "pointer" }}
+                            textUnderlineOffset={5}
+                          >
+                            {record?.Title}
+                          </Text>
+                        </Link>
                       </Flex>
                     ))}
                   </Flex>
