@@ -12,7 +12,6 @@ import {
 } from "@chakra-ui/react"
 import { dryrun } from "@permaweb/aoconnect"
 import { Link } from "arnext"
-import Head from "next/head"
 import { useEffect, useState } from "react"
 
 const MAIN_PROCESS_ID = "jIRuxblllcBIDUmYbrbbEI90nJs40duNA6wR6NkYVvI"
@@ -90,29 +89,8 @@ export default function Home() {
     return new Intl.DateTimeFormat("en-US", options).format(date)
   }
 
-  const meta = {
-    title: "dumpet.fun",
-    description: "Populartiy contest",
-    image: "T2q7IO67TYEhuk1CIPVxHX9MdEmzTUocZjScmdWTHK0",
-  }
   return (
     <ChakraProvider>
-      <Head>
-        <title>{meta.title}</title>
-        <meta name="description" content={meta.description} />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={`${meta.title}`} />
-        <meta name="twitter:description" content={meta.description} />
-        <meta
-          name="twitter:image"
-          content={`https://arweave.net/${meta.image}`}
-        />
-        <meta property="og:title" content={`${meta.title}`} />
-        <meta name="og:description" content={meta.description} />
-        <meta name="og:image" content={`https://arweave.net/${meta.image}`} />
-        <link rel="icon" href="./favicon.svg" />
-      </Head>
       <Flex
         direction="column"
         align="center"
