@@ -582,7 +582,7 @@ export default function Home({ _id = null }) {
         <meta property="og:title" content={`${meta.title}`} />
         <meta name="og:description" content={meta.description} />
         <meta name="og:image" content={`https://arweave.net/${meta.image}`} />
-        <link rel="icon" href=".././favicon.svg" />
+        <link rel="icon" href=".././favicon.ico" />
       </Head>
       <Flex
         direction="column"

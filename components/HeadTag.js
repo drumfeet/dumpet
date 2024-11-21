@@ -22,7 +22,7 @@ export default function HeadTag() {
       <meta property="og:title" content={`${meta.title}`} />
       <meta name="og:description" content={meta.description} />
       <meta name="og:image" content={`https://arweave.net/${meta.image}`} />
-      <link rel="icon" href="./favicon.svg" />
+      <link rel="icon" href="./favicon.ico" />
     </Head>
   )
 }
