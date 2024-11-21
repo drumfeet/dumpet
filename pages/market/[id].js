@@ -64,6 +64,7 @@ export default function Home({ _id = null }) {
   const { id } = useParams()
   const [pid, setPid] = useState(_id)
   const [jsonData, setJsonData] = useState()
+  const [tokenProcessId, setTokenProcessId] = useState("")
   const [amount, setAmount] = useState(1)
   const [amountOfVote, setAmountOfVote] = useState(1)
   const [userDepositBalance, setUserDepositBalance] = useState(null) // must be a number
@@ -163,6 +164,7 @@ export default function Home({ _id = null }) {
       setJsonData(_jsonData)
       setOptionA(_jsonData?.MarketInfo?.OptionA)
       setOptionB(_jsonData?.MarketInfo?.OptionB)
+      setTokenProcessId(_jsonData?.MarketInfo?.TokenTxId)
       updateBalances(_jsonData)
     } catch (error) {
       console.error(error)
@@ -245,7 +247,7 @@ export default function Home({ _id = null }) {
 
     try {
       const messageId = await message({
-        process: DUMPET_TOKEN_TXID,
+        process: tokenProcessId,
         tags: [
           {
             name: "Action",
@@ -266,7 +268,7 @@ export default function Home({ _id = null }) {
 
       const _result = await result({
         message: messageId,
-        process: DUMPET_TOKEN_TXID,
+        process: tokenProcessId,
       })
       console.log("_result", _result)
       if (handleMessageResultError(_result)) return
