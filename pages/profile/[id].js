@@ -336,29 +336,40 @@ export default function Home({ _id = null }) {
                     </Text>
                     {userTransactions?.map((record, index) => (
                       <Flex
+                        w="100%"
+                        maxW="100%"
                         key={index}
-                        align="center"
+                        alignItems="center"
                         justify="space-between"
                         py={2}
-                        px={4}
-                        bg="#1a1a2e"
+                        px={{ base: 0, md: 4 }}
                         _hover={{ bg: "#3e3e5e" }}
                       >
-                        <Link
-                          // target="_blank"
-                          // rel="noopener noreferrer"
-                          href={`/market/${record?.MarketProcessId}`}
+                        <Flex
+                          alignItems="center"
+                          overflow="hidden" // Ensures truncation works
+                          flex="1"
+                          mr={2} // Spacing between text and button
                         >
-                          <Text
-                            isTruncated
-                            color="whiteAlpha.800"
-                            textDecoration="underline"
-                            _hover={{ cursor: "pointer" }}
-                            textUnderlineOffset={5}
+                          <Link
+                            href={`/market/${record?.MarketProcessId}`}
+                            style={{ width: "100%" }}
                           >
-                            {record?.Title}
-                          </Text>
-                        </Link>
+                            <Text
+                              color="whiteAlpha.800"
+                              textDecoration="underline"
+                              _hover={{ cursor: "pointer" }}
+                              textUnderlineOffset={5}
+                              isTruncated
+                              noOfLines={1}
+                              whiteSpace="nowrap"
+                              overflow="hidden"
+                              textOverflow="ellipsis"
+                            >
+                              {record?.Title}
+                            </Text>
+                          </Link>
+                        </Flex>
                         <IconButton
                           icon={<ShareIcon strokeColor="#FFFFFF7A" size={14} />}
                           colorScheme="whiteAlpha"
