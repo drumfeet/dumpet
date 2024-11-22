@@ -10,6 +10,7 @@ import {
   Heading,
   Text,
   Box,
+  Select,
 } from "@chakra-ui/react"
 import {
   createDataItemSigner,
@@ -18,13 +19,13 @@ import {
   dryrun,
 } from "@permaweb/aoconnect"
 import { Link } from "arnext"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import AppHeader from "@/components/AppHeader"
 import WalletIcon from "@/components/icons/WalletIcon"
 import UserIcon from "@/components/icons/UserIcon"
 import { ExternalLinkIcon } from "@chakra-ui/icons"
+import tokenList from "@/components/TokenList"
 
-const DUMPET_TOKEN_TXID = "QD3R6Qes15eQqIN_TK5s7ttawzAiX8ucYI2AUXnuS18"
 const MAIN_PROCESS_ID = "jIRuxblllcBIDUmYbrbbEI90nJs40duNA6wR6NkYVvI"
 
 export default function Home() {
@@ -40,7 +41,9 @@ export default function Home() {
     return `${year}-${month}-${day}T${hours}:${minutes}` // Format without seconds
   })
 
-  const [tokenTxId, setTokenTxId] = useState(DUMPET_TOKEN_TXID)
+  const [tokenTxId, setTokenTxId] = useState(tokenList[0].value)
+  const [isCustomInput, setIsCustomInput] = useState(false)
+  const tokenInputRef = useRef(null)
   const [optionA, setOptionA] = useState("")
   const [optionB, setOptionB] = useState("")
   const [isPending, setIsPending] = useState(false)
@@ -55,6 +58,27 @@ export default function Home() {
     setUserAddress,
     handleMessageResultError,
   } = useAppContext()
+
+  const handleSelectChange = (event) => {
+    const value = event.target.value
+    if (value === "custom") {
+      setIsCustomInput(true)
+    } else {
+      setTokenTxId(value)
+      setIsCustomInput(false)
+    }
+  }
+
+  const handleCustomInputChange = (event) => {
+    setTokenTxId(event.target.value)
+  }
+
+  // Focus the input field when switching to custom input
+  useEffect(() => {
+    if (isCustomInput && tokenInputRef.current) {
+      tokenInputRef.current.focus()
+    }
+  }, [isCustomInput])
 
   useEffect(() => {
     ;(async () => {
@@ -89,6 +113,8 @@ export default function Home() {
   }
 
   const createMarket = async () => {
+    console.log("tokenTxId", tokenTxId)
+
     const _connected = await connectWallet()
     if (_connected.success === false) {
       return
@@ -241,16 +267,40 @@ export default function Home() {
                 </Link>
               </Flex>
 
-              <Input
-                placeholder="Token txid"
-                value={tokenTxId}
-                onChange={(e) => setTokenTxId(e.target.value)}
-                borderColor="#98A2B3"
-                bg="#2d2d44"
-                color="white"
-                focusBorderColor="#7023b6"
-                _placeholder={{ color: "gray.400" }}
-              />
+              {!isCustomInput ? (
+                <Select
+                  onChange={handleSelectChange}
+                  value={tokenTxId}
+                  borderColor="#98A2B3"
+                  bg="#2d2d44"
+                  color="white"
+                  focusBorderColor="#7023b6"
+                  _placeholder={{ color: "gray.400" }}
+                >
+                  {tokenList.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </Select>
+              ) : (
+                <Input
+                  ref={tokenInputRef}
+                  value={tokenTxId}
+                  onChange={handleCustomInputChange}
+                  onBlur={() => {
+                    if (!tokenTxId) {
+                      setIsCustomInput(false)
+                      setTokenTxId(tokenList[0].value) // Reset to the first option if empty
+                    }
+                  }}
+                  borderColor="#98A2B3"
+                  bg="#2d2d44"
+                  color="white"
+                  focusBorderColor="#7023b6"
+                  _placeholder={{ color: "gray.400" }}
+                />
+              )}
             </FormControl>
             <FormControl>
               <FormHelperText fontSize="xs">Option A</FormHelperText>
