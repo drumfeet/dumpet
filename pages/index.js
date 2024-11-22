@@ -302,7 +302,7 @@ export default function Home() {
               await fetchMarkets(nextPage)
             }}
           >
-            Fetch More
+            Show More
           </Button>
         )}
 
