@@ -978,7 +978,7 @@ export default function Home({ _id = null }) {
                       focusBorderColor="#7023b6"
                       precision={DEFAULT_PRECISION}
                       value={amount}
-                      min={1}
+                      min={0.000000000001}
                       onChange={(e) => {
                         console.log("e", e)
                         setAmount(e)

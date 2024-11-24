@@ -102,7 +102,7 @@ export default function Home() {
             The range of possible bet ideas are endless. There are NO RULES!
           </Text>
           <Text>Forget reality, it&apos;s all about the voter deposits.</Text>
-          <Text>I am ready to dumpet!</Text>
+          <Text>Are you ready to dumpet?</Text>
         </Flex>
         <Flex paddingY={8}></Flex>
 
