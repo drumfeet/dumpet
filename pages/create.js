@@ -364,9 +364,13 @@ export default function Home() {
                   <Link href={`/profile/${userAddress}`} passHref>
                     <Button
                       variant="outline"
+                      color="white"
+                      border="1px solid"
+                      borderColor="#6b46c1"
+                      _hover={{ bg: "#6b46c1", color: "white" }}
                       colorScheme="purple"
                       width="100%"
-                      rightIcon={<UserIcon strokeColor="#6b46c1" />}
+                      rightIcon={<UserIcon strokeColor="#ffffff" />}
                     >
                       View My Profile
                     </Button>
@@ -377,7 +381,11 @@ export default function Home() {
               <>
                 <Button
                   variant="outline"
-                  rightIcon={<WalletIcon strokeColor="#6b46c1" />}
+                  color="white"
+                  border="1px solid"
+                  borderColor="#6b46c1"
+                  _hover={{ bg: "#6b46c1", color: "white" }}
+                  rightIcon={<WalletIcon strokeColor="#ffffff" />}
                   width="100%"
                   colorScheme="purple"
                   // bg="#7023b6"
