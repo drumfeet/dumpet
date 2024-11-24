@@ -855,6 +855,18 @@ export default function Home({ _id = null }) {
                                 </Box>
                               </Flex>
                             </Link>
+                            <Button
+                              w="100%"
+                              colorScheme="purple"
+                              onClick={async (event) => {
+                                const button = event.target
+                                button.disabled = true
+                                await withdrawRewards()
+                                button.disabled = false
+                              }}
+                            >
+                              <Text fontWeight="bold">Withdraw AO</Text>
+                            </Button>
                           </FormControl>
                           <FormControl>
                             <FormHelperText fontSize="xs">
@@ -1003,6 +1015,11 @@ export default function Home({ _id = null }) {
                   </Button>
                   <Flex paddingY={2}></Flex>
                   <Button
+                    variant="outline"
+                    border="2px solid"
+                    borderColor="purple.700"
+                    color="white"
+                    _hover={{ bg: "purple.700" }}
                     colorScheme="purple"
                     onClick={async (event) => {
                       const button = event.target
@@ -1038,6 +1055,11 @@ export default function Home({ _id = null }) {
 
                   <Flex paddingY={4}></Flex>
                   <Button
+                    variant="outline"
+                    border="2px solid"
+                    borderColor="purple.700"
+                    color="white"
+                    _hover={{ bg: "purple.700" }}
                     colorScheme="purple"
                     onClick={async (event) => {
                       const button = event.target
@@ -1049,7 +1071,7 @@ export default function Home({ _id = null }) {
                     <Text fontWeight="bold">Conclude</Text>
                   </Button>
 
-                  <Flex paddingY={4}></Flex>
+                  {/* <Flex paddingY={4}></Flex>
                   <FormControl>
                     <FormHelperText fontSize="xs" color="gray.400">
                       *Creator only
@@ -1066,7 +1088,7 @@ export default function Home({ _id = null }) {
                     >
                       <Text fontWeight="bold">Withdraw AO</Text>
                     </Button>
-                  </FormControl>
+                  </FormControl> */}
                 </Flex>
               </Flex>
             </>
