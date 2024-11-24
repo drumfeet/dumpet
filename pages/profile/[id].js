@@ -233,14 +233,16 @@ export default function Home({ _id = null }) {
               await hasWaitFor()
               button.disabled = false
             }}
+            _hover={{ border: "1px solid" }}
           >
             Check Pending Market
           </Button>
 
           <Button
+            variant="outline"
             width="100%"
             colorScheme="purple"
-            bg="#7023b6"
+            _hover={{ bg: "#7023b6", color: "white" }}
             onClick={async (event) => {
               const button = event.target
               button.disabled = true
@@ -252,7 +254,7 @@ export default function Home({ _id = null }) {
           </Button>
 
           <Flex paddingY={8}></Flex>
-          <Flex justifyContent="flex-end" w="100%">
+          <Flex justifyContent="flex-end" w="100%" alignItems="center">
             <IconButton
               icon={<ShareIcon strokeColor="#FFFFFF7A" size={24} />}
               colorScheme="whiteAlpha"
