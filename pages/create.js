@@ -363,10 +363,10 @@ export default function Home() {
                 <Box width="100%">
                   <Link href={`/profile/${userAddress}`} passHref>
                     <Button
-                      width="100%"
+                      variant="outline"
                       colorScheme="purple"
-                      bg="#7023b6"
-                      rightIcon={<UserIcon />}
+                      width="100%"
+                      rightIcon={<UserIcon strokeColor="#6b46c1" />}
                     >
                       View My Profile
                     </Button>
@@ -376,10 +376,11 @@ export default function Home() {
             ) : (
               <>
                 <Button
-                  rightIcon={<WalletIcon />}
+                  variant="outline"
+                  rightIcon={<WalletIcon strokeColor="#6b46c1" />}
                   width="100%"
                   colorScheme="purple"
-                  bg="#7023b6"
+                  // bg="#7023b6"
                   onClick={async () => {
                     await connectWallet()
                   }}
