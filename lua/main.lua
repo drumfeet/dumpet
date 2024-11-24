@@ -1,4 +1,5 @@
 local json = require("json")
+local crypto = require(".crypto")
 
 local function decodeMessageData(data)
     local status, decodedData = pcall(json.decode, data)
@@ -951,11 +952,28 @@ Handlers.add("RandomMarket", Handlers.utils.hasMatchingTag("Action", "RandomMark
             return
         end
 
-        local randomIndex = math.random(#MarketKeys)
+        local length = #MarketKeys
+        local timestampStr = tostring(msg["Timestamp"])
+        local blockHeightStr = tostring(msg["Block-Height"])
+        local randomNum = crypto.random(0, length, timestampStr)
+        local randomIndex = randomNum
+        -- local randomIndex = math.random(#MarketKeys)
         local randomKey = MarketKeys[randomIndex]
         local randomMarket = Markets[randomKey]
 
-        ao.send({ Target = msg.From, Data = json.encode(randomMarket) })
+        ao.send({
+            Target = msg.From,
+            -- Data = json.encode({
+            --     RandomIndex = randomIndex,
+            --     RandomKey = randomKey,
+            --     RandomMarket = randomMarket,
+            --     Length = length,
+            --     RandomNum = randomNum,
+            --     Timestamp = timestampStr,
+            --     BlockHeight = blockHeightStr,
+            -- })
+            Data = json.encode(randomMarket)
+        })
     end)
 
     if not success then
