@@ -808,7 +808,7 @@ export default function Home({ _id = null }) {
                           </FormControl>
                           <FormControl>
                             <FormHelperText fontSize="xs">
-                              Token ProcessId
+                              Bet Token ProcessId
                             </FormHelperText>
                             <Link
                               target="_blank"
@@ -855,6 +855,7 @@ export default function Home({ _id = null }) {
                                 </Box>
                               </Flex>
                             </Link>
+                            <Flex paddingY={1}></Flex>
                             <Button
                               w="100%"
                               colorScheme="purple"

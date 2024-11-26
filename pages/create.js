@@ -257,7 +257,7 @@ export default function Home() {
             </FormControl>
             <FormControl>
               <Flex gap={2} alignItems="center">
-                <FormHelperText fontSize="xs">Token ProcessId</FormHelperText>
+                <FormHelperText fontSize="xs">Bet Token ProcessId</FormHelperText>
                 <Link
                   target="_blank"
                   rel="noopener noreferrer"

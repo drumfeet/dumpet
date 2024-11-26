@@ -15,6 +15,9 @@ https://t.me/dumpetdotfun
 ## Main Process ID
 jIRuxblllcBIDUmYbrbbEI90nJs40duNA6wR6NkYVvI
 
+## DUMPET Token Process ID
+QD3R6Qes15eQqIN_TK5s7ttawzAiX8ucYI2AUXnuS18
+
 ## Deployment Transaction ID
 -
 
@@ -25,4 +28,4 @@ https://dumpet.ar.io
 
 https://gateway-explorer.vercel.app/#/
 
-https://gateways.ar-io.dev/#/dashboard
+https://gateways.ar-io.dev/#/gateways
