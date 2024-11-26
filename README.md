@@ -28,4 +28,4 @@ https://dumpet.ar.io
 
 https://gateway-explorer.vercel.app/#/
 
-https://gateways.ar-io.dev/#/gateways
+https://gateways.ar.io/#/gateways
