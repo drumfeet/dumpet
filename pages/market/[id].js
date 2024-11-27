@@ -561,7 +561,7 @@ export default function Home({ _id = null }) {
 
   const meta = {
     title: "dumpet.fun",
-    description: "Populartiy contest duel platform",
+    description: "Popularity contest duel platform",
     image: "T2q7IO67TYEhuk1CIPVxHX9MdEmzTUocZjScmdWTHK0",
   }
 
