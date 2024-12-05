@@ -9,6 +9,7 @@ import {
   useToast,
   Text,
   IconButton,
+  Skeleton
 } from "@chakra-ui/react"
 import { dryrun } from "@permaweb/aoconnect"
 import { Link } from "arnext"
@@ -22,13 +23,16 @@ export default function Home() {
   const [randomMarket, setRandomMarket] = useState(null)
   const [hasMore, setHasMore] = useState(false)
   const [nextPage, setNextPage] = useState(1)
+  const [isLoading, setIsLoading] = useState(false)
 
   const { handleMessageResultError } = useAppContext()
 
   useEffect(() => {
     ;(async () => {
+      setIsLoading(true)
       await fetchRandomMarket()
       await fetchMarkets()
+      setIsLoading(false)
     })()
   }, [])
 
@@ -124,7 +128,8 @@ export default function Home() {
 
         <Flex paddingY={8}></Flex>
 
-        {randomMarket && (
+        {isLoading && <Skeleton height="400px" width="80%" /> }
+        {!isLoading && randomMarket && (
           <Flex
             flexDirection="column"
             w="250px"
@@ -213,7 +218,7 @@ export default function Home() {
           </Text> */}
         </Flex>
 
-        {markets && markets.length > 0 && (
+        {!isLoading && markets && markets.length > 0 && (
           <Flex wrap="wrap" justify="center" gap={4} maxW="1200px">
             {markets.map((market, index) => (
               <Flex
