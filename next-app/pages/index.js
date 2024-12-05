@@ -9,7 +9,7 @@ import {
   useToast,
   Text,
   IconButton,
-  Skeleton
+  Spinner
 } from "@chakra-ui/react"
 import { dryrun } from "@permaweb/aoconnect"
 import { Link } from "arnext"
@@ -128,7 +128,17 @@ export default function Home() {
 
         <Flex paddingY={8}></Flex>
 
-        {isLoading && <Skeleton height="400px" width="80%" /> }
+        {isLoading && (
+          <Flex justifyContent="center">
+            <Spinner
+              thickness="4px"
+              speed="0.65s"
+              emptyColor="gray.200"
+              color="purple.500"
+              size="xl"
+            />
+          </Flex>
+        )}
         {!isLoading && randomMarket && (
           <Flex
             flexDirection="column"
@@ -300,7 +310,7 @@ export default function Home() {
 
         <Flex paddingY={4}></Flex>
 
-        {hasMore && (
+        {!isLoading && hasMore && (
           <Button
             colorScheme="purple"
             onClick={async () => {
@@ -311,7 +321,7 @@ export default function Home() {
           </Button>
         )}
 
-        {!hasMore && (
+        {!isLoading && !hasMore && (
           <Text fontSize="sm" color="gray.400">
             No more markets to fetch.
           </Text>
