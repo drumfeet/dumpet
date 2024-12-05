@@ -233,7 +233,6 @@ export default function Home({ _id = null }) {
               await hasWaitFor()
               button.disabled = false
             }}
-            _hover={{ border: "1px solid" }}
           >
             Check Pending Market
           </Button>
@@ -242,7 +241,7 @@ export default function Home({ _id = null }) {
             variant="outline"
             width="100%"
             colorScheme="purple"
-            _hover={{ bg: "#7023b6", color: "white" }}
+            _hover={{ bg: "#6c45c1", color: "white", border: "none" }}
             onClick={async (event) => {
               const button = event.target
               button.disabled = true
