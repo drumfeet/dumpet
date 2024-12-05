@@ -76,11 +76,17 @@ export default function Home({ _id = null }) {
   const [totalBalanceVoteB, setTotalBalanceVoteB] = useState(0)
   const [optionA, setOptionA] = useState("")
   const [optionB, setOptionB] = useState("")
+  const [tokenDenomination, setTokenDenomination] = useState(0)
+  const [tokenSymbol, setTokenSymbol] = useState("")
+  const [isReady, setIsReady] = useState(false)
 
   const adjustedData =
     totalBalanceVoteA <= 0 && totalBalanceVoteB <= 0
       ? [1, 1]
-      : [divideByPower(totalBalanceVoteA), divideByPower(totalBalanceVoteB)]
+      : [
+          divideByPower(totalBalanceVoteA, tokenDenomination),
+          divideByPower(totalBalanceVoteB, tokenDenomination),
+        ]
 
   const data = {
     labels: [optionA, optionB],
@@ -108,6 +114,15 @@ export default function Home({ _id = null }) {
       })()
     }
   }, [pid])
+
+  useEffect(() => {
+    if (tokenProcessId) {
+      ;(async () => {
+        await getTokenInfo()
+        setIsReady(true)
+      })()
+    }
+  }, [tokenProcessId])
 
   useEffect(() => {
     console.log("pid", pid)
@@ -149,6 +164,33 @@ export default function Home({ _id = null }) {
     } catch (error) {
       console.error("Error formatting timestamp:", error.message)
       return "" // Default error message for invalid input
+    }
+  }
+
+  const getTokenInfo = async () => {
+    try {
+      const _result = await dryrun({
+        process: tokenProcessId,
+        tags: [{ name: "Action", value: "Info" }],
+      })
+
+      console.log("_result", _result)
+
+      const denominationTag = _result?.Messages?.[0]?.Tags.find(
+        (tag) => tag.name === "Denomination"
+      )
+      setTokenDenomination(
+        isNaN(Number(denominationTag?.value))
+          ? DEFAULT_PRECISION
+          : Number(denominationTag?.value)
+      )
+
+      const ticketTag = _result?.Messages?.[0]?.Tags.find(
+        (tag) => tag.name === "Ticker"
+      )
+      setTokenSymbol(ticketTag?.value ?? "N.A.")
+    } catch (error) {
+      console.error(error)
     }
   }
 
@@ -607,7 +649,7 @@ export default function Home({ _id = null }) {
           color="white"
           width="100%"
         >
-          {jsonData ? (
+          {isReady ? (
             <>
               {/* Left Pane Section */}
               <Flex
@@ -649,7 +691,9 @@ export default function Home({ _id = null }) {
 
                   <Flex paddingY={2}></Flex>
                   <Text fontSize="xs" color="gray.400">
-                    Your Total VoteA: {divideByPower(userBalanceVoteA)}
+                    Your Total VoteA:{" "}
+                    {divideByPower(userBalanceVoteA, tokenDenomination)} $
+                    {tokenSymbol}
                   </Text>
                   <Button
                     cursor="pointer"
@@ -680,7 +724,9 @@ export default function Home({ _id = null }) {
                     </Flex>
 
                     <Text color="pink.400" textAlign="center">
-                      TOTAL VOTES: {divideByPower(totalBalanceVoteA)}
+                      TOTAL VOTES:{" "}
+                      {divideByPower(totalBalanceVoteA, tokenDenomination)} $
+                      {tokenSymbol}
                     </Text>
                   </Flex>
 
@@ -697,7 +743,9 @@ export default function Home({ _id = null }) {
                     </Text>
                   </Flex>
                   <Text fontSize="xs" color="gray.400">
-                    Your Total VoteB: {divideByPower(userBalanceVoteB)}
+                    Your Total VoteB:{" "}
+                    {divideByPower(userBalanceVoteB, tokenDenomination)} $
+                    {tokenSymbol}
                   </Text>
                   <Button
                     cursor="pointer"
@@ -728,7 +776,9 @@ export default function Home({ _id = null }) {
                       <RepeatIcon color="whiteAlpha.500" boxSize={4} />
                     </Flex>
                     <Text color="pink.400" textAlign="center">
-                      TOTAL VOTES: {divideByPower(totalBalanceVoteB)}
+                      TOTAL VOTES:{" "}
+                      {divideByPower(totalBalanceVoteB, tokenDenomination)} $
+                      {tokenSymbol}
                     </Text>
                   </Flex>
                 </Flex>
@@ -1037,7 +1087,9 @@ export default function Home({ _id = null }) {
                       Your Deposit Balance
                     </FormHelperText>
                     <Text maxW="lg" color="whiteAlpha.800">
-                      {divideByPower(userDepositBalance) ?? "-"}
+                      {divideByPower(userDepositBalance, tokenDenomination) ??
+                        "-"}{" "}
+                      ${tokenSymbol}
                     </Text>
                   </FormControl>
 

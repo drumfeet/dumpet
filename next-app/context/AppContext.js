@@ -57,12 +57,12 @@ export const AppContextProvider = ({ children }) => {
     }
   }
 
-  const multiplyByPower = (v) => {
-    return v * Math.pow(BASE_UNIT, DENOMINATION)
+  const multiplyByPower = (v, denomination = DENOMINATION) => {
+    return v * Math.pow(BASE_UNIT, denomination)
   }
 
-  const divideByPower = (v) => {
-    return (v / Math.pow(BASE_UNIT, DENOMINATION)).toFixed(12)
+  const divideByPower = (v, denomination = DENOMINATION) => {
+    return (v / Math.pow(BASE_UNIT, denomination)).toFixed(denomination)
   }
 
   const handleMessageResultError = (_result) => {
