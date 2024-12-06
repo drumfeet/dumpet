@@ -142,20 +142,10 @@ BalancesVoteB = BalancesVoteB or {}          -- table of balance from users that
 TotalBalanceVoteA = TotalBalanceVoteA or "0" -- total amount of votes for OptionA
 TotalBalanceVoteB = TotalBalanceVoteB or "0" -- total amount of votes for OptionB
 -- AllVotesTotalBalance = AllVotesTotalBalance or "0" -- total amount of votes for OptionA and OptionB
-BASE_UNIT = BASE_UNIT or 10
-Denomination = Denomination or 12
 MarketInfo = MarketInfo or {}
 Creator = Creator or ""
 MainProcessId = MainProcessId or ""
 VotersProcessId = "566F7MCrrBhr87n7Hs5JKyEQeRlAT9A14G4OWxfS4kQ"
-
-local multiplyByPower = function(v)
-    return v * (BASE_UNIT ^ Denomination)
-end
-
-local divideByPower = function(v)
-    return v / (BASE_UNIT ^ Denomination)
-end
 
 local function printData(k, v)
     local _data = { Key = k, Value = v }
@@ -213,8 +203,6 @@ Handlers.add("GetMarketInfo", Handlers.utils.hasMatchingTag("Action", "GetMarket
             BalancesVoteB = BalancesVoteB,
             TotalBalanceVoteA = TotalBalanceVoteA,
             TotalBalanceVoteB = TotalBalanceVoteB,
-            BASE_UNIT = BASE_UNIT,
-            Denomination = Denomination,
             Creator = Creator,
             MainProcessId = MainProcessId,
 
