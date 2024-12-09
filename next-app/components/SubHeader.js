@@ -74,10 +74,6 @@ export default function SubHeader() {
             </Button>
           </Link>
 
-          <Button variant="link" colorScheme="purple" onClick={airdrop}>
-            Airdrop
-          </Button>
-
           <Link
             target="_blank"
             rel="noopener noreferrer"
@@ -92,14 +88,6 @@ export default function SubHeader() {
             href="https://x.com/dumpetdotfun"
           >
             <TwitterIcon strokeColor="#9F7AEA" size={18} />
-          </Link>
-
-          <Link
-            target="_blank"
-            rel="noopener noreferrer"
-            href="https://github.com/drumfeet/dumpet"
-          >
-            <GithubIcon strokeColor="#9F7AEA" size={18} />
           </Link>
         </Flex>
       </Flex>
