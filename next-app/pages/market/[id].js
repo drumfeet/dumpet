@@ -1,5 +1,6 @@
 import { Link, useParams } from "arnext"
 import { useEffect, useState } from "react"
+import ChatBox from "@/components/ChatBox"
 import {
   Button,
   ChakraProvider,
@@ -959,6 +960,10 @@ export default function Home({ _id = null }) {
                     )}
                   </AccordionItem>
                 </Accordion>
+              
+                <Flex paddingY={4}></Flex>
+
+                <ChatBox/>
               </Flex>
 
               {/* Right Pane Section */}

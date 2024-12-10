@@ -138,98 +138,92 @@ export default function ChatBox() {
     <ChakraProvider>
       <Flex
         direction="column"
-        align="center"
-        p={4}
+        w="100%"
+        h="100%"
         bg="#1a1a2e"
-        minHeight="100vh"
+        minH="100vh"
         color="white"
       >
+        {/* Main chat container */}
         <Flex
-          direction={{ base: "column", md: "row" }}
-          maxW="1200px"
-          align="stretch"
-          justify="center"
-          width="100%"
+          direction="column"
+          w="100%"
+          h="100%"
           flex={1}
-          gap={4}
+          bg="purple.800"
+          borderRadius={{ base: "0", md: "md" }}
+          p={4}
         >
-          {/* Chat Messages Section */}
-          <Flex
-            direction="column"
-            width={{ base: "100%", md: "70%" }}
-            bg="purple.800"
-            borderRadius="md"
-            p={4}
+          <Text fontSize="xl" mb={4}>Chat</Text>
+          
+          {/* Messages Container */}
+          <VStack
+            flex={1}
+            w="100%"
+            overflowY="auto"
+            spacing={4}
+            align="stretch"
+            maxH="calc(100vh - 200px)"
+            mb={4}
+            css={{
+              '&::-webkit-scrollbar': {
+                width: '4px',
+              },
+              '&::-webkit-scrollbar-track': {
+                width: '6px',
+              },
+              '&::-webkit-scrollbar-thumb': {
+                background: 'purple.500',
+                borderRadius: '24px',
+              },
+            }}
           >
-            <Text fontSize="xl" mb={4}>Chat</Text>
-            
-            {/* Messages Container */}
-            <VStack
-              flex={1}
-              overflowY="auto"
-              spacing={4}
-              align="stretch"
-              maxHeight="60vh"
-              mb={4}
-              css={{
-                '&::-webkit-scrollbar': {
-                  width: '4px',
-                },
-                '&::-webkit-scrollbar-track': {
-                  width: '6px',
-                },
-                '&::-webkit-scrollbar-thumb': {
-                  background: 'purple.500',
-                  borderRadius: '24px',
-                },
-              }}
-            >
-              {messages.map((msg, index) => (
-                <Box
-                  key={index}
-                  bg="#2d2d44"
-                  p={3}
-                  borderRadius="md"
-                  alignSelf={msg.sender === globalThis.arweaveWallet?.getActiveAddress() ? "flex-end" : "flex-start"}
-                  maxWidth="80%"
-                >
-                  <Text fontSize="xs" color="purple.300" mb={1}>
-                    {msg.sender?.slice(0, 8)}...{msg.sender?.slice(-8)}
-                  </Text>
-                  <Text>{msg.content}</Text>
-                  <Text fontSize="xs" color="gray.400" mt={1}>
-                    {new Date(msg.timestamp).toLocaleTimeString()}
-                  </Text>
-                </Box>
-              ))}
-              <div ref={chatEndRef} />
-            </VStack>
-
-            {/* Input Section */}
-            <FormControl>
-              <Input
-                placeholder="Type your message..."
-                _placeholder={{ color: "gray.400" }}
-                onChange={(e) => setChatMsg(e.target.value)}
-                onKeyPress={handleKeyPress}
-                value={chatMsg}
-                focusBorderColor="#7023b6"
+            {messages.map((msg, index) => (
+              <Box
+                key={index}
                 bg="#2d2d44"
-                borderColor="#2d2d44"
+                p={3}
                 borderRadius="md"
-              />
-            </FormControl>
-            
-            <Button
-              mt={4}
-              colorScheme="purple"
-              onClick={post}
-              isLoading={isLoading}
-              loadingText="Sending..."
-            >
-              Send Message
-            </Button>
-          </Flex>
+                alignSelf={msg.sender === globalThis.arweaveWallet?.getActiveAddress() ? "flex-end" : "flex-start"}
+                maxWidth="80%"
+              >
+                <Text fontSize="xs" color="purple.300" mb={1}>
+                  {msg.sender?.slice(0, 8)}...{msg.sender?.slice(-8)}
+                </Text>
+                <Text>{msg.content}</Text>
+                <Text fontSize="xs" color="gray.400" mt={1}>
+                  {new Date(msg.timestamp).toLocaleTimeString()}
+                </Text>
+              </Box>
+            ))}
+            <div ref={chatEndRef} />
+          </VStack>
+
+          {/* Input Section */}
+          <FormControl>
+            <Input
+              placeholder="Type your message..."
+              _placeholder={{ color: "gray.400" }}
+              onChange={(e) => setChatMsg(e.target.value)}
+              onKeyPress={handleKeyPress}
+              value={chatMsg}
+              focusBorderColor="#7023b6"
+              bg="#2d2d44"
+              borderColor="#2d2d44"
+              borderRadius="md"
+            />
+          </FormControl>
+          
+          <Button
+            mt={4}
+            w="100%"
+            colorScheme="purple"
+            onClick={post}
+            isLoading={isLoading}
+            loadingText="Sending..."
+          >
+            Send Message
+          </Button>
         </Flex>
       </Flex>
     </ChakraProvider>
