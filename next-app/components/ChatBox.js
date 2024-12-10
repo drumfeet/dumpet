@@ -230,20 +230,6 @@ export default function ChatBox() {
               Send Message
             </Button>
           </Flex>
-
-          {/* Right Pane - Could be used for online users, settings, etc. */}
-          <Flex
-            direction="column"
-            width={{ base: "100%", md: "30%" }}
-            bg="purple.800"
-            borderRadius="md"
-            p={4}
-          >
-            <Text fontSize="xl" mb={4}>Online Users</Text>
-            <Text color="gray.400">
-              This panel could be used for showing online users, chat settings, or other features
-            </Text>
-          </Flex>
         </Flex>
       </Flex>
     </ChakraProvider>
