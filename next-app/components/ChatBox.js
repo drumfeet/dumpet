@@ -1,3 +1,4 @@
+import { useAppContext } from "@/context/AppContext"
 import {
   Button,
   ChakraProvider,
@@ -17,8 +18,14 @@ import { useState } from "react"
 const CHAT_PROCESS_ID = "kfjNgT4R0vQaRgho2aSMSbJgB8xqvQL_1__yIsE_fp8"
 
 export default function ChatBox() {
+  const { connectWallet } = useAppContext()
   const [chatMsg, setChatMsg] = useState("")
   const post = async () => {
+    const _connected = await connectWallet()
+    if (_connected.success === false) {
+      return
+    }
+
     try {
       const messageId = await message({
         process: CHAT_PROCESS_ID,
