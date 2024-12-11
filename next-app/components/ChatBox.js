@@ -15,10 +15,10 @@ import { createDataItemSigner, message, result, dryrun } from "@permaweb/aoconne
 import { useState, useEffect, useRef } from "react"
 import areArraysEqual from "@/utils/AreArrayEquals"
 
-const CHAT_PROCESS_ID = "kfjNgT4R0vQaRgho2aSMSbJgB8xqvQL_1__yIsE_fp8"
 const POLLING_INTERVAL = 5000
 
-export default function ChatBox() {
+export default function ChatBox({ pid = null }) {
+  const [chatId, setChatId] = useState(pid)
   const [chatMsg, setChatMsg] = useState("")
   const [messages, setMessages] = useState([])
   const [currentPage, setCurrentPage] = useState(1)
@@ -54,7 +54,7 @@ export default function ChatBox() {
 
     try {
       const messageId = await message({
-        process: CHAT_PROCESS_ID,
+        process: chatId,
         tags: [
           {
             name: "Action",
@@ -70,7 +70,7 @@ export default function ChatBox() {
 
       const _result = await result({
         message: messageId,
-        process: CHAT_PROCESS_ID
+        process: chatId
       })
 
       setChatMsg("")
@@ -92,7 +92,7 @@ export default function ChatBox() {
   const get = async (nextPage = 1, limit = 50) => {
     try {
       const result = await dryrun({
-        process: CHAT_PROCESS_ID,
+        process: chatId,
         tags: [
           { name: "Action", value: "List" },
           { name: "Page", value: nextPage.toString() },
@@ -100,18 +100,19 @@ export default function ChatBox() {
           { name: "Order", value: "desc" }
         ]
       })
-
-      const _jsonData = JSON.parse(result?.Messages[0]?.Data)
-      setHasMore(_jsonData.HasMore)
-
-      if (nextPage === 1) {
-        if (!areArraysEqual(_jsonData.Chats, messagesRef.current)) {
-          setMessages(_jsonData.Chats || [])
-          messagesRef.current = _jsonData.Chats || []
+      if (result?.Messages[0]?.Data) {
+        const _jsonData = JSON.parse(result?.Messages[0]?.Data)
+        setHasMore(_jsonData.HasMore)
+  
+        if (nextPage === 1) {
+          if (!areArraysEqual(_jsonData.Chats, messagesRef.current)) {
+            setMessages(_jsonData.Chats || [])
+            messagesRef.current = _jsonData.Chats || []
+          }
+        } else {
+          setMessages(prevMessages => [...prevMessages, ...(_jsonData.Chats || [])])
+          messagesRef.current = [...messagesRef.current, ...(_jsonData.Chats || [])]
         }
-      } else {
-        setMessages(prevMessages => [...prevMessages, ...(_jsonData.Chats || [])])
-        messagesRef.current = [...messagesRef.current, ...(_jsonData.Chats || [])]
       }
     } catch (error) {
       console.error(error)
@@ -129,9 +130,9 @@ export default function ChatBox() {
     try {
       const nextPage = currentPage + 1
       setCurrentPage(nextPage)
-      setIsLoadingMore(true);
+      setIsLoadingMore(true)
       await get(nextPage)
-      setIsLoadingMore(false);
+      setIsLoadingMore(false)
     } catch (error) {
       toast({
         title: "Error retrieving more messages",

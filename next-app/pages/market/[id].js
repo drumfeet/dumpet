@@ -66,6 +66,7 @@ export default function Home({ _id = null }) {
   const toast = useToast()
   const { id } = useParams()
   const [pid, setPid] = useState(_id)
+  const [showChatBox, setShowChatBox] = useState(false)
   const [jsonData, setJsonData] = useState()
   const [tokenProcessId, setTokenProcessId] = useState("")
   const [amount, setAmount] = useState(1)
@@ -205,6 +206,7 @@ export default function Home({ _id = null }) {
 
       console.log("result", result)
       const _jsonData = JSON.parse(result?.Messages[0]?.Data)
+      setShowChatBox(_jsonData.ChatEnabled ? true : false)
       console.log("_jsonData", _jsonData)
       setJsonData(_jsonData)
       setOptionA(_jsonData?.MarketInfo?.OptionA)
@@ -963,7 +965,7 @@ export default function Home({ _id = null }) {
               
                 <Flex paddingY={4}></Flex>
 
-                <ChatBox/>
+                { showChatBox && <ChatBox pid={pid}/> }
               </Flex>
 
               {/* Right Pane Section */}
