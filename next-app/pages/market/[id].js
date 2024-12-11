@@ -31,7 +31,14 @@ import {
 } from "@permaweb/aoconnect"
 import AppHeader from "@/components/AppHeader"
 import { useAppContext } from "@/context/AppContext"
-import { ExternalLinkIcon, RepeatIcon, UpDownIcon } from "@chakra-ui/icons"
+import {
+  CheckCircleIcon,
+  CheckIcon,
+  ExternalLinkIcon,
+  RepeatIcon,
+  TimeIcon,
+  UpDownIcon,
+} from "@chakra-ui/icons"
 import { Pie } from "react-chartjs-2"
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js"
 import ShareIcon from "@/components/icons/ShareIcon"
@@ -699,6 +706,7 @@ export default function Home({ _id = null }) {
                     {tokenSymbol}
                   </Text>
                   <Button
+                    leftIcon={<CheckIcon />}
                     cursor="pointer"
                     colorScheme="purple"
                     // bg="#7023b6"
@@ -751,6 +759,7 @@ export default function Home({ _id = null }) {
                     {tokenSymbol}
                   </Text>
                   <Button
+                    leftIcon={<CheckCircleIcon />}
                     cursor="pointer"
                     colorScheme="purple"
                     // bg="#7023b6"
@@ -962,10 +971,10 @@ export default function Home({ _id = null }) {
                     )}
                   </AccordionItem>
                 </Accordion>
-              
+
                 <Flex paddingY={4}></Flex>
 
-                { showChatBox && <ChatBox pid={pid}/> }
+                {showChatBox && <ChatBox pid={pid} />}
               </Flex>
 
               {/* Right Pane Section */}
@@ -1115,6 +1124,7 @@ export default function Home({ _id = null }) {
 
                   <Flex paddingY={4}></Flex>
                   <Button
+                    leftIcon={<TimeIcon />}
                     variant="outline"
                     border="2px solid"
                     borderColor="purple.700"

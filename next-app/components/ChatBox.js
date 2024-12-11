@@ -20,6 +20,7 @@ import {
 } from "@permaweb/aoconnect"
 import { useState, useEffect, useRef } from "react"
 import areArraysEqual from "@/utils/AreArrayEquals"
+import { ChatIcon } from "@chakra-ui/icons"
 
 const POLLING_INTERVAL = 5000
 
@@ -183,7 +184,7 @@ export default function ChatBox({ pid = null }) {
           p={4}
         >
           <Text fontSize="2xl" fontWeight="bold" mb={4}>
-            Chat
+            <ChatIcon /> Chat
           </Text>
           <FormControl>
             <Textarea
@@ -200,6 +201,7 @@ export default function ChatBox({ pid = null }) {
           </FormControl>
 
           <Button
+            leftIcon={<ChatIcon />}
             mt={4}
             w="100%"
             variant="outline"
@@ -214,7 +216,7 @@ export default function ChatBox({ pid = null }) {
           >
             Send Message
           </Button>
-          <Flex paddingY={2}></Flex>
+          <Flex paddingY={4}></Flex>
 
           <VStack
             flex={1}
