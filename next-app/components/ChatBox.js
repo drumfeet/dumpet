@@ -9,7 +9,7 @@ import {
   Text,
   VStack,
   Box,
-  useToast,
+  useToast
 } from "@chakra-ui/react"
 import { createDataItemSigner, message, result, dryrun } from "@permaweb/aoconnect"
 import { useState, useEffect, useRef } from "react"
@@ -21,36 +21,27 @@ const POLLING_INTERVAL = 5000
 export default function ChatBox() {
   const [chatMsg, setChatMsg] = useState("")
   const [messages, setMessages] = useState([])
+  const [currentPage, setCurrentPage] = useState(1)
+  const [hasMore, setHasMore] = useState(false)
   const messagesRef = useRef([])
   const [isLoading, setIsLoading] = useState(false)
+  const [isLoadingMore, setIsLoadingMore] = useState(false)
   const chatEndRef = useRef(null)
   const toast = useToast()
   const { connectWallet } = useAppContext()
 
-  // Auto-scroll to bottom when new messages arrive
-  const scrollToBottom = () => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" })
-  }
-
-  useEffect(() => {
-    scrollToBottom()
-  }, [messages])
-
-  // Initial fetch and polling setup
   useEffect(() => {
     const fetchMessages = async () => {
-      await get()
+      // Only fetch the first page during polling
+      if (currentPage === 1) {
+        await get()
+      }
     }
 
-    // Initial fetch
     fetchMessages()
-
-    // Set up polling
     const interval = setInterval(fetchMessages, POLLING_INTERVAL)
-
-    // Cleanup
     return () => clearInterval(interval)
-  }, [])
+  }, [currentPage])
 
   const post = async () => {
     const _connected = await connectWallet()
@@ -67,22 +58,21 @@ export default function ChatBox() {
         tags: [
           {
             name: "Action",
-            value: "AddChat",
+            value: "AddChat"
           },
           {
             name: "ChatMsg",
-            value: chatMsg,
-          },
+            value: chatMsg
+          }
         ],
-        signer: createDataItemSigner(globalThis.arweaveWallet),
+        signer: createDataItemSigner(globalThis.arweaveWallet)
       })
 
       const _result = await result({
         message: messageId,
-        process: CHAT_PROCESS_ID,
+        process: CHAT_PROCESS_ID
       })
 
-      // Clear input and refresh messages
       setChatMsg("")
       await get()
     } catch (error) {
@@ -92,7 +82,7 @@ export default function ChatBox() {
         description: error.message,
         status: "error",
         duration: 3000,
-        isClosable: true,
+        isClosable: true
       })
     } finally {
       setIsLoading(false)
@@ -107,14 +97,21 @@ export default function ChatBox() {
           { name: "Action", value: "List" },
           { name: "Page", value: nextPage.toString() },
           { name: "Limit", value: limit.toString() },
-          { name: "Order", value: "asc" },
-        ],
+          { name: "Order", value: "desc" }
+        ]
       })
 
       const _jsonData = JSON.parse(result?.Messages[0]?.Data)
-      if (!areArraysEqual(_jsonData.Chats, messagesRef.current)) {
-        setMessages(_jsonData.Chats || [])
-        messagesRef.current = _jsonData.Chats || []
+      setHasMore(_jsonData.HasMore)
+
+      if (nextPage === 1) {
+        if (!areArraysEqual(_jsonData.Chats, messagesRef.current)) {
+          setMessages(_jsonData.Chats || [])
+          messagesRef.current = _jsonData.Chats || []
+        }
+      } else {
+        setMessages(prevMessages => [...prevMessages, ...(_jsonData.Chats || [])])
+        messagesRef.current = [...messagesRef.current, ...(_jsonData.Chats || [])]
       }
     } catch (error) {
       console.error(error)
@@ -123,7 +120,25 @@ export default function ChatBox() {
         description: error.message,
         status: "error",
         duration: 3000,
-        isClosable: true,
+        isClosable: true
+      })
+    }
+  }
+
+  const handleLoadMore = async () => {
+    try {
+      const nextPage = currentPage + 1
+      setCurrentPage(nextPage)
+      setIsLoadingMore(true);
+      await get(nextPage)
+      setIsLoadingMore(false);
+    } catch (error) {
+      toast({
+        title: "Error retrieving more messages",
+        description: error.message,
+        status: "error",
+        duration: 3000,
+        isClosable: true
       })
     }
   }
@@ -138,7 +153,6 @@ export default function ChatBox() {
   return (
     <ChakraProvider>
       <Flex direction="column" w="100%" h="100%" bg="#1a1a2e" minH="100vh" color="white">
-        {/* Main chat container */}
         <Flex
           direction="column"
           w="100%"
@@ -148,11 +162,40 @@ export default function ChatBox() {
           borderRadius={{ base: "0", md: "md" }}
           p={4}
         >
+          <FormControl>
+            <Input
+              placeholder="Type your message..."
+              _placeholder={{ color: "gray.400" }}
+              onChange={(e) => setChatMsg(e.target.value)}
+              onKeyPress={handleKeyPress}
+              value={chatMsg}
+              focusBorderColor="#7023b6"
+              bg="#2d2d44"
+              borderColor="#2d2d44"
+              borderRadius="md"
+            />
+          </FormControl>
+
+          <Button
+            mt={4}
+            w="100%"
+            variant="outline"
+            border="2px solid"
+            borderColor="purple.700"
+            color="white"
+            _hover={{ bg: "purple.700" }}
+            colorScheme="purple"
+            onClick={post}
+            isLoading={isLoading}
+            loadingText="Sending..."
+          >
+            Send Message
+          </Button>
+          <Flex paddingY={2}></Flex>
           <Text fontSize="xl" mb={4}>
             Chat
           </Text>
 
-          {/* Messages Container */}
           <VStack
             flex={1}
             w="100%"
@@ -163,15 +206,15 @@ export default function ChatBox() {
             mb={4}
             css={{
               "&::-webkit-scrollbar": {
-                width: "4px",
+                width: "4px"
               },
               "&::-webkit-scrollbar-track": {
-                width: "6px",
+                width: "6px"
               },
               "&::-webkit-scrollbar-thumb": {
                 background: "purple.500",
-                borderRadius: "24px",
-              },
+                borderRadius: "24px"
+              }
             }}
           >
             {messages.map((msg, index) => (
@@ -194,34 +237,21 @@ export default function ChatBox() {
                 </Text>
               </Box>
             ))}
+            {hasMore && (
+              <Flex justify="center" mb={4}>
+                <Button
+                  onClick={handleLoadMore}
+                  isLoading={isLoadingMore}
+                  loadingText="Loading..."
+                  size="sm"
+                  colorScheme="purple"
+                >
+                  Show More
+                </Button>
+              </Flex>
+            )}
             <div ref={chatEndRef} />
           </VStack>
-
-          {/* Input Section */}
-          <FormControl>
-            <Input
-              placeholder="Type your message..."
-              _placeholder={{ color: "gray.400" }}
-              onChange={(e) => setChatMsg(e.target.value)}
-              onKeyPress={handleKeyPress}
-              value={chatMsg}
-              focusBorderColor="#7023b6"
-              bg="#2d2d44"
-              borderColor="#2d2d44"
-              borderRadius="md"
-            />
-          </FormControl>
-
-          <Button
-            mt={4}
-            w="100%"
-            colorScheme="purple"
-            onClick={post}
-            isLoading={isLoading}
-            loadingText="Sending..."
-          >
-            Send Message
-          </Button>
         </Flex>
       </Flex>
     </ChakraProvider>
