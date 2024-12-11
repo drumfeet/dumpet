@@ -9,9 +9,14 @@ import {
   Text,
   VStack,
   Box,
-  useToast
+  useToast,
 } from "@chakra-ui/react"
-import { createDataItemSigner, message, result, dryrun } from "@permaweb/aoconnect"
+import {
+  createDataItemSigner,
+  message,
+  result,
+  dryrun,
+} from "@permaweb/aoconnect"
 import { useState, useEffect, useRef } from "react"
 import areArraysEqual from "@/utils/AreArrayEquals"
 
@@ -58,19 +63,19 @@ export default function ChatBox({ pid = null }) {
         tags: [
           {
             name: "Action",
-            value: "AddChat"
+            value: "AddChat",
           },
           {
             name: "ChatMsg",
-            value: chatMsg
-          }
+            value: chatMsg,
+          },
         ],
-        signer: createDataItemSigner(globalThis.arweaveWallet)
+        signer: createDataItemSigner(globalThis.arweaveWallet),
       })
 
       const _result = await result({
         message: messageId,
-        process: chatId
+        process: chatId,
       })
 
       setChatMsg("")
@@ -82,7 +87,7 @@ export default function ChatBox({ pid = null }) {
         description: error.message,
         status: "error",
         duration: 3000,
-        isClosable: true
+        isClosable: true,
       })
     } finally {
       setIsLoading(false)
@@ -97,21 +102,27 @@ export default function ChatBox({ pid = null }) {
           { name: "Action", value: "List" },
           { name: "Page", value: nextPage.toString() },
           { name: "Limit", value: limit.toString() },
-          { name: "Order", value: "desc" }
-        ]
+          { name: "Order", value: "desc" },
+        ],
       })
       if (result?.Messages[0]?.Data) {
         const _jsonData = JSON.parse(result?.Messages[0]?.Data)
         setHasMore(_jsonData.HasMore)
-  
+
         if (nextPage === 1) {
           if (!areArraysEqual(_jsonData.Chats, messagesRef.current)) {
             setMessages(_jsonData.Chats || [])
             messagesRef.current = _jsonData.Chats || []
           }
         } else {
-          setMessages(prevMessages => [...prevMessages, ...(_jsonData.Chats || [])])
-          messagesRef.current = [...messagesRef.current, ...(_jsonData.Chats || [])]
+          setMessages((prevMessages) => [
+            ...prevMessages,
+            ...(_jsonData.Chats || []),
+          ])
+          messagesRef.current = [
+            ...messagesRef.current,
+            ...(_jsonData.Chats || []),
+          ]
         }
       }
     } catch (error) {
@@ -121,7 +132,7 @@ export default function ChatBox({ pid = null }) {
         description: error.message,
         status: "error",
         duration: 3000,
-        isClosable: true
+        isClosable: true,
       })
     }
   }
@@ -139,7 +150,7 @@ export default function ChatBox({ pid = null }) {
         description: error.message,
         status: "error",
         duration: 3000,
-        isClosable: true
+        isClosable: true,
       })
     }
   }
@@ -153,7 +164,14 @@ export default function ChatBox({ pid = null }) {
 
   return (
     <ChakraProvider>
-      <Flex direction="column" w="100%" h="100%" bg="#1a1a2e" minH="100vh" color="white">
+      <Flex
+        direction="column"
+        w="100%"
+        h="100%"
+        bg="#1a1a2e"
+        minH="100vh"
+        color="white"
+      >
         <Flex
           direction="column"
           w="100%"
@@ -163,6 +181,9 @@ export default function ChatBox({ pid = null }) {
           borderRadius={{ base: "0", md: "md" }}
           p={4}
         >
+          <Text fontSize="2xl" fontWeight="bold" mb={4}>
+            Chat
+          </Text>
           <FormControl>
             <Input
               placeholder="Type your message..."
@@ -193,9 +214,6 @@ export default function ChatBox({ pid = null }) {
             Send Message
           </Button>
           <Flex paddingY={2}></Flex>
-          <Text fontSize="xl" mb={4}>
-            Chat
-          </Text>
 
           <VStack
             flex={1}
@@ -207,15 +225,15 @@ export default function ChatBox({ pid = null }) {
             mb={4}
             css={{
               "&::-webkit-scrollbar": {
-                width: "4px"
+                width: "4px",
               },
               "&::-webkit-scrollbar-track": {
-                width: "6px"
+                width: "6px",
               },
               "&::-webkit-scrollbar-thumb": {
                 background: "purple.500",
-                borderRadius: "24px"
-              }
+                borderRadius: "24px",
+              },
             }}
           >
             {messages.map((msg, index) => (
