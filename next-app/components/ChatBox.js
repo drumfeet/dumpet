@@ -18,13 +18,15 @@ import {
   dryrun,
 } from "@permaweb/aoconnect";
 import { useState, useEffect, useRef } from "react";
+import areArraysEqual from "@/utils/AreArrayEquals";
 
 const CHAT_PROCESS_ID = "kfjNgT4R0vQaRgho2aSMSbJgB8xqvQL_1__yIsE_fp8";
-const POLLING_INTERVAL = 20000; // 20 seconds
+const POLLING_INTERVAL = 5000; // 20 seconds
 
 export default function ChatBox() {
   const [chatMsg, setChatMsg] = useState("");
   const [messages, setMessages] = useState([]);
+  const messagesRef = useRef([]);
   const [isLoading, setIsLoading] = useState(false);
   const chatEndRef = useRef(null);
   const toast = useToast();
@@ -88,13 +90,6 @@ export default function ChatBox() {
       // Clear input and refresh messages
       setChatMsg("");
       await get();
-      
-      toast({
-        title: "Message sent",
-        status: "success",
-        duration: 2000,
-        isClosable: true,
-      });
     } catch (error) {
       console.error(error);
       toast({
@@ -117,11 +112,15 @@ export default function ChatBox() {
           { name: "Action", value: "List" },
           { name: "Page", value: nextPage.toString() },
           { name: "Limit", value: limit.toString() },
+          { name: "Order", value: 'asc' },
         ],
       });
-      
+
       const _jsonData = JSON.parse(result?.Messages[0]?.Data);
-      setMessages(_jsonData.messages || []);
+      if (!areArraysEqual(_jsonData.Chats, messagesRef.current)) {
+        setMessages(_jsonData.Chats || []);
+        messagesRef.current = _jsonData.Chats || [];
+      }
     } catch (error) {
       console.error(error);
       toast({
@@ -188,18 +187,16 @@ export default function ChatBox() {
             {messages.map((msg, index) => (
               <Box
                 key={index}
-                bg="#2d2d44"
                 p={3}
-                borderRadius="md"
-                alignSelf={msg.sender === globalThis.arweaveWallet?.getActiveAddress() ? "flex-end" : "flex-start"}
-                maxWidth="80%"
+                alignSelf={msg.UserId === globalThis.arweaveWallet?.getActiveAddress() ? "flex-end" : "flex-start"}
+                maxWidth="100%"
               >
                 <Text fontSize="xs" color="purple.300" mb={1}>
-                  {msg.sender?.slice(0, 8)}...{msg.sender?.slice(-8)}
+                  {msg.UserId?.slice(0, 8)}...{msg.UserId?.slice(-8)}
                 </Text>
-                <Text>{msg.content}</Text>
+                <Text>{msg.ChatMsg}</Text>
                 <Text fontSize="xs" color="gray.400" mt={1}>
-                  {new Date(msg.timestamp).toLocaleTimeString()}
+                  {new Date(msg.Timestamp).toLocaleTimeString()}
                 </Text>
               </Box>
             ))}
