@@ -21,7 +21,7 @@ import { useState, useEffect, useRef } from "react";
 import areArraysEqual from "@/utils/AreArrayEquals";
 
 const CHAT_PROCESS_ID = "kfjNgT4R0vQaRgho2aSMSbJgB8xqvQL_1__yIsE_fp8";
-const POLLING_INTERVAL = 5000; // 20 seconds
+const POLLING_INTERVAL = 5000;
 
 export default function ChatBox() {
   const [chatMsg, setChatMsg] = useState("");
