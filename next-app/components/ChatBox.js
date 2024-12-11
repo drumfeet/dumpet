@@ -10,61 +10,56 @@ import {
   VStack,
   Box,
   useToast,
-} from "@chakra-ui/react";
-import {
-  createDataItemSigner,
-  message,
-  result,
-  dryrun,
-} from "@permaweb/aoconnect";
-import { useState, useEffect, useRef } from "react";
-import areArraysEqual from "@/utils/AreArrayEquals";
+} from "@chakra-ui/react"
+import { createDataItemSigner, message, result, dryrun } from "@permaweb/aoconnect"
+import { useState, useEffect, useRef } from "react"
+import areArraysEqual from "@/utils/AreArrayEquals"
 
-const CHAT_PROCESS_ID = "kfjNgT4R0vQaRgho2aSMSbJgB8xqvQL_1__yIsE_fp8";
-const POLLING_INTERVAL = 5000;
+const CHAT_PROCESS_ID = "kfjNgT4R0vQaRgho2aSMSbJgB8xqvQL_1__yIsE_fp8"
+const POLLING_INTERVAL = 5000
 
 export default function ChatBox() {
-  const [chatMsg, setChatMsg] = useState("");
-  const [messages, setMessages] = useState([]);
-  const messagesRef = useRef([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const chatEndRef = useRef(null);
-  const toast = useToast();
+  const [chatMsg, setChatMsg] = useState("")
+  const [messages, setMessages] = useState([])
+  const messagesRef = useRef([])
+  const [isLoading, setIsLoading] = useState(false)
+  const chatEndRef = useRef(null)
+  const toast = useToast()
   const { connectWallet } = useAppContext()
 
   // Auto-scroll to bottom when new messages arrive
   const scrollToBottom = () => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+    scrollToBottom()
+  }, [messages])
 
   // Initial fetch and polling setup
   useEffect(() => {
     const fetchMessages = async () => {
-      await get();
-    };
+      await get()
+    }
 
     // Initial fetch
-    fetchMessages();
+    fetchMessages()
 
     // Set up polling
-    const interval = setInterval(fetchMessages, POLLING_INTERVAL);
+    const interval = setInterval(fetchMessages, POLLING_INTERVAL)
 
     // Cleanup
-    return () => clearInterval(interval);
-  }, []);
+    return () => clearInterval(interval)
+  }, [])
 
   const post = async () => {
     const _connected = await connectWallet()
     if (_connected.success === false) {
       return
     }
-    if (!chatMsg.trim()) return;
-    
-    setIsLoading(true);
+    if (!chatMsg.trim()) return
+
+    setIsLoading(true)
 
     try {
       const messageId = await message({
@@ -80,29 +75,29 @@ export default function ChatBox() {
           },
         ],
         signer: createDataItemSigner(globalThis.arweaveWallet),
-      });
+      })
 
       const _result = await result({
         message: messageId,
         process: CHAT_PROCESS_ID,
-      });
+      })
 
       // Clear input and refresh messages
-      setChatMsg("");
-      await get();
+      setChatMsg("")
+      await get()
     } catch (error) {
-      console.error(error);
+      console.error(error)
       toast({
         title: "Error sending message",
         description: error.message,
         status: "error",
         duration: 3000,
         isClosable: true,
-      });
+      })
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   const get = async (nextPage = 1, limit = 50) => {
     try {
@@ -112,44 +107,37 @@ export default function ChatBox() {
           { name: "Action", value: "List" },
           { name: "Page", value: nextPage.toString() },
           { name: "Limit", value: limit.toString() },
-          { name: "Order", value: 'asc' },
+          { name: "Order", value: "asc" },
         ],
-      });
+      })
 
-      const _jsonData = JSON.parse(result?.Messages[0]?.Data);
+      const _jsonData = JSON.parse(result?.Messages[0]?.Data)
       if (!areArraysEqual(_jsonData.Chats, messagesRef.current)) {
-        setMessages(_jsonData.Chats || []);
-        messagesRef.current = _jsonData.Chats || [];
+        setMessages(_jsonData.Chats || [])
+        messagesRef.current = _jsonData.Chats || []
       }
     } catch (error) {
-      console.error(error);
+      console.error(error)
       toast({
         title: "Error fetching messages",
         description: error.message,
         status: "error",
         duration: 3000,
         isClosable: true,
-      });
+      })
     }
-  };
+  }
 
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      post();
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault()
+      post()
     }
-  };
+  }
 
   return (
     <ChakraProvider>
-      <Flex
-        direction="column"
-        w="100%"
-        h="100%"
-        bg="#1a1a2e"
-        minH="100vh"
-        color="white"
-      >
+      <Flex direction="column" w="100%" h="100%" bg="#1a1a2e" minH="100vh" color="white">
         {/* Main chat container */}
         <Flex
           direction="column"
@@ -160,8 +148,10 @@ export default function ChatBox() {
           borderRadius={{ base: "0", md: "md" }}
           p={4}
         >
-          <Text fontSize="xl" mb={4}>Chat</Text>
-          
+          <Text fontSize="xl" mb={4}>
+            Chat
+          </Text>
+
           {/* Messages Container */}
           <VStack
             flex={1}
@@ -172,15 +162,15 @@ export default function ChatBox() {
             maxH="calc(100vh - 200px)"
             mb={4}
             css={{
-              '&::-webkit-scrollbar': {
-                width: '4px',
+              "&::-webkit-scrollbar": {
+                width: "4px",
               },
-              '&::-webkit-scrollbar-track': {
-                width: '6px',
+              "&::-webkit-scrollbar-track": {
+                width: "6px",
               },
-              '&::-webkit-scrollbar-thumb': {
-                background: 'purple.500',
-                borderRadius: '24px',
+              "&::-webkit-scrollbar-thumb": {
+                background: "purple.500",
+                borderRadius: "24px",
               },
             }}
           >
@@ -188,7 +178,11 @@ export default function ChatBox() {
               <Box
                 key={index}
                 p={3}
-                alignSelf={msg.UserId === globalThis.arweaveWallet?.getActiveAddress() ? "flex-end" : "flex-start"}
+                alignSelf={
+                  msg.UserId === globalThis.arweaveWallet?.getActiveAddress()
+                    ? "flex-end"
+                    : "flex-start"
+                }
                 maxWidth="100%"
               >
                 <Text fontSize="xs" color="purple.300" mb={1}>
@@ -217,7 +211,7 @@ export default function ChatBox() {
               borderRadius="md"
             />
           </FormControl>
-          
+
           <Button
             mt={4}
             w="100%"
@@ -231,5 +225,5 @@ export default function ChatBox() {
         </Flex>
       </Flex>
     </ChakraProvider>
-  );
+  )
 }
