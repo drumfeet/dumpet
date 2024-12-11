@@ -79,13 +79,11 @@ Handlers.add("GetMarketInfo", Handlers.utils.hasMatchingTag("Action", "GetMarket
         Target = msg.From,
         Data = json.encode({
             MarketInfo = MarketInfo,
-            BalancesVoteA = BalancesVoteA,
-            BalancesVoteB = BalancesVoteB,
             TotalBalanceVoteA = TotalBalanceVoteA,
             TotalBalanceVoteB = TotalBalanceVoteB,
             Creator = Creator,
             MainProcessId = MainProcessId,
-
+            ChatEnabled = true,
         })
     })
 end)
