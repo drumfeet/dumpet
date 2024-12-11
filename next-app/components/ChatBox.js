@@ -1,3 +1,4 @@
+import { useAppContext } from "@/context/AppContext"
 import {
   Button,
   ChakraProvider,
@@ -27,6 +28,7 @@ export default function ChatBox() {
   const [isLoading, setIsLoading] = useState(false);
   const chatEndRef = useRef(null);
   const toast = useToast();
+  const { connectWallet } = useAppContext()
 
   // Auto-scroll to bottom when new messages arrive
   const scrollToBottom = () => {
@@ -54,9 +56,14 @@ export default function ChatBox() {
   }, []);
 
   const post = async () => {
+    const _connected = await connectWallet()
+    if (_connected.success === false) {
+      return
+    }
     if (!chatMsg.trim()) return;
     
     setIsLoading(true);
+
     try {
       const messageId = await message({
         process: CHAT_PROCESS_ID,
