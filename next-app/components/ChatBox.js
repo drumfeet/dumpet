@@ -10,6 +10,7 @@ import {
   VStack,
   Box,
   useToast,
+  Textarea,
 } from "@chakra-ui/react"
 import {
   createDataItemSigner,
@@ -94,7 +95,7 @@ export default function ChatBox({ pid = null }) {
     }
   }
 
-  const get = async (nextPage = 1, limit = 50) => {
+  const get = async (nextPage = 1, limit = 10) => {
     try {
       const result = await dryrun({
         process: chatId,
@@ -185,7 +186,7 @@ export default function ChatBox({ pid = null }) {
             Chat
           </Text>
           <FormControl>
-            <Input
+            <Textarea
               placeholder="Type your message..."
               _placeholder={{ color: "gray.400" }}
               onChange={(e) => setChatMsg(e.target.value)}
