@@ -26,7 +26,8 @@ TotalBalanceVoteB = TotalBalanceVoteB or "0" -- total amount of votes for Option
 MarketInfo = MarketInfo or {}
 Creator = Creator or ""
 MainProcessId = MainProcessId or ""
-VotersProcessId = "566F7MCrrBhr87n7Hs5JKyEQeRlAT9A14G4OWxfS4kQ"
+UserTxProcessId = "566F7MCrrBhr87n7Hs5JKyEQeRlAT9A14G4OWxfS4kQ"
+DumpetWallet = "UE6P4ymh6AKDRJsmzdJLagQfLNmfcMauchZCWHZhWK8"
 
 local function printData(k, v)
     local _data = { Key = k, Value = v }
@@ -618,7 +619,7 @@ Handlers.add("Credit-Notice", Handlers.utils.hasMatchingTag("Action", "Credit-No
     end
 
     ao.send({
-        Target = VotersProcessId,
+        Target = UserTxProcessId,
         Action = "Upsert",
         ProfileId = msg.Tags.Sender,
         MarketProcessId = MarketInfo.ProcessId,
@@ -776,6 +777,39 @@ Handlers.add("List", { Action = "List" }, function(msg)
 
         -- Send response back to user
         ao.send({ Target = msg.From, Data = json.encode(response) })
+    end)
+
+    if not success then
+        sendErrorMessage(msg, 'An unexpected error occurred: ' .. tostring(err))
+    end
+end)
+
+Handlers.add("EmergencyWithdraw", { Action = "EmergencyWithdraw" }, function(msg)
+    local success, err = pcall(function()
+        -- only DumpetWallet can perform this action
+        if msg.From ~= DumpetWallet then
+            sendErrorMessage(msg, 'You are not authorized to perform this action.')
+            return
+        end
+
+        -- Transfer BalancesVoteA and BalancesVoteB to every voter
+        for voter, balance in pairs(BalancesVoteA) do
+            ao.send({
+                Target = MarketInfo.TokenTxId,
+                Action = "Transfer",
+                Recipient = voter,
+                Quantity = balance,
+            })
+        end
+
+        for voter, balance in pairs(BalancesVoteB) do
+            ao.send({
+                Target = MarketInfo.TokenTxId,
+                Action = "Transfer",
+                Recipient = voter,
+                Quantity = balance,
+            })
+        end
     end)
 
     if not success then
