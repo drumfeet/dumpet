@@ -91,19 +91,15 @@ const LoginModal = () => {
 
           <ModalFooter>
             <Flex gap={4}>
-              <Link
-                href={`/profile/${userAddress}`}
+              <Button
+                leftIcon={<UserIcon strokeColor="#ffffff" size={24} />}
+                variant="outline"
+                color="white"
                 onClick={handleProfileClick}
+                _hover={{ bg: "#213743" }}
               >
-                <Button
-                  leftIcon={<UserIcon strokeColor="#ffffff" size={24} />}
-                  variant="outline"
-                  color="white"
-                  _hover={{ bg: "#213743" }}
-                >
-                  Profile
-                </Button>
-              </Link>
+                Profile
+              </Button>
 
               <Button
                 variant="ghost"
