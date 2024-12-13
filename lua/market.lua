@@ -608,6 +608,8 @@ end)
 
 Handlers.add("Credit-Notice", Handlers.utils.hasMatchingTag("Action", "Credit-Notice"), function(msg)
     if (hasMarketExpired(msg)) then
+        sendErrorMessage(msg, 'Market duration has already expired.', msg.Tags.Sender)
+
         -- return funds to sender
         ao.send({
             Target = msg.From, -- user token PROCESS_ID
@@ -615,7 +617,6 @@ Handlers.add("Credit-Notice", Handlers.utils.hasMatchingTag("Action", "Credit-No
             Recipient = msg.Tags.Sender,
             Quantity = msg.Tags.Quantity,
         })
-        sendErrorMessage(msg, '', msg.Tags.Sender)
         return
     end
 
@@ -814,6 +815,9 @@ Handlers.add("EmergencyWithdraw", { Action = "EmergencyWithdraw" }, function(msg
 
         -- Mark the market as concluded
         MarketInfo.Concluded = true
+
+        -- Send a success message
+        ao.send({ Target = msg.From, Data = "Emergency Withdrawal successful" })
     end)
 
     if not success then
@@ -832,6 +836,9 @@ Handlers.add("VoidMarket", { Action = "VoidMarket" }, function(msg)
         -- Change the MarketInfo.Duration to reflect the market has expired
         local timestamp = msg["Timestamp"]
         MarketInfo.Duration = tostring(timestamp)
+
+        -- Send a success message
+        ao.send({ Target = msg.From, Data = "Market voided successfully" })
     end)
 
     if not success then

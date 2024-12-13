@@ -25,6 +25,15 @@ MarketKeys = MarketKeys or {}
 WaitFor = WaitFor or {}
 Creators = Creators or {}
 
+SupportedTokens = SupportedTokens or {
+    ["yKdMeRNY8Yjmk8eNfJRzef1W7oQaM8CvAw72gBarQt8"] = true,
+    ["QD3R6Qes15eQqIN_TK5s7ttawzAiX8ucYI2AUXnuS18"] = true,
+    ["xU9zFkq3X2ZQ6olwNVvr1vUWIjc3kXTWr7xKQD6dh10"] = true,
+    ["NG-0lVX882MG5nhARrSzyprEK6ejonHpdUmaaMPsHE8"] = true,
+    ["7zH9dlMNoxprab9loshv3Y7WG45DOny_Vrq9KrXObdQ"] = true,
+    ["wOrb8b_V8QixWyXZub48Ki5B6OIDyf_p1ngoonsaRpQ"] = true,
+}
+
 local function isSenderWaiting(sender)
     return WaitFor[sender] ~= nil
 end
@@ -32,7 +41,7 @@ end
 Handlers.add("Create", Handlers.utils.hasMatchingTag("Action", "Create"), function(msg)
     local success, err = pcall(function()
         if isSenderWaiting(msg.From) then
-            sendErrorMessage(msg, 'You already have a market in progress!')
+            sendErrorMessage(msg, 'You still have a pending market creation!')
             return
         end
 
@@ -79,6 +88,11 @@ Handlers.add("Create", Handlers.utils.hasMatchingTag("Action", "Create"), functi
 
         if type(msg.Tags.TokenTxId) ~= 'string' or msg.Tags.TokenTxId:match("^%s*$") then
             sendErrorMessage(msg, 'TokenTxId is required and must be a non-empty string!')
+            return
+        end
+
+        if not SupportedTokens[msg.Tags.TokenTxId] then
+            sendErrorMessage(msg, 'Your bet token is not yet supported! ' .. msg.Tags.TokenTxId)
             return
         end
 
@@ -728,6 +742,8 @@ end)
 
 Handlers.add("Credit-Notice", Handlers.utils.hasMatchingTag("Action", "Credit-Notice"), function(msg)
     if (hasMarketExpired(msg)) then
+        sendErrorMessage(msg, 'Market duration has already expired.', msg.Tags.Sender)
+
         -- return funds to sender
         ao.send({
             Target = msg.From, -- user token PROCESS_ID
@@ -735,7 +751,6 @@ Handlers.add("Credit-Notice", Handlers.utils.hasMatchingTag("Action", "Credit-No
             Recipient = msg.Tags.Sender,
             Quantity = msg.Tags.Quantity,
         })
-        sendErrorMessage(msg, '', msg.Tags.Sender)
         return
     end
 
@@ -934,6 +949,9 @@ Handlers.add("EmergencyWithdraw", { Action = "EmergencyWithdraw" }, function(msg
 
         -- Mark the market as concluded
         MarketInfo.Concluded = true
+
+        -- Send a success message
+        ao.send({ Target = msg.From, Data = "Emergency Withdrawal successful" })
     end)
 
     if not success then
@@ -952,6 +970,9 @@ Handlers.add("VoidMarket", { Action = "VoidMarket" }, function(msg)
         -- Change the MarketInfo.Duration to reflect the market has expired
         local timestamp = msg["Timestamp"]
         MarketInfo.Duration = tostring(timestamp)
+
+        -- Send a success message
+        ao.send({ Target = msg.From, Data = "Market voided successfully" })
     end)
 
     if not success then
@@ -974,11 +995,11 @@ end)
                     AoTokenProcessId = "]] .. marketInfo.AoTokenProcessId .. [["
                     }
                 Creator = "]] .. msg.From .. [["
-                Owner = ""
                 MainProcessId = "]] .. ao.id .. [["
                 UserTxProcessId = "566F7MCrrBhr87n7Hs5JKyEQeRlAT9A14G4OWxfS4kQ"
                 DumpetWallet = "UE6P4ymh6AKDRJsmzdJLagQfLNmfcMauchZCWHZhWK8"
                 IsChatEnabled = true
+                Owner = ""
             ]])
         })
 
