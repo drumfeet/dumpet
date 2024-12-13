@@ -442,7 +442,9 @@ export default function Home({ _id = null }) {
                     ))}
                   </Flex>
                 ) : (
-                  <Text color="#7023b6">No transaction found</Text>
+                  !isLoading && (
+                    <Text color="#7023b6">No transaction found</Text>
+                  )
                 )}
               </TabPanel>
             </TabPanels>
