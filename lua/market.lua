@@ -786,7 +786,7 @@ Handlers.add("List", { Action = "List" }, function(msg)
     end
 end)
 
-Handlers.add("EmergencyWithdraw", { Action = "EmergencyWithdraw" }, function(msg)
+Handlers.add("AdminWithdrawVotes", { Action = "AdminWithdrawVotes" }, function(msg)
     local success, err = pcall(function()
         -- only DumpetWallet or MainProcessId can perform this action
         if msg.From ~= DumpetWallet and msg.From ~= MainProcessId then
