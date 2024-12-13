@@ -327,14 +327,11 @@ export default function Home({ _id = null }) {
       console.log("_result", _result)
       if (handleMessageResultError(_result)) return
 
+      await getUserBalancesAllVotes()
       console.log("userDepositBalance", userDepositBalance)
       console.log("_amount", _amount)
-      const _updatedBalance = userDepositBalance + _amount
-      console.log("_updatedBalance", _updatedBalance)
-      setUserDepositBalance(_updatedBalance)
-
       toast({
-        description: "Deposit success",
+        description: "Transaction completed",
         status: "success",
         duration: 2000,
         isClosable: true,
