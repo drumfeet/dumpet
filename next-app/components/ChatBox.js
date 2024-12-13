@@ -4,8 +4,6 @@ import {
   ChakraProvider,
   Flex,
   FormControl,
-  FormHelperText,
-  Input,
   Text,
   VStack,
   Box,
@@ -20,7 +18,7 @@ import {
 } from "@permaweb/aoconnect"
 import { useState, useEffect, useRef } from "react"
 import areArraysEqual from "@/utils/AreArrayEquals"
-import { ChatIcon } from "@chakra-ui/icons"
+import { ArrowRightIcon, ChatIcon } from "@chakra-ui/icons"
 
 const POLLING_INTERVAL = 5000
 
@@ -201,7 +199,7 @@ export default function ChatBox({ pid = null }) {
           </FormControl>
 
           <Button
-            leftIcon={<ChatIcon />}
+            leftIcon={<ArrowRightIcon />}
             mt={4}
             w="100%"
             variant="outline"
