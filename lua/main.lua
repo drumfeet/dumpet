@@ -146,7 +146,9 @@ TotalBalanceVoteB = TotalBalanceVoteB or "0" -- total amount of votes for Option
 MarketInfo = MarketInfo or {}
 Creator = Creator or ""
 MainProcessId = MainProcessId or ""
-VotersProcessId = "566F7MCrrBhr87n7Hs5JKyEQeRlAT9A14G4OWxfS4kQ"
+UserTxProcessId = UserTxProcessId or ""
+DumpetWallet = DumpetWallet or ""
+IsChatEnabled = IsChatEnabled or true
 
 local function printData(k, v)
     local _data = { Key = k, Value = v }
@@ -204,7 +206,7 @@ Handlers.add("GetMarketInfo", Handlers.utils.hasMatchingTag("Action", "GetMarket
             TotalBalanceVoteB = TotalBalanceVoteB,
             Creator = Creator,
             MainProcessId = MainProcessId,
-            ChatEnabled = true,
+            ChatEnabled = IsChatEnabled,
         })
     })
 end)
@@ -738,7 +740,7 @@ Handlers.add("Credit-Notice", Handlers.utils.hasMatchingTag("Action", "Credit-No
     end
 
     ao.send({
-        Target = VotersProcessId,
+        Target = UserTxProcessId,
         Action = "Upsert",
         ProfileId = msg.Tags.Sender,
         MarketProcessId = MarketInfo.ProcessId,
@@ -903,6 +905,60 @@ Handlers.add("List", { Action = "List" }, function(msg)
     end
 end)
 
+Handlers.add("EmergencyWithdraw", { Action = "EmergencyWithdraw" }, function(msg)
+    local success, err = pcall(function()
+        -- only DumpetWallet or MainProcessId can perform this action
+        if msg.From ~= DumpetWallet and msg.From ~= MainProcessId then
+            sendErrorMessage(msg, 'You are not authorized to perform this action.')
+            return
+        end
+
+        -- Transfer BalancesVoteA and BalancesVoteB back to the voters
+        for voter, balance in pairs(BalancesVoteA) do
+            ao.send({
+                Target = MarketInfo.TokenTxId,
+                Action = "Transfer",
+                Recipient = voter,
+                Quantity = balance,
+            })
+        end
+
+        for voter, balance in pairs(BalancesVoteB) do
+            ao.send({
+                Target = MarketInfo.TokenTxId,
+                Action = "Transfer",
+                Recipient = voter,
+                Quantity = balance,
+            })
+        end
+
+        -- Mark the market as concluded
+        MarketInfo.Concluded = true
+    end)
+
+    if not success then
+        sendErrorMessage(msg, 'An unexpected error occurred: ' .. tostring(err))
+    end
+end)
+
+Handlers.add("VoidMarket", { Action = "VoidMarket" }, function(msg)
+    local success, err = pcall(function()
+        -- only DumpetWallet or MainProcessId can perform this action
+        if msg.From ~= DumpetWallet and msg.From ~= MainProcessId then
+            sendErrorMessage(msg, 'You are not authorized to perform this action.')
+            return
+        end
+
+        -- Change the MarketInfo.Duration to reflect the market has expired
+        local timestamp = msg["Timestamp"]
+        MarketInfo.Duration = tostring(timestamp)
+    end)
+
+    if not success then
+        sendErrorMessage(msg, 'An unexpected error occurred: ' .. tostring(err))
+    end
+end)
+
 
                 MarketInfo = {
                     Title = "]] .. marketInfo.Title .. [[",
@@ -920,6 +976,9 @@ end)
                 Creator = "]] .. msg.From .. [["
                 Owner = ""
                 MainProcessId = "]] .. ao.id .. [["
+                UserTxProcessId = "566F7MCrrBhr87n7Hs5JKyEQeRlAT9A14G4OWxfS4kQ"
+                DumpetWallet = "UE6P4ymh6AKDRJsmzdJLagQfLNmfcMauchZCWHZhWK8"
+                IsChatEnabled = true
             ]])
         })
 
