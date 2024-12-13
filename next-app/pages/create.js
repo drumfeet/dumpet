@@ -25,8 +25,7 @@ import WalletIcon from "@/components/icons/WalletIcon"
 import UserIcon from "@/components/icons/UserIcon"
 import { ExternalLinkIcon } from "@chakra-ui/icons"
 import tokenList from "@/components/TokenList"
-
-const MAIN_PROCESS_ID = "jIRuxblllcBIDUmYbrbbEI90nJs40duNA6wR6NkYVvI"
+import { MAIN_PROCESS_ID } from "@/context/AppContext"
 
 export default function Home() {
   const [title, setTitle] = useState("")
@@ -257,7 +256,9 @@ export default function Home() {
             </FormControl>
             <FormControl>
               <Flex gap={2} alignItems="center">
-                <FormHelperText fontSize="xs">Bet Token ProcessId</FormHelperText>
+                <FormHelperText fontSize="xs">
+                  Bet Token ProcessId
+                </FormHelperText>
                 <Link
                   target="_blank"
                   rel="noopener noreferrer"

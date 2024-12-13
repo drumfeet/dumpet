@@ -28,6 +28,7 @@ import AppHeader from "@/components/AppHeader"
 import { useAppContext } from "@/context/AppContext"
 import ShareIcon from "@/components/icons/ShareIcon"
 import Head from "next/head"
+import { MAIN_PROCESS_ID, USERTX_PROCESS_ID } from "@/context/AppContext"
 
 export async function getStaticPaths() {
   return { paths: [], fallback: "blocking" }
@@ -35,8 +36,6 @@ export async function getStaticPaths() {
 
 const getID = async (id, pid) => `${pid ?? id}`
 
-const MAIN_PROCESS_ID = "jIRuxblllcBIDUmYbrbbEI90nJs40duNA6wR6NkYVvI"
-const USERTX_PROCESS_ID = "566F7MCrrBhr87n7Hs5JKyEQeRlAT9A14G4OWxfS4kQ"
 export async function getStaticProps({ params: { id } }) {
   return { props: { pid: await getID(id) } }
 }
