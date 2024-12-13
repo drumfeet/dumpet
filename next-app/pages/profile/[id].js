@@ -22,7 +22,7 @@ import {
   TabPanel,
   Box,
   IconButton,
-  Spinner
+  Spinner,
 } from "@chakra-ui/react"
 import AppHeader from "@/components/AppHeader"
 import { useAppContext } from "@/context/AppContext"
@@ -60,11 +60,11 @@ export default function Home({ _id = null }) {
   useEffect(() => {
     if (pid) {
       ;(async () => {
-        setIsLoading(true);
+        setIsLoading(true)
         await hasWaitFor()
         await fetchMarkets()
         await fetchUser()
-        setIsLoading(false);
+        setIsLoading(false)
       })()
     }
   }, [pid])
@@ -364,9 +364,7 @@ export default function Home({ _id = null }) {
                     ))}
                   </Flex>
                 ) : (
-                  !isLoading && (
-                    <Text color="#7023b6">No market found</Text>
-                  )
+                  !isLoading && <Text color="#7023b6">No market found</Text>
                 )}
               </TabPanel>
               <TabPanel>
