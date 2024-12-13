@@ -22,6 +22,7 @@ import {
   TabPanel,
   Box,
   IconButton,
+  Spinner,
 } from "@chakra-ui/react"
 import AppHeader from "@/components/AppHeader"
 import { useAppContext } from "@/context/AppContext"
@@ -45,6 +46,7 @@ export default function Home({ _id = null }) {
   const { id } = useParams()
   const [pid, setPid] = useState(_id)
   const [isPending, setIsPending] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [userMarkets, setUserMarkets] = useState([])
   const [userTransactions, setUserTransactions] = useState([])
   const { handleMessageResultError, connectWallet } = useAppContext()
@@ -53,14 +55,16 @@ export default function Home({ _id = null }) {
     ;(async () => {
       _id ?? setPid(await getID(id, _id))
     })()
-  }, [])
+  }, [id])
 
   useEffect(() => {
     if (pid) {
       ;(async () => {
+        setIsLoading(true)
         await hasWaitFor()
         await fetchMarkets()
         await fetchUser()
+        setIsLoading(false)
       })()
     }
   }, [pid])
@@ -288,7 +292,18 @@ export default function Home({ _id = null }) {
             </TabList>
             <TabPanels>
               <TabPanel>
-                {userMarkets?.length > 0 ? (
+                {isLoading && (
+                  <Flex justifyContent="center">
+                    <Spinner
+                      thickness="4px"
+                      speed="0.65s"
+                      emptyColor="gray.200"
+                      color="purple.500"
+                      size="xl"
+                    />
+                  </Flex>
+                )}
+                {!isLoading && userMarkets?.length > 0 ? (
                   <Flex direction="column" width="100%" maxW="lg">
                     <Text fontSize="xs" color="gray.400" paddingBottom={2}>
                       MARKET PROCESS ID
@@ -349,11 +364,22 @@ export default function Home({ _id = null }) {
                     ))}
                   </Flex>
                 ) : (
-                  <Text color="#7023b6">No market found</Text>
+                  !isLoading && <Text color="#7023b6">No market found</Text>
                 )}
               </TabPanel>
               <TabPanel>
-                {userTransactions?.length > 0 ? (
+                {isLoading && (
+                  <Flex justifyContent="center">
+                    <Spinner
+                      thickness="4px"
+                      speed="0.65s"
+                      emptyColor="gray.200"
+                      color="purple.500"
+                      size="xl"
+                    />
+                  </Flex>
+                )}
+                {!isLoading && userTransactions?.length > 0 ? (
                   <Flex direction="column" width="100%" maxW="lg">
                     <Text fontSize="xs" color="gray.400" paddingBottom={2}>
                       MARKET PROCESS ID
@@ -414,7 +440,9 @@ export default function Home({ _id = null }) {
                     ))}
                   </Flex>
                 ) : (
-                  <Text color="#7023b6">No transaction found</Text>
+                  !isLoading && (
+                    <Text color="#7023b6">No transaction found</Text>
+                  )
                 )}
               </TabPanel>
             </TabPanels>
