@@ -16,7 +16,6 @@ import { useAppContext } from "@/context/AppContext"
 import UserIcon from "./icons/UserIcon"
 import WalletIcon from "./icons/WalletIcon"
 import { Link } from "arnext"
-import { useRouter } from "next/navigation"
 
 const LoginModal = () => {
   const {
@@ -29,13 +28,6 @@ const LoginModal = () => {
   } = useAppContext()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const toast = useToast()
-  const router = useRouter()
-
-  const handleProfileClick = (e) => {
-    e.preventDefault()
-    router.push(`/profile/${userAddress}`)
-    onClose()
-  }
 
   return (
     <>
@@ -91,15 +83,17 @@ const LoginModal = () => {
 
           <ModalFooter>
             <Flex gap={4}>
-              <Button
-                leftIcon={<UserIcon strokeColor="#ffffff" size={24} />}
-                variant="outline"
-                color="white"
-                onClick={handleProfileClick}
-                _hover={{ bg: "#213743" }}
-              >
-                Profile
-              </Button>
+              <Link href={`/profile/${userAddress}`}>
+                <Button
+                  leftIcon={<UserIcon strokeColor="#ffffff" size={24} />}
+                  variant="outline"
+                  color="white"
+                  onClick={() => onClose()}
+                  _hover={{ bg: "#213743" }}
+                >
+                  Profile
+                </Button>
+              </Link>
 
               <Button
                 variant="ghost"
