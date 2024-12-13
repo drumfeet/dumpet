@@ -53,7 +53,7 @@ export default function Home({ _id = null }) {
     ;(async () => {
       _id ?? setPid(await getID(id, _id))
     })()
-  }, [])
+  }, [id])
 
   useEffect(() => {
     if (pid) {

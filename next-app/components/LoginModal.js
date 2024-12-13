@@ -34,7 +34,7 @@ const LoginModal = () => {
   const handleProfileClick = (e) => {
     e.preventDefault()
     router.push(`/profile/${userAddress}`)
-    router.refresh()
+    onClose()
   }
 
   return (
