@@ -26,12 +26,12 @@ WaitFor = WaitFor or {}
 Creators = Creators or {}
 
 SupportedTokens = SupportedTokens or {
-    ["yKdMeRNY8Yjmk8eNfJRzef1W7oQaM8CvAw72gBarQt8"] = { Denomination = 12, Ticker = "TEST", Logo = "62Xi37z2A3zf74EH8WcdHsgerupea3xGgC6L_M3HT50" },
-    ["QD3R6Qes15eQqIN_TK5s7ttawzAiX8ucYI2AUXnuS18"] = { Denomination = 12, Ticker = "DUMPET", Logo = "62Xi37z2A3zf74EH8WcdHsgerupea3xGgC6L_M3HT50" },
-    ["xU9zFkq3X2ZQ6olwNVvr1vUWIjc3kXTWr7xKQD6dh10"] = { Denomination = 12, Ticker = "wAR", Logo = "L99jaxRKQKJt9CqoJtPaieGPEhJD3wNhR4iGqc8amXs" },
-    ["NG-0lVX882MG5nhARrSzyprEK6ejonHpdUmaaMPsHE8"] = { Denomination = 12, Ticker = "qAR", Logo = "26yDr08SuwvNQ4VnhAfV4IjJcOOlQ4tAQLc1ggrCPu0" },
-    ["7zH9dlMNoxprab9loshv3Y7WG45DOny_Vrq9KrXObdQ"] = { Denomination = 6, Ticker = "wUSDC", Logo = "HZlLK9uWlNbhDbxXXe8aPaXZPqq9PKzpdH93ol-BKis" },
-    ["wOrb8b_V8QixWyXZub48Ki5B6OIDyf_p1ngoonsaRpQ"] = { Denomination = 3, Ticker = "TRUNK", Logo = "hqg-Em9DdYHYmMysyVi8LuTGF8IF_F7ZacgjYiSpj0k" },
+    ["yKdMeRNY8Yjmk8eNfJRzef1W7oQaM8CvAw72gBarQt8"] = { Denomination = 12, Name = "Test Token", Ticker = "TEST", Logo = "62Xi37z2A3zf74EH8WcdHsgerupea3xGgC6L_M3HT50" },
+    ["QD3R6Qes15eQqIN_TK5s7ttawzAiX8ucYI2AUXnuS18"] = { Denomination = 12, Name = "DUMPET", Ticker = "DUMPET", Logo = "62Xi37z2A3zf74EH8WcdHsgerupea3xGgC6L_M3HT50" },
+    ["xU9zFkq3X2ZQ6olwNVvr1vUWIjc3kXTWr7xKQD6dh10"] = { Denomination = 12, Name = "Wrapped AR", Ticker = "wAR", Logo = "L99jaxRKQKJt9CqoJtPaieGPEhJD3wNhR4iGqc8amXs" },
+    ["NG-0lVX882MG5nhARrSzyprEK6ejonHpdUmaaMPsHE8"] = { Denomination = 12, Name = "Q Arweave", Ticker = "qAR", Logo = "26yDr08SuwvNQ4VnhAfV4IjJcOOlQ4tAQLc1ggrCPu0" },
+    ["7zH9dlMNoxprab9loshv3Y7WG45DOny_Vrq9KrXObdQ"] = { Denomination = 6, Name = "Ethereum-Wrapped USDC", Ticker = "wUSDC", Logo = "HZlLK9uWlNbhDbxXXe8aPaXZPqq9PKzpdH93ol-BKis" },
+    ["wOrb8b_V8QixWyXZub48Ki5B6OIDyf_p1ngoonsaRpQ"] = { Denomination = 3, Name = "TRUNK", Ticker = "TRUNK", Logo = "hqg-Em9DdYHYmMysyVi8LuTGF8IF_F7ZacgjYiSpj0k" },
 }
 
 local function isSenderWaiting(sender)
@@ -116,6 +116,10 @@ Handlers.add("Create", Handlers.utils.hasMatchingTag("Action", "Create"), functi
             Title = msg.Tags.Title,
             Duration = msg.Tags.Duration,
             TokenTxId = msg.Tags.TokenTxId,
+            TokenName = SupportedTokens[msg.Tags.TokenTxId].Name,
+            Ticker = SupportedTokens[msg.Tags.TokenTxId].Ticker,
+            Denomination = SupportedTokens[msg.Tags.TokenTxId].Denomination,
+            Logo = SupportedTokens[msg.Tags.TokenTxId].Logo,
             OptionA = msg.Tags.OptionA,
             OptionB = msg.Tags.OptionB,
             ProcessId = childProcessId,
@@ -985,6 +989,10 @@ end)
                     Title = "]] .. marketInfo.Title .. [[",
                     Duration = "]] .. marketInfo.Duration .. [[",
                     TokenTxId = "]] .. marketInfo.TokenTxId .. [[",
+                    TokenName = "]] .. SupportedTokens[marketInfo.TokenTxId].Name .. [[",
+                    Ticker = "]] .. SupportedTokens[marketInfo.TokenTxId].Ticker .. [[",
+                    Denomination = "]] .. SupportedTokens[marketInfo.TokenTxId].Denomination .. [[",
+                    Logo = "]] .. SupportedTokens[marketInfo.TokenTxId].Logo .. [[",
                     OptionA = "]] .. marketInfo.OptionA .. [[",
                     OptionB = "]] .. marketInfo.OptionB .. [[",
                     ProcessId = "]] .. childProcessId .. [[",
