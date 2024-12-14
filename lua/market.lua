@@ -106,7 +106,6 @@ Handlers.add("CancelVote", Handlers.utils.hasMatchingTag("Action", "CancelVote")
     local originalBalanceVoteB = nil
     local originalTotalBalanceVoteA = nil
     local originalTotalBalanceVoteB = nil
-    local originalMainProcessBalance = nil
 
     local success, err = pcall(function()
         -- Check if Balances[msg.From] has enough balance to cancel votes
@@ -123,7 +122,6 @@ Handlers.add("CancelVote", Handlers.utils.hasMatchingTag("Action", "CancelVote")
         originalBalanceVoteB = senderBalanceVoteB
         originalTotalBalanceVoteA = TotalBalanceVoteA
         originalTotalBalanceVoteB = TotalBalanceVoteB
-        originalMainProcessBalance = Balances[MainProcessId] or "0"
 
         -- Calculate the total votes being canceled
         local totalVotesToCancel = utils.add(senderBalanceVoteA, senderBalanceVoteB)
@@ -134,9 +132,8 @@ Handlers.add("CancelVote", Handlers.utils.hasMatchingTag("Action", "CancelVote")
         -- Refund the user's canceled vote balances after deducting the fee
         local refundAmount = utils.subtract(totalVotesToCancel, cancelFee)
 
-        -- Update balances for the user and MainProcessId
+        -- Update user's balance
         Balances[msg.From] = utils.add(Balances[msg.From] or "0", refundAmount)
-        Balances[MainProcessId] = utils.add(originalMainProcessBalance, cancelFee)
 
         -- Nullify user's votes and update total balances
         BalancesVoteA[msg.From] = nil
@@ -151,12 +148,19 @@ Handlers.add("CancelVote", Handlers.utils.hasMatchingTag("Action", "CancelVote")
             CancelFee = cancelFee,
             NewBalance = Balances[msg.From],
             TotalBalanceVoteA = TotalBalanceVoteA,
-            TotalBalanceVoteB = TotalBalanceVoteB,
-            MainProcessBalance = Balances[MainProcessId]
+            TotalBalanceVoteB = TotalBalanceVoteB
         }
         printData("CancelVotes _data", _data)
 
         ao.send({ Target = msg.From, Data = json.encode(_data) })
+
+        -- Transfer the cancel fee to the DumpetWallet
+        ao.send({
+            Target = MarketInfo.TokenTxId,
+            Action = "Transfer",
+            Recipient = DumpetWallet,
+            Quantity = cancelFee,
+        })
     end)
 
     if not success then
@@ -175,9 +179,6 @@ Handlers.add("CancelVote", Handlers.utils.hasMatchingTag("Action", "CancelVote")
         end
         if originalTotalBalanceVoteB then
             TotalBalanceVoteB = originalTotalBalanceVoteB
-        end
-        if originalMainProcessBalance then
-            Balances[MainProcessId] = originalMainProcessBalance
         end
 
         sendErrorMessage(msg, 'An unexpected error occurred: ' .. tostring(err))

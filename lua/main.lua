@@ -26,12 +26,12 @@ WaitFor = WaitFor or {}
 Creators = Creators or {}
 
 SupportedTokens = SupportedTokens or {
-    ["yKdMeRNY8Yjmk8eNfJRzef1W7oQaM8CvAw72gBarQt8"] = true,
-    ["QD3R6Qes15eQqIN_TK5s7ttawzAiX8ucYI2AUXnuS18"] = true,
-    ["xU9zFkq3X2ZQ6olwNVvr1vUWIjc3kXTWr7xKQD6dh10"] = true,
-    ["NG-0lVX882MG5nhARrSzyprEK6ejonHpdUmaaMPsHE8"] = true,
-    ["7zH9dlMNoxprab9loshv3Y7WG45DOny_Vrq9KrXObdQ"] = true,
-    ["wOrb8b_V8QixWyXZub48Ki5B6OIDyf_p1ngoonsaRpQ"] = true,
+    ["yKdMeRNY8Yjmk8eNfJRzef1W7oQaM8CvAw72gBarQt8"] = { Denomination = 12, Ticker = "TEST", Logo = "62Xi37z2A3zf74EH8WcdHsgerupea3xGgC6L_M3HT50" },
+    ["QD3R6Qes15eQqIN_TK5s7ttawzAiX8ucYI2AUXnuS18"] = { Denomination = 12, Ticker = "DUMPET", Logo = "62Xi37z2A3zf74EH8WcdHsgerupea3xGgC6L_M3HT50" },
+    ["xU9zFkq3X2ZQ6olwNVvr1vUWIjc3kXTWr7xKQD6dh10"] = { Denomination = 12, Ticker = "wAR", Logo = "L99jaxRKQKJt9CqoJtPaieGPEhJD3wNhR4iGqc8amXs" },
+    ["NG-0lVX882MG5nhARrSzyprEK6ejonHpdUmaaMPsHE8"] = { Denomination = 12, Ticker = "qAR", Logo = "26yDr08SuwvNQ4VnhAfV4IjJcOOlQ4tAQLc1ggrCPu0" },
+    ["7zH9dlMNoxprab9loshv3Y7WG45DOny_Vrq9KrXObdQ"] = { Denomination = 6, Ticker = "wUSDC", Logo = "HZlLK9uWlNbhDbxXXe8aPaXZPqq9PKzpdH93ol-BKis" },
+    ["wOrb8b_V8QixWyXZub48Ki5B6OIDyf_p1ngoonsaRpQ"] = { Denomination = 3, Ticker = "TRUNK", Logo = "hqg-Em9DdYHYmMysyVi8LuTGF8IF_F7ZacgjYiSpj0k" },
 }
 
 local function isSenderWaiting(sender)
@@ -71,7 +71,6 @@ Handlers.add("Create", Handlers.utils.hasMatchingTag("Action", "Create"), functi
         -- Define time bounds
         local min_duration = timestamp + (86400 * 1000)   -- 24 hours in milliseconds
         local max_duration = timestamp + (7776000 * 1000) -- 90 days in milliseconds
-
 
         -- Check if duration is within the valid range
         if duration_num < timestamp then
@@ -240,7 +239,6 @@ Handlers.add("CancelVote", Handlers.utils.hasMatchingTag("Action", "CancelVote")
     local originalBalanceVoteB = nil
     local originalTotalBalanceVoteA = nil
     local originalTotalBalanceVoteB = nil
-    local originalMainProcessBalance = nil
 
     local success, err = pcall(function()
         -- Check if Balances[msg.From] has enough balance to cancel votes
@@ -257,7 +255,6 @@ Handlers.add("CancelVote", Handlers.utils.hasMatchingTag("Action", "CancelVote")
         originalBalanceVoteB = senderBalanceVoteB
         originalTotalBalanceVoteA = TotalBalanceVoteA
         originalTotalBalanceVoteB = TotalBalanceVoteB
-        originalMainProcessBalance = Balances[MainProcessId] or "0"
 
         -- Calculate the total votes being canceled
         local totalVotesToCancel = utils.add(senderBalanceVoteA, senderBalanceVoteB)
@@ -268,9 +265,8 @@ Handlers.add("CancelVote", Handlers.utils.hasMatchingTag("Action", "CancelVote")
         -- Refund the user's canceled vote balances after deducting the fee
         local refundAmount = utils.subtract(totalVotesToCancel, cancelFee)
 
-        -- Update balances for the user and MainProcessId
+        -- Update user's balance
         Balances[msg.From] = utils.add(Balances[msg.From] or "0", refundAmount)
-        Balances[MainProcessId] = utils.add(originalMainProcessBalance, cancelFee)
 
         -- Nullify user's votes and update total balances
         BalancesVoteA[msg.From] = nil
@@ -285,12 +281,19 @@ Handlers.add("CancelVote", Handlers.utils.hasMatchingTag("Action", "CancelVote")
             CancelFee = cancelFee,
             NewBalance = Balances[msg.From],
             TotalBalanceVoteA = TotalBalanceVoteA,
-            TotalBalanceVoteB = TotalBalanceVoteB,
-            MainProcessBalance = Balances[MainProcessId]
+            TotalBalanceVoteB = TotalBalanceVoteB
         }
         printData("CancelVotes _data", _data)
 
         ao.send({ Target = msg.From, Data = json.encode(_data) })
+
+        -- Transfer the cancel fee to the DumpetWallet
+        ao.send({
+            Target = MarketInfo.TokenTxId,
+            Action = "Transfer",
+            Recipient = DumpetWallet,
+            Quantity = cancelFee,
+        })
     end)
 
     if not success then
@@ -309,9 +312,6 @@ Handlers.add("CancelVote", Handlers.utils.hasMatchingTag("Action", "CancelVote")
         end
         if originalTotalBalanceVoteB then
             TotalBalanceVoteB = originalTotalBalanceVoteB
-        end
-        if originalMainProcessBalance then
-            Balances[MainProcessId] = originalMainProcessBalance
         end
 
         sendErrorMessage(msg, 'An unexpected error occurred: ' .. tostring(err))
@@ -920,7 +920,7 @@ Handlers.add("List", { Action = "List" }, function(msg)
     end
 end)
 
-Handlers.add("EmergencyWithdraw", { Action = "EmergencyWithdraw" }, function(msg)
+Handlers.add("AdminWithdrawVotes", { Action = "AdminWithdrawVotes" }, function(msg)
     local success, err = pcall(function()
         -- only DumpetWallet or MainProcessId can perform this action
         if msg.From ~= DumpetWallet and msg.From ~= MainProcessId then
