@@ -67,6 +67,9 @@ export default function Home() {
             Step 4: Once the market duration ends, anyone can conclude the
             market process.
           </Text>
+          <Text>
+            Market creators can set the duration between 8 minutes and 8 days.
+          </Text>
           <Text>Step 5: The option with the highest votes wins.</Text>
           <Text>
             The tokens from losing votes are distributed proportionally to the
@@ -76,7 +79,7 @@ export default function Home() {
             A 1% fee applies if you cancel your vote before the market
             concludes.
           </Text>
-          <Text>
+          <Text as="s">
             You can claim a one-time airdrop if your wallet did not previously
             hold a DUMPET token balance.
           </Text>
@@ -97,13 +100,17 @@ export default function Home() {
             creators.
           </Text>
           <Text>
-            The range of possible bet ideas are endless. There are NO RULES!
+            The range of possible duel ideas are endless. There are NO RULES!
           </Text>
           <Text>Forget reality, it&apos;s all about the voter deposits.</Text>
           <Text>Are you ready to dumpet?</Text>
         </Flex>
         <Flex paddingY={8}></Flex>
-
+        <Text as="b"> Dumpet is experimental. Use at your own risk.</Text>
+        <Text>
+          Unexpected issues may occur, and we may not be able to recover any
+          losses.
+        </Text>
         <Flex paddingY={8}></Flex>
       </Flex>
     </ChakraProvider>
