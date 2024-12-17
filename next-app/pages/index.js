@@ -9,12 +9,13 @@ import {
   useToast,
   Text,
   IconButton,
-  Spinner
+  Spinner,
 } from "@chakra-ui/react"
 import { dryrun } from "@permaweb/aoconnect"
 import { Link } from "arnext"
 import { useEffect, useState } from "react"
 import { MAIN_PROCESS_ID } from "@/context/AppContext"
+import { StarIcon } from "@chakra-ui/icons"
 
 export default function Home() {
   const toast = useToast()
@@ -110,19 +111,15 @@ export default function Home() {
           // target="_blank" rel="noopener noreferrer"
           href="/create"
         >
-          <Flex
-            w="100%"
-            maxW="800px"
-            bg="purple.500" // Vibrant purple for the banner
-            p={4}
-            borderRadius="md"
-            align="center"
-            justify="center"
+          <Button
+            leftIcon={<StarIcon />}
+            colorScheme="purple"
+            paddingY={8}
+            paddingX={4}
+            fontSize="lg"
           >
-            <Text fontSize="lg" fontWeight="bold" textAlign="center">
-              CREATE DUMB BET
-            </Text>
-          </Flex>
+            CREATE DUEL
+          </Button>
         </Link>
 
         <Flex paddingY={8}></Flex>
