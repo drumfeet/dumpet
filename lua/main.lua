@@ -69,8 +69,9 @@ Handlers.add("Create", Handlers.utils.hasMatchingTag("Action", "Create"), functi
         end
 
         -- Define time bounds
-        local min_duration = timestamp + (86400 * 1000)   -- 24 hours in milliseconds
-        local max_duration = timestamp + (7776000 * 1000) -- 90 days in milliseconds
+        local milliseconds = 1000
+        local min_duration = timestamp + (480 * milliseconds)    -- 8 minutes in milliseconds
+        local max_duration = timestamp + (691200 * milliseconds) -- 8 days in milliseconds
 
         -- Check if duration is within the valid range
         if duration_num < timestamp then

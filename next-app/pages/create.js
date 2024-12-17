@@ -31,7 +31,7 @@ export default function Home() {
   const [title, setTitle] = useState("")
   const [duration, setDuration] = useState(() => {
     const defaultDuration = new Date()
-    defaultDuration.setHours(defaultDuration.getHours() + 48) // Add 48 hours
+    defaultDuration.setMinutes(defaultDuration.getMinutes() + 15)
     const year = defaultDuration.getFullYear()
     const month = String(defaultDuration.getMonth() + 1).padStart(2, "0") // Months are 0-indexed
     const day = String(defaultDuration.getDate()).padStart(2, "0")
