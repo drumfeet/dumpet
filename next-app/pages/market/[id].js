@@ -89,7 +89,7 @@ export default function Home({ _id = null }) {
   const [totalBalanceVoteB, setTotalBalanceVoteB] = useState(0)
   const [optionA, setOptionA] = useState("")
   const [optionB, setOptionB] = useState("")
-  const [isReady, setIsReady] = useState(false)
+  const [isFetchingData, setIsFetchingData] = useState(false)
 
   const adjustedData =
     totalBalanceVoteA <= 0 && totalBalanceVoteB <= 0
@@ -261,6 +261,7 @@ export default function Home({ _id = null }) {
     }
     const _userAddress = _connected.userAddress
 
+    setIsFetchingData(true)
     try {
       console.log("UserBalancesAllVotes pid", pid)
       const _result = await dryrun({
@@ -276,6 +277,8 @@ export default function Home({ _id = null }) {
       updateUserBalances(jsonData)
     } catch (error) {
       console.error(error)
+    } finally {
+      setIsFetchingData(false)
     }
   }
 
@@ -715,7 +718,7 @@ export default function Home({ _id = null }) {
                   <Flex paddingY={2}></Flex>
                   <Text fontSize="xs" color="gray.400">
                     Your Total VoteA:{" "}
-                    {tokenDenomination && tokenSymbol ? (
+                    {tokenDenomination && tokenSymbol && !isFetchingData ? (
                       <>
                         {divideByPower(userBalanceVoteA, tokenDenomination)}
                         {` $${tokenSymbol}`}
@@ -785,7 +788,7 @@ export default function Home({ _id = null }) {
                   </Flex>
                   <Text fontSize="xs" color="gray.400">
                     Your Total VoteB:{" "}
-                    {tokenDenomination && tokenSymbol ? (
+                    {tokenDenomination && tokenSymbol && !isFetchingData ? (
                       <>
                         {divideByPower(userBalanceVoteB, tokenDenomination)}
                         {` $${tokenSymbol}`}
@@ -1151,7 +1154,7 @@ export default function Home({ _id = null }) {
                       Your Deposit Balance
                     </FormHelperText>
                     <Text maxW="lg" color="whiteAlpha.800">
-                      {tokenDenomination && tokenSymbol ? (
+                      {tokenDenomination && tokenSymbol && !isFetchingData ? (
                         <>
                           {divideByPower(userDepositBalance, tokenDenomination)}
                           {` $${tokenSymbol}`}
