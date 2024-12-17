@@ -76,6 +76,10 @@ export default function Home({ _id = null }) {
   const [showChatBox, setShowChatBox] = useState(false)
   const [jsonData, setJsonData] = useState()
   const [tokenProcessId, setTokenProcessId] = useState("")
+  const [tokenDenomination, setTokenDenomination] = useState(0)
+  const [tokenSymbol, setTokenSymbol] = useState("")
+  const [tokenLogo, setTokenLogo] = useState("")
+  const [tokenName, setTokenName] = useState("")
   const [amount, setAmount] = useState(1)
   const [amountOfVote, setAmountOfVote] = useState(1)
   const [userDepositBalance, setUserDepositBalance] = useState(null) // must be a number
@@ -85,8 +89,6 @@ export default function Home({ _id = null }) {
   const [totalBalanceVoteB, setTotalBalanceVoteB] = useState(0)
   const [optionA, setOptionA] = useState("")
   const [optionB, setOptionB] = useState("")
-  const [tokenDenomination, setTokenDenomination] = useState(0)
-  const [tokenSymbol, setTokenSymbol] = useState("")
   const [isReady, setIsReady] = useState(false)
 
   const adjustedData =
@@ -127,8 +129,9 @@ export default function Home({ _id = null }) {
   useEffect(() => {
     if (tokenProcessId) {
       ;(async () => {
-        await getTokenInfo()
-        setIsReady(true)
+        if (!tokenSymbol) {
+          await getTokenInfo()
+        }
       })()
     }
   }, [tokenProcessId])
@@ -182,7 +185,6 @@ export default function Home({ _id = null }) {
         process: tokenProcessId,
         tags: [{ name: "Action", value: "Info" }],
       })
-
       console.log("_result", _result)
 
       const denominationTag = _result?.Messages?.[0]?.Tags.find(
@@ -194,10 +196,20 @@ export default function Home({ _id = null }) {
           : Number(denominationTag?.value)
       )
 
-      const ticketTag = _result?.Messages?.[0]?.Tags.find(
+      const tickerTag = _result?.Messages?.[0]?.Tags.find(
         (tag) => tag.name === "Ticker"
       )
-      setTokenSymbol(ticketTag?.value ?? "N.A.")
+      setTokenSymbol(tickerTag?.value ?? "")
+
+      const logoTag = _result?.Messages?.[0]?.Tags.find(
+        (tag) => tag.name === "Logo"
+      )
+      setTokenLogo(logoTag?.value ?? "")
+
+      const nameTag = _result?.Messages?.[0]?.Tags.find(
+        (tag) => tag.name === "Name"
+      )
+      setTokenName(nameTag?.value ?? "")
     } catch (error) {
       console.error(error)
     }
@@ -219,6 +231,10 @@ export default function Home({ _id = null }) {
       setOptionA(_jsonData?.MarketInfo?.OptionA)
       setOptionB(_jsonData?.MarketInfo?.OptionB)
       setTokenProcessId(_jsonData?.MarketInfo?.TokenTxId)
+      setTokenDenomination(_jsonData?.MarketInfo?.Denomination)
+      setTokenSymbol(_jsonData?.MarketInfo?.Ticker)
+      setTokenLogo(_jsonData?.MarketInfo?.Logo)
+      setTokenName(_jsonData?.MarketInfo?.TokenName)
       updateBalances(_jsonData)
     } catch (error) {
       console.error(error)
@@ -656,7 +672,7 @@ export default function Home({ _id = null }) {
           color="white"
           width="100%"
         >
-          {isReady ? (
+          {jsonData ? (
             <>
               {/* Left Pane Section */}
               <Flex
@@ -699,8 +715,16 @@ export default function Home({ _id = null }) {
                   <Flex paddingY={2}></Flex>
                   <Text fontSize="xs" color="gray.400">
                     Your Total VoteA:{" "}
-                    {divideByPower(userBalanceVoteA, tokenDenomination)} $
-                    {tokenSymbol}
+                    {tokenDenomination && tokenSymbol ? (
+                      <>
+                        {divideByPower(userBalanceVoteA, tokenDenomination)}
+                        {` $${tokenSymbol}`}
+                      </>
+                    ) : (
+                      <>
+                        <Spinner size="xs" />
+                      </>
+                    )}
                   </Text>
                   <Button
                     leftIcon={<CheckIcon />}
@@ -727,14 +751,23 @@ export default function Home({ _id = null }) {
                     {jsonData?.MarketInfo?.OptionA}
                   </Text>
                   <Flex gap={2} alignItems="center">
-                    <Flex onClick={getTotalBalanceAllVotes} cursor="pointer">
-                      <RepeatIcon color="whiteAlpha.500" boxSize={4} />
-                    </Flex>
-
+                    {tokenDenomination && tokenSymbol && (
+                      <Flex onClick={getTotalBalanceAllVotes} cursor="pointer">
+                        <RepeatIcon color="whiteAlpha.500" boxSize={4} />
+                      </Flex>
+                    )}
                     <Text color="pink.400" textAlign="center">
                       TOTAL VOTES:{" "}
-                      {divideByPower(totalBalanceVoteA, tokenDenomination)} $
-                      {tokenSymbol}
+                      {tokenDenomination && tokenSymbol ? (
+                        <>
+                          {divideByPower(totalBalanceVoteA, tokenDenomination)}
+                          {tokenSymbol && ` $${tokenSymbol}`}
+                        </>
+                      ) : (
+                        <>
+                          <Spinner size="xs" />
+                        </>
+                      )}
                     </Text>
                   </Flex>
 
@@ -752,8 +785,16 @@ export default function Home({ _id = null }) {
                   </Flex>
                   <Text fontSize="xs" color="gray.400">
                     Your Total VoteB:{" "}
-                    {divideByPower(userBalanceVoteB, tokenDenomination)} $
-                    {tokenSymbol}
+                    {tokenDenomination && tokenSymbol ? (
+                      <>
+                        {divideByPower(userBalanceVoteB, tokenDenomination)}
+                        {` $${tokenSymbol}`}
+                      </>
+                    ) : (
+                      <>
+                        <Spinner size="xs" />
+                      </>
+                    )}
                   </Text>
                   <Button
                     leftIcon={<CheckCircleIcon />}
@@ -781,13 +822,23 @@ export default function Home({ _id = null }) {
                     {jsonData?.MarketInfo?.OptionB}
                   </Text>
                   <Flex gap={2} alignItems="center">
-                    <Flex onClick={getTotalBalanceAllVotes} cursor="pointer">
-                      <RepeatIcon color="whiteAlpha.500" boxSize={4} />
-                    </Flex>
+                    {tokenDenomination && tokenSymbol && (
+                      <Flex onClick={getTotalBalanceAllVotes} cursor="pointer">
+                        <RepeatIcon color="whiteAlpha.500" boxSize={4} />
+                      </Flex>
+                    )}
                     <Text color="pink.400" textAlign="center">
                       TOTAL VOTES:{" "}
-                      {divideByPower(totalBalanceVoteB, tokenDenomination)} $
-                      {tokenSymbol}
+                      {tokenDenomination && tokenSymbol ? (
+                        <>
+                          {divideByPower(totalBalanceVoteB, tokenDenomination)}
+                          {tokenSymbol && ` $${tokenSymbol}`}
+                        </>
+                      ) : (
+                        <>
+                          <Spinner size="xs" />
+                        </>
+                      )}
                     </Text>
                   </Flex>
                 </Flex>
@@ -1100,9 +1151,16 @@ export default function Home({ _id = null }) {
                       Your Deposit Balance
                     </FormHelperText>
                     <Text maxW="lg" color="whiteAlpha.800">
-                      {divideByPower(userDepositBalance, tokenDenomination) ??
-                        "-"}{" "}
-                      ${tokenSymbol}
+                      {tokenDenomination && tokenSymbol ? (
+                        <>
+                          {divideByPower(userDepositBalance, tokenDenomination)}
+                          {` $${tokenSymbol}`}
+                        </>
+                      ) : (
+                        <>
+                          <Spinner size="xs" />
+                        </>
+                      )}
                     </Text>
                   </FormControl>
 
