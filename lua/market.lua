@@ -29,7 +29,8 @@ MainProcessId = MainProcessId or ""
 UserTxProcessId = UserTxProcessId or ""
 DumpetWallet = DumpetWallet or ""
 IsChatEnabled = IsChatEnabled or true
-Returns = Returns or {} -- table of returned votes
+ReturnsA = ReturnsA or {} -- table of returned votes
+ReturnsB = ReturnsB or {} -- table of returned votes
 
 local function printData(k, v)
     local _data = { Key = k, Value = v }
@@ -788,18 +789,18 @@ Handlers.add("List", { Action = "List" }, function(msg)
     end
 end)
 
-Handlers.add('Return', Handlers.utils.hasMatchingTag("Action", "Return"), function(msg)
+Handlers.add('ReturnA', Handlers.utils.hasMatchingTag("Action", "ReturnA"), function(msg)
     local bal = '0'
 
     -- If not Recipient is provided, then return the Senders balance
     if (msg.Tags.Recipient) then
-        if (Returns[msg.Tags.Recipient]) then
-            bal = Returns[msg.Tags.Recipient]
+        if (ReturnsA[msg.Tags.Recipient]) then
+            bal = ReturnsA[msg.Tags.Recipient]
         end
-    elseif msg.Tags.Target and Returns[msg.Tags.Target] then
-        bal = Returns[msg.Tags.Target]
-    elseif Returns[msg.From] then
-        bal = Returns[msg.From]
+    elseif msg.Tags.Target and ReturnsA[msg.Tags.Target] then
+        bal = ReturnsA[msg.Tags.Target]
+    elseif ReturnsA[msg.From] then
+        bal = ReturnsA[msg.From]
     end
     if msg.reply then
         msg.reply({
@@ -819,11 +820,50 @@ Handlers.add('Return', Handlers.utils.hasMatchingTag("Action", "Return"), functi
     end
 end)
 
-Handlers.add('Returns', Handlers.utils.hasMatchingTag("Action", "Returns"), function(msg)
+Handlers.add('ReturnB', Handlers.utils.hasMatchingTag("Action", "ReturnB"), function(msg)
+    local bal = '0'
+
+    -- If not Recipient is provided, then return the Senders balance
+    if (msg.Tags.Recipient) then
+        if (ReturnsB[msg.Tags.Recipient]) then
+            bal = ReturnsB[msg.Tags.Recipient]
+        end
+    elseif msg.Tags.Target and ReturnsB[msg.Tags.Target] then
+        bal = ReturnsB[msg.Tags.Target]
+    elseif ReturnsB[msg.From] then
+        bal = ReturnsB[msg.From]
+    end
     if msg.reply then
-        msg.reply({ Data = json.encode(Returns) })
+        msg.reply({
+            Balance = bal,
+            Ticker = Ticker,
+            Account = msg.Tags.Recipient or msg.From,
+            Data = bal
+        })
     else
-        Send({ Target = msg.From, Data = json.encode(Returns) })
+        Send({
+            Target = msg.From,
+            Balance = bal,
+            Ticker = Ticker,
+            Account = msg.Tags.Recipient or msg.From,
+            Data = bal
+        })
+    end
+end)
+
+Handlers.add('ReturnsA', Handlers.utils.hasMatchingTag("Action", "ReturnsA"), function(msg)
+    if msg.reply then
+        msg.reply({ Data = json.encode(ReturnsA) })
+    else
+        Send({ Target = msg.From, Data = json.encode(ReturnsA) })
+    end
+end)
+
+Handlers.add('ReturnsB', Handlers.utils.hasMatchingTag("Action", "ReturnsB"), function(msg)
+    if msg.reply then
+        msg.reply({ Data = json.encode(ReturnsB) })
+    else
+        Send({ Target = msg.From, Data = json.encode(ReturnsB) })
     end
 end)
 
