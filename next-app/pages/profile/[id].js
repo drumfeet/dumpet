@@ -59,11 +59,7 @@ export default function Home({ _id = null }) {
   useEffect(() => {
     if (pid) {
       ;(async () => {
-        setIsLoading(true)
-        await hasWaitFor()
         await fetchMarkets()
-        await fetchUser()
-        setIsLoading(false)
       })()
     }
   }, [pid])
@@ -138,6 +134,7 @@ export default function Home({ _id = null }) {
   }
 
   const fetchMarkets = async () => {
+    setIsLoading(true)
     console.log("fetchMarkets")
     try {
       const _result = await dryrun({
@@ -155,10 +152,13 @@ export default function Home({ _id = null }) {
       setUserMarkets(jsonData?.Markets)
     } catch (error) {
       console.error(error)
+    } finally {
+      setIsLoading(false)
     }
   }
 
   const fetchUser = async () => {
+    setIsLoading(true)
     console.log("fetchUser")
     try {
       const _result = await dryrun({
@@ -176,6 +176,8 @@ export default function Home({ _id = null }) {
       setUserTransactions(jsonData?.Markets)
     } catch (error) {
       console.error(error)
+    } finally {
+      setIsLoading(false)
     }
   }
 
