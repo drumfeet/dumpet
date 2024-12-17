@@ -609,7 +609,7 @@ end)
 
 Handlers.add("Credit-Notice", Handlers.utils.hasMatchingTag("Action", "Credit-Notice"), function(msg)
     if (hasMarketExpired(msg)) then
-        sendErrorMessage(msg, 'Market duration has already expired.', msg.Tags.Sender)
+        sendErrorMessage(msg, 'Market duration has already expired.') -- msg.Tags.Sender is their token PROCESS_ID
 
         -- return funds to sender
         ao.send({
@@ -787,6 +787,47 @@ Handlers.add("List", { Action = "List" }, function(msg)
     end
 end)
 
+Returns = Returns or {}
+
+Handlers.add('Return', Handlers.utils.hasMatchingTag("Action", "Return"), function(msg)
+    local bal = '0'
+
+    -- If not Recipient is provided, then return the Senders balance
+    if (msg.Tags.Recipient) then
+        if (Returns[msg.Tags.Recipient]) then
+            bal = Returns[msg.Tags.Recipient]
+        end
+    elseif msg.Tags.Target and Returns[msg.Tags.Target] then
+        bal = Returns[msg.Tags.Target]
+    elseif Returns[msg.From] then
+        bal = Returns[msg.From]
+    end
+    if msg.reply then
+        msg.reply({
+            Balance = bal,
+            Ticker = Ticker,
+            Account = msg.Tags.Recipient or msg.From,
+            Data = bal
+        })
+    else
+        Send({
+            Target = msg.From,
+            Balance = bal,
+            Ticker = Ticker,
+            Account = msg.Tags.Recipient or msg.From,
+            Data = bal
+        })
+    end
+end)
+
+Handlers.add('Returns', Handlers.utils.hasMatchingTag("Action", "Returns"), function(msg)
+    if msg.reply then
+        msg.reply({ Data = json.encode(Returns) })
+    else
+        Send({ Target = msg.From, Data = json.encode(Returns) })
+    end
+end)
+
 Handlers.add("AdminWithdrawVotes", { Action = "AdminWithdrawVotes" }, function(msg)
     local success, err = pcall(function()
         -- only DumpetWallet or MainProcessId can perform this action
@@ -797,6 +838,8 @@ Handlers.add("AdminWithdrawVotes", { Action = "AdminWithdrawVotes" }, function(m
 
         -- Transfer BalancesVoteA and BalancesVoteB back to the voters
         for voter, balance in pairs(BalancesVoteA) do
+            Returns[voter] = balance
+
             ao.send({
                 Target = MarketInfo.TokenTxId,
                 Action = "Transfer",
@@ -806,6 +849,8 @@ Handlers.add("AdminWithdrawVotes", { Action = "AdminWithdrawVotes" }, function(m
         end
 
         for voter, balance in pairs(BalancesVoteB) do
+            Returns[voter] = balance
+
             ao.send({
                 Target = MarketInfo.TokenTxId,
                 Action = "Transfer",
@@ -826,7 +871,7 @@ Handlers.add("AdminWithdrawVotes", { Action = "AdminWithdrawVotes" }, function(m
     end
 end)
 
-Handlers.add("VoidMarket", { Action = "VoidMarket" }, function(msg)
+Handlers.add("AdminCancelMarket", { Action = "AdminCancelMarket" }, function(msg)
     local success, err = pcall(function()
         -- only DumpetWallet or MainProcessId can perform this action
         if msg.From ~= DumpetWallet and msg.From ~= MainProcessId then
@@ -839,7 +884,7 @@ Handlers.add("VoidMarket", { Action = "VoidMarket" }, function(msg)
         MarketInfo.Duration = tostring(timestamp)
 
         -- Send a success message
-        ao.send({ Target = msg.From, Data = "Market voided successfully" })
+        ao.send({ Target = msg.From, Data = "Market has been canceled." })
     end)
 
     if not success then
