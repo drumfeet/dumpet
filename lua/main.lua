@@ -26,7 +26,6 @@ WaitFor = WaitFor or {}
 Creators = Creators or {}
 
 SupportedTokens = SupportedTokens or {
-    ["yKdMeRNY8Yjmk8eNfJRzef1W7oQaM8CvAw72gBarQt8"] = { Denomination = 12, Name = "Test Token", Ticker = "TEST", Logo = "62Xi37z2A3zf74EH8WcdHsgerupea3xGgC6L_M3HT50" },
     ["QD3R6Qes15eQqIN_TK5s7ttawzAiX8ucYI2AUXnuS18"] = { Denomination = 12, Name = "DUMPET", Ticker = "DUMPET", Logo = "62Xi37z2A3zf74EH8WcdHsgerupea3xGgC6L_M3HT50" },
     ["NG-0lVX882MG5nhARrSzyprEK6ejonHpdUmaaMPsHE8"] = { Denomination = 12, Name = "Q Arweave", Ticker = "qAR", Logo = "26yDr08SuwvNQ4VnhAfV4IjJcOOlQ4tAQLc1ggrCPu0" },
     ["xU9zFkq3X2ZQ6olwNVvr1vUWIjc3kXTWr7xKQD6dh10"] = { Denomination = 12, Name = "Wrapped AR", Ticker = "wAR", Logo = "L99jaxRKQKJt9CqoJtPaieGPEhJD3wNhR4iGqc8amXs" },
@@ -79,11 +78,11 @@ Handlers.add("Create", Handlers.utils.hasMatchingTag("Action", "Create"), functi
                 'Duration must be greater than current time in milliseconds')
             return
         elseif duration_num < min_duration then
-            sendErrorMessage(msg, 'Duration must be greater than 24 hours in milliseconds')
+            sendErrorMessage(msg, 'Minimum duration must be 8 minutes in milliseconds')
             return
         elseif duration_num > max_duration then
             sendErrorMessage(msg,
-                'Duration must be less than 90 days in milliseconds')
+                'Max duration must be 8 days in milliseconds')
         end
 
         if type(msg.Tags.TokenTxId) ~= 'string' or msg.Tags.TokenTxId:match("^%s*$") then
@@ -1000,7 +999,7 @@ Handlers.add("AdminWithdrawVotes", { Action = "AdminWithdrawVotes" }, function(m
         MarketInfo.Concluded = true
 
         -- Send a success message
-        ao.send({ Target = msg.From, Data = "Emergency Withdrawal successful" })
+        ao.send({ Target = msg.From, Data = "Voter balances has been returned" })
     end)
 
     if not success then

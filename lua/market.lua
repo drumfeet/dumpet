@@ -862,7 +862,7 @@ Handlers.add("AdminWithdrawVotes", { Action = "AdminWithdrawVotes" }, function(m
         MarketInfo.Concluded = true
 
         -- Send a success message
-        ao.send({ Target = msg.From, Data = "Emergency Withdrawal successful" })
+        ao.send({ Target = msg.From, Data = "Voter balances has been returned" })
     end)
 
     if not success then
