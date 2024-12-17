@@ -16,6 +16,11 @@ import { Link } from "arnext"
 import { useEffect, useState } from "react"
 import { MAIN_PROCESS_ID } from "@/context/AppContext"
 import { StarIcon } from "@chakra-ui/icons"
+import { cacheService } from "@/services/CacheService"
+
+const CACHE_KEY_MARKETS = "markets_data"
+const CACHE_KEY_RANDOM = "random_market"
+const FIVE_MINUTES = 5 * 60 * 1000 // 5 minutes in milliseconds
 
 export default function Home() {
   const toast = useToast()
@@ -43,6 +48,14 @@ export default function Home() {
 
   async function fetchMarkets(nextPage = 1) {
     try {
+      const cachedMarkets = cacheService.get(CACHE_KEY_MARKETS);
+      if (cachedMarkets && nextPage > 1) {
+        console.log("Using cached markets data")
+        setMarkets(cachedMarkets.markets)
+        setHasMore(cachedMarkets.hasMore)
+        setNextPage(cachedMarkets.nextPage)
+        return
+      }
       const _result = await dryrun({
         process: MAIN_PROCESS_ID,
         tags: [
@@ -55,10 +68,27 @@ export default function Home() {
       const jsonData = JSON.parse(_result?.Messages[0]?.Data)
       console.log("jsonData", jsonData)
 
-      // Append new markets to the existing list
-      setMarkets((prevMarkets) => [...prevMarkets, ...jsonData.Markets])
+      // If it's page 1, replace all markets, otherwise append
+      setMarkets((prevMarkets) => {
+        const updatedMarkets =
+          nextPage === 1
+            ? jsonData.Markets
+            : [...prevMarkets, ...jsonData.Markets]
 
-      // Update `hasMore` and `nextPage` state
+        // Cache the complete state
+        cacheService.set(
+          CACHE_KEY_MARKETS,
+          {
+            markets: updatedMarkets,
+            hasMore: jsonData.HasMore,
+            nextPage: jsonData.NextPage || nextPage + 1,
+          },
+          FIVE_MINUTES
+        )
+
+        return updatedMarkets
+      })
+
       setHasMore(jsonData.HasMore)
       if (jsonData?.NextPage) setNextPage(jsonData.NextPage)
     } catch (error) {
@@ -69,16 +99,25 @@ export default function Home() {
   const fetchRandomMarket = async () => {
     setIsLoading(true)
     try {
-      const _result = await dryrun({
-        process: MAIN_PROCESS_ID,
-        tags: [{ name: "Action", value: "RandomMarket" }],
-      })
-      console.log(_result?.Messages[0])
-      console.log("fetchRandomMarket _result", _result)
-      if (handleMessageResultError(_result)) return
-      const jsonData = JSON.parse(_result?.Messages[0]?.Data)
-      console.log("fetchRandomMarket jsonData", jsonData)
-      setRandomMarket(jsonData)
+      const cachedRandomMarket = cacheService.get(CACHE_KEY_RANDOM)
+      if (cachedRandomMarket) {
+        console.log("Using cached random market")
+        setRandomMarket(cachedRandomMarket)
+      } else {
+        const _result = await dryrun({
+          process: MAIN_PROCESS_ID,
+          tags: [{ name: "Action", value: "RandomMarket" }],
+        })
+        console.log(_result?.Messages[0])
+        console.log("fetchRandomMarket _result", _result)
+        if (handleMessageResultError(_result)) return
+        const jsonData = JSON.parse(_result?.Messages[0]?.Data)
+        console.log("fetchRandomMarket jsonData", jsonData)
+        setRandomMarket(jsonData)
+  
+        // Cache the random market
+        cacheService.set(CACHE_KEY_RANDOM, jsonData, FIVE_MINUTES)
+      }
     } catch (error) {
       console.error(error)
     } finally {
