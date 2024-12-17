@@ -29,6 +29,7 @@ MainProcessId = MainProcessId or ""
 UserTxProcessId = UserTxProcessId or ""
 DumpetWallet = DumpetWallet or ""
 IsChatEnabled = IsChatEnabled or true
+Returns = Returns or {} -- table of returned votes
 
 local function printData(k, v)
     local _data = { Key = k, Value = v }
@@ -786,8 +787,6 @@ Handlers.add("List", { Action = "List" }, function(msg)
         sendErrorMessage(msg, 'An unexpected error occurred: ' .. tostring(err))
     end
 end)
-
-Returns = Returns or {}
 
 Handlers.add('Return', Handlers.utils.hasMatchingTag("Action", "Return"), function(msg)
     local bal = '0'

@@ -28,8 +28,8 @@ Creators = Creators or {}
 SupportedTokens = SupportedTokens or {
     ["yKdMeRNY8Yjmk8eNfJRzef1W7oQaM8CvAw72gBarQt8"] = { Denomination = 12, Name = "Test Token", Ticker = "TEST", Logo = "62Xi37z2A3zf74EH8WcdHsgerupea3xGgC6L_M3HT50" },
     ["QD3R6Qes15eQqIN_TK5s7ttawzAiX8ucYI2AUXnuS18"] = { Denomination = 12, Name = "DUMPET", Ticker = "DUMPET", Logo = "62Xi37z2A3zf74EH8WcdHsgerupea3xGgC6L_M3HT50" },
-    ["xU9zFkq3X2ZQ6olwNVvr1vUWIjc3kXTWr7xKQD6dh10"] = { Denomination = 12, Name = "Wrapped AR", Ticker = "wAR", Logo = "L99jaxRKQKJt9CqoJtPaieGPEhJD3wNhR4iGqc8amXs" },
     ["NG-0lVX882MG5nhARrSzyprEK6ejonHpdUmaaMPsHE8"] = { Denomination = 12, Name = "Q Arweave", Ticker = "qAR", Logo = "26yDr08SuwvNQ4VnhAfV4IjJcOOlQ4tAQLc1ggrCPu0" },
+    ["xU9zFkq3X2ZQ6olwNVvr1vUWIjc3kXTWr7xKQD6dh10"] = { Denomination = 12, Name = "Wrapped AR", Ticker = "wAR", Logo = "L99jaxRKQKJt9CqoJtPaieGPEhJD3wNhR4iGqc8amXs" },
     ["7zH9dlMNoxprab9loshv3Y7WG45DOny_Vrq9KrXObdQ"] = { Denomination = 6, Name = "Ethereum-Wrapped USDC", Ticker = "wUSDC", Logo = "HZlLK9uWlNbhDbxXXe8aPaXZPqq9PKzpdH93ol-BKis" },
     ["wOrb8b_V8QixWyXZub48Ki5B6OIDyf_p1ngoonsaRpQ"] = { Denomination = 3, Name = "TRUNK", Ticker = "TRUNK", Logo = "hqg-Em9DdYHYmMysyVi8LuTGF8IF_F7ZacgjYiSpj0k" },
 }
@@ -166,6 +166,7 @@ MainProcessId = MainProcessId or ""
 UserTxProcessId = UserTxProcessId or ""
 DumpetWallet = DumpetWallet or ""
 IsChatEnabled = IsChatEnabled or true
+Returns = Returns or {} -- table of returned votes
 
 local function printData(k, v)
     local _data = { Key = k, Value = v }
@@ -923,8 +924,6 @@ Handlers.add("List", { Action = "List" }, function(msg)
         sendErrorMessage(msg, 'An unexpected error occurred: ' .. tostring(err))
     end
 end)
-
-Returns = Returns or {}
 
 Handlers.add('Return', Handlers.utils.hasMatchingTag("Action", "Return"), function(msg)
     local bal = '0'
