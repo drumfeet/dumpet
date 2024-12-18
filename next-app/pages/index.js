@@ -29,12 +29,17 @@ export default function Home() {
 
   useEffect(() => {
     ;(async () => {
-      setIsLoading(true)
       await fetchRandomMarket()
-      await fetchMarkets()
-      setIsLoading(false)
     })()
   }, [])
+
+  useEffect(() => {
+    ;(async () => {
+      if (randomMarket) {
+        await fetchMarkets()
+      }
+    })()
+  }, [randomMarket])
 
   async function fetchMarkets(nextPage = 1) {
     try {
@@ -62,6 +67,7 @@ export default function Home() {
   }
 
   const fetchRandomMarket = async () => {
+    setIsLoading(true)
     try {
       const _result = await dryrun({
         process: MAIN_PROCESS_ID,
@@ -75,6 +81,8 @@ export default function Home() {
       setRandomMarket(jsonData)
     } catch (error) {
       console.error(error)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -317,11 +325,11 @@ export default function Home() {
           </Button>
         )}
 
-        {!isLoading && !hasMore && (
+        {/* {!isLoading && !hasMore && (
           <Text fontSize="sm" color="gray.400">
             No more markets to fetch.
           </Text>
-        )}
+        )} */}
 
         <Flex paddingY={8}></Flex>
       </Flex>
