@@ -83,7 +83,7 @@ export default function Home() {
       
       if (cachedRandomMarket) {
         setRandomMarket(cachedRandomMarket)
-        fetchMarkets(1)
+        fetchMarkets()
         return
       }
 
@@ -98,7 +98,7 @@ export default function Home() {
       setRandomMarket(jsonData)
       cacheService.set(CACHE_KEY_RANDOM, jsonData, FIVE_MINUTES)
       
-      await fetchMarkets(1)
+      fetchMarkets()
     } catch (error) {
       console.error('Error fetching random market:', error)
     } finally {
