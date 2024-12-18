@@ -13,14 +13,14 @@ import {
 } from "@chakra-ui/react"
 import { dryrun } from "@permaweb/aoconnect"
 import { Link } from "arnext"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { MAIN_PROCESS_ID } from "@/context/AppContext"
 import { StarIcon } from "@chakra-ui/icons"
 import { cacheService } from "@/services/CacheService"
 
 const CACHE_KEY_MARKETS = "markets_data"
 const CACHE_KEY_RANDOM = "random_market"
-const FIVE_MINUTES = 5 * 60 * 1000 // 5 minutes in milliseconds
+const FIVE_MINUTES = 5 * 60 * 1000
 
 export default function Home() {
   const toast = useToast()
@@ -29,113 +29,99 @@ export default function Home() {
   const [hasMore, setHasMore] = useState(false)
   const [nextPage, setNextPage] = useState(1)
   const [isLoading, setIsLoading] = useState(false)
-
   const { handleMessageResultError } = useAppContext()
 
-  useEffect(() => {
-    ;(async () => {
-      await fetchRandomMarket()
-    })()
-  }, [])
-
-  useEffect(() => {
-    ;(async () => {
-      if (randomMarket) {
-        await fetchMarkets()
-      }
-    })()
-  }, [randomMarket])
-
-  async function fetchMarkets(nextPage = 1) {
+  const fetchMarkets = useCallback(async (page = 1) => {
     try {
-      const cachedMarkets = cacheService.get(CACHE_KEY_MARKETS);
-      if (cachedMarkets && nextPage > 1) {
-        console.log("Using cached markets data")
-        setMarkets(cachedMarkets.markets)
-        setHasMore(cachedMarkets.hasMore)
-        setNextPage(cachedMarkets.nextPage)
+      const cachedData = cacheService.get(CACHE_KEY_MARKETS)
+      
+      // If requesting first page and we have cached data, use it
+      if (cachedData && page === 1) {
+        setMarkets(cachedData.markets)
+        setHasMore(cachedData.hasMore)
+        setNextPage(cachedData.nextPage)
         return
       }
-      const _result = await dryrun({
+
+      const result = await dryrun({
         process: MAIN_PROCESS_ID,
         tags: [
           { name: "Action", value: "List" },
-          { name: "Page", value: nextPage.toString() },
+          { name: "Page", value: page.toString() },
         ],
       })
+      const jsonData = JSON.parse(result?.Messages[0]?.Data)
 
-      console.log("_result", _result)
-      const jsonData = JSON.parse(_result?.Messages[0]?.Data)
-      console.log("jsonData", jsonData)
+      setMarkets(prevMarkets => {
+        const updatedMarkets = page === 1 
+          ? jsonData.Markets 
+          : [...prevMarkets, ...jsonData.Markets]
 
-      // If it's page 1, replace all markets, otherwise append
-      setMarkets((prevMarkets) => {
-        const updatedMarkets =
-          nextPage === 1
-            ? jsonData.Markets
-            : [...prevMarkets, ...jsonData.Markets]
-
-        // Cache the complete state
-        cacheService.set(
-          CACHE_KEY_MARKETS,
-          {
+        // Only cache on first page load
+        if (page === 1) {
+          cacheService.set(CACHE_KEY_MARKETS, {
             markets: updatedMarkets,
             hasMore: jsonData.HasMore,
-            nextPage: jsonData.NextPage || nextPage + 1,
-          },
-          FIVE_MINUTES
-        )
+            nextPage: jsonData.NextPage || page + 1,
+          }, FIVE_MINUTES)
+        }
 
         return updatedMarkets
       })
 
       setHasMore(jsonData.HasMore)
-      if (jsonData?.NextPage) setNextPage(jsonData.NextPage)
+      setNextPage(jsonData.NextPage || page + 1)
     } catch (error) {
-      console.error(error)
+      console.error('Error fetching markets:', error)
     }
-  }
+  }, [])
 
-  const fetchRandomMarket = async () => {
+  const fetchRandomMarket = useCallback(async () => {
     setIsLoading(true)
     try {
       const cachedRandomMarket = cacheService.get(CACHE_KEY_RANDOM)
+      
       if (cachedRandomMarket) {
-        console.log("Using cached random market")
         setRandomMarket(cachedRandomMarket)
-      } else {
-        const _result = await dryrun({
-          process: MAIN_PROCESS_ID,
-          tags: [{ name: "Action", value: "RandomMarket" }],
-        })
-        console.log(_result?.Messages[0])
-        console.log("fetchRandomMarket _result", _result)
-        if (handleMessageResultError(_result)) return
-        const jsonData = JSON.parse(_result?.Messages[0]?.Data)
-        console.log("fetchRandomMarket jsonData", jsonData)
-        setRandomMarket(jsonData)
-  
-        // Cache the random market
-        cacheService.set(CACHE_KEY_RANDOM, jsonData, FIVE_MINUTES)
+        fetchMarkets(1)
+        return
       }
+
+      const result = await dryrun({
+        process: MAIN_PROCESS_ID,
+        tags: [{ name: "Action", value: "RandomMarket" }],
+      })
+
+      if (handleMessageResultError(result)) return
+
+      const jsonData = JSON.parse(result?.Messages[0]?.Data)
+      setRandomMarket(jsonData)
+      cacheService.set(CACHE_KEY_RANDOM, jsonData, FIVE_MINUTES)
+      
+      await fetchMarkets(1)
     } catch (error) {
-      console.error(error)
+      console.error('Error fetching random market:', error)
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [fetchMarkets, handleMessageResultError])
+
+  // Initial load
+  useEffect(() => {
+    fetchRandomMarket()
+  }, [fetchRandomMarket])
 
   function formatUnixTimestamp(timestamp) {
     const date = new Date(Number(timestamp))
     const options = {
-      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone, // Use the local timezone
+      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       weekday: "short",
       month: "short",
       day: "2-digit",
       year: "numeric",
       hour: "2-digit",
       minute: "2-digit",
-      hour12: false, // 24-hour format
+      hour12: false,
     }
     return new Intl.DateTimeFormat("en-US", options).format(date)
   }
@@ -146,7 +132,7 @@ export default function Home() {
         direction="column"
         align="center"
         p={4}
-        bg="#1a1a2e" // Dark purple background
+        bg="#1a1a2e"
         minHeight="100vh"
         color="white"
       >
@@ -154,10 +140,7 @@ export default function Home() {
         <SubHeader />
         <Flex paddingY={8}></Flex>
 
-        <Link
-          // target="_blank" rel="noopener noreferrer"
-          href="/create"
-        >
+        <Link href="/create">
           <Button
             leftIcon={<StarIcon />}
             colorScheme="purple"
@@ -212,11 +195,7 @@ export default function Home() {
               />
             </Flex>
 
-            <Link
-              // target="_blank"
-              // rel="noopener noreferrer"
-              href={`/market/${randomMarket.ProcessId}`}
-            >
+            <Link href={`/market/${randomMarket.ProcessId}`}>
               <Flex flexDirection="column" gap={2}>
                 <Text
                   fontSize="md"
@@ -266,9 +245,6 @@ export default function Home() {
           maxW="1050px"
           justifyContent="flex-start"
         >
-          {/* <Text fontSize="xs" color="gray.400" paddingBottom={2}>
-            Most Recent
-          </Text> */}
         </Flex>
 
         {!isLoading && markets && markets.length > 0 && (
@@ -302,11 +278,7 @@ export default function Home() {
                     }}
                   />
                 </Flex>
-                <Link
-                  // target="_blank"
-                  // rel="noopener noreferrer"
-                  href={`/market/${market.ProcessId}`}
-                >
+                <Link href={`/market/${market.ProcessId}`}>
                   <Flex flexDirection="column" gap={2}>
                     <Text
                       fontSize="md"
@@ -356,19 +328,11 @@ export default function Home() {
         {!isLoading && hasMore && (
           <Button
             colorScheme="purple"
-            onClick={async () => {
-              await fetchMarkets(nextPage)
-            }}
+            onClick={() => fetchMarkets(nextPage)}
           >
             Show More
           </Button>
         )}
-
-        {/* {!isLoading && !hasMore && (
-          <Text fontSize="sm" color="gray.400">
-            No more markets to fetch.
-          </Text>
-        )} */}
 
         <Flex paddingY={8}></Flex>
       </Flex>
