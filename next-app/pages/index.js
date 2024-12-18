@@ -13,7 +13,7 @@ import {
 } from "@chakra-ui/react"
 import { dryrun } from "@permaweb/aoconnect"
 import { Link } from "arnext"
-import { useEffect, useState, useCallback } from "react"
+import { useEffect, useState } from "react"
 import { MAIN_PROCESS_ID } from "@/context/AppContext"
 import { StarIcon } from "@chakra-ui/icons"
 import { cacheService } from "@/services/CacheService"
@@ -23,7 +23,6 @@ const CACHE_KEY_RANDOM = "random_market"
 const FIVE_MINUTES = 5 * 60 * 1000
 
 export default function Home() {
-  const toast = useToast()
   const [markets, setMarkets] = useState([])
   const [randomMarket, setRandomMarket] = useState(null)
   const [hasMore, setHasMore] = useState(false)
@@ -31,10 +30,25 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false)
   const { handleMessageResultError } = useAppContext()
 
-  const fetchMarkets = useCallback(async (page = 1) => {
+  useEffect(() => {
+    ;(async () => {
+      await fetchRandomMarket()
+    })()
+  }, [])
+
+  useEffect(() => {
+    ;(async () => {
+      if (randomMarket) {
+        await fetchMarkets()
+      }
+    })()
+  }, [randomMarket])
+
+  const fetchMarkets = async (page = 1) => {
     try {
+      console.log("fetchMarkets Market called")
       const cachedData = cacheService.get(CACHE_KEY_MARKETS)
-      
+
       // If requesting first page and we have cached data, use it
       if (cachedData && page === 1) {
         setMarkets(cachedData.markets)
@@ -52,18 +66,21 @@ export default function Home() {
       })
       const jsonData = JSON.parse(result?.Messages[0]?.Data)
 
-      setMarkets(prevMarkets => {
-        const updatedMarkets = page === 1 
-          ? jsonData.Markets 
-          : [...prevMarkets, ...jsonData.Markets]
+      setMarkets((prevMarkets) => {
+        const updatedMarkets =
+          page === 1 ? jsonData.Markets : [...prevMarkets, ...jsonData.Markets]
 
         // Only cache on first page load
         if (page === 1) {
-          cacheService.set(CACHE_KEY_MARKETS, {
-            markets: updatedMarkets,
-            hasMore: jsonData.HasMore,
-            nextPage: jsonData.NextPage || page + 1,
-          }, FIVE_MINUTES)
+          cacheService.set(
+            CACHE_KEY_MARKETS,
+            {
+              markets: updatedMarkets,
+              hasMore: jsonData.HasMore,
+              nextPage: jsonData.NextPage || page + 1,
+            },
+            FIVE_MINUTES
+          )
         }
 
         return updatedMarkets
@@ -72,15 +89,16 @@ export default function Home() {
       setHasMore(jsonData.HasMore)
       setNextPage(jsonData.NextPage || page + 1)
     } catch (error) {
-      console.error('Error fetching markets:', error)
+      console.error("Error fetching markets:", error)
     }
-  }, [])
+  }
 
-  const fetchRandomMarket = useCallback(async () => {
+  const fetchRandomMarket = async () => {
+    console.log("fetchRandom Market called")
     setIsLoading(true)
     try {
       const cachedRandomMarket = cacheService.get(CACHE_KEY_RANDOM)
-      
+
       if (cachedRandomMarket) {
         setRandomMarket(cachedRandomMarket)
         fetchMarkets()
@@ -97,19 +115,14 @@ export default function Home() {
       const jsonData = JSON.parse(result?.Messages[0]?.Data)
       setRandomMarket(jsonData)
       cacheService.set(CACHE_KEY_RANDOM, jsonData, FIVE_MINUTES)
-      
+
       fetchMarkets()
     } catch (error) {
-      console.error('Error fetching random market:', error)
+      console.error("Error fetching random market:", error)
     } finally {
       setIsLoading(false)
     }
-  }, [fetchMarkets, handleMessageResultError])
-
-  // Initial load
-  useEffect(() => {
-    fetchRandomMarket()
-  }, [fetchRandomMarket])
+  }
 
   function formatUnixTimestamp(timestamp) {
     const date = new Date(Number(timestamp))
@@ -244,8 +257,7 @@ export default function Home() {
           w="100%"
           maxW="1050px"
           justifyContent="flex-start"
-        >
-        </Flex>
+        ></Flex>
 
         {!isLoading && markets && markets.length > 0 && (
           <Flex wrap="wrap" justify="center" gap={4} maxW="1200px">
@@ -326,10 +338,7 @@ export default function Home() {
         <Flex paddingY={4}></Flex>
 
         {!isLoading && hasMore && (
-          <Button
-            colorScheme="purple"
-            onClick={() => fetchMarkets(nextPage)}
-          >
+          <Button colorScheme="purple" onClick={() => fetchMarkets(nextPage)}>
             Show More
           </Button>
         )}
