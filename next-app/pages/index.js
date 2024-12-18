@@ -114,14 +114,14 @@ export default function Home() {
   function formatUnixTimestamp(timestamp) {
     const date = new Date(Number(timestamp))
     const options = {
-      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone, // Use the local timezone
       weekday: "short",
       month: "short",
       day: "2-digit",
       year: "numeric",
       hour: "2-digit",
       minute: "2-digit",
-      hour12: false,
+      hour12: false, // 24-hour format
     }
     return new Intl.DateTimeFormat("en-US", options).format(date)
   }
@@ -132,7 +132,7 @@ export default function Home() {
         direction="column"
         align="center"
         p={4}
-        bg="#1a1a2e"
+        bg="#1a1a2e" // Dark purple background
         minHeight="100vh"
         color="white"
       >
