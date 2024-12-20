@@ -1,5 +1,4 @@
 import AppHeader from "@/components/AppHeader"
-import ShareIcon from "@/components/icons/ShareIcon"
 import SubHeader from "@/components/SubHeader"
 import { useAppContext } from "@/context/AppContext"
 import {
@@ -7,16 +6,15 @@ import {
   ChakraProvider,
   Flex,
   useToast,
-  Text,
-  IconButton,
   Spinner,
 } from "@chakra-ui/react"
 import { dryrun } from "@permaweb/aoconnect"
 import { Link } from "arnext"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { MAIN_PROCESS_ID } from "@/context/AppContext"
 import { StarIcon } from "@chakra-ui/icons"
 import localforage from "localforage"
+import { MarketCard } from "@/components/MarketCard"
 
 const CACHE_KEYS = {
   RANDOM_MARKET: "randomMarket",
@@ -75,6 +73,15 @@ export default function Home() {
       }
     })()
   }, [isCachedDataStale])
+
+  const handleShare = useCallback((processId) => {
+    const text = `Check out this market on dumpet.fun - `
+    const url = `${window.location.origin}/market/${processId}`
+    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+      text
+    )}&url=${encodeURIComponent(url)}`
+    window.open(twitterUrl, "_blank")
+  }, [])
 
   const getCachedData = async () => {
     const _randomMarket = await localforage.getItem(
@@ -190,7 +197,6 @@ export default function Home() {
         <Flex paddingY={8}></Flex>
 
         <Link
-          // target="_blank" rel="noopener noreferrer"
           href="/create"
         >
           <Button
@@ -218,80 +224,7 @@ export default function Home() {
           </Flex>
         )}
         {!isLoading && randomMarket && (
-          <Flex
-            flexDirection="column"
-            w="250px"
-            border="1px solid"
-            borderColor="purple.700"
-            paddingX={4}
-            paddingBottom={8}
-            borderRadius="md"
-            textAlign="center"
-          >
-            <Flex w="100%" justify="flex-end">
-              <IconButton
-                icon={<ShareIcon strokeColor="#FFFFFF7A" size={14} />}
-                colorScheme="whiteAlpha"
-                variant="ghost"
-                aria-label="Share"
-                onClick={() => {
-                  const text = `Check out this market on dumpet.fun - `
-                  const url =
-                    window.location.origin +
-                    `/market/${randomMarket?.ProcessId}`
-                  const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
-                    text
-                  )}&url=${encodeURIComponent(url)}`
-                  window.open(twitterUrl, "_blank")
-                }}
-              />
-            </Flex>
-
-            <Link
-              // target="_blank"
-              // rel="noopener noreferrer"
-              href={`/market/${randomMarket.ProcessId}`}
-            >
-              <Flex flexDirection="column" gap={2}>
-                <Text
-                  fontSize="md"
-                  fontWeight="bold"
-                  color="purple.300"
-                  isTruncated
-                >
-                  {randomMarket?.Title}
-                </Text>
-                <Text fontSize="sm" isTruncated>
-                  {randomMarket?.OptionA}
-                </Text>
-                <Flex justifyContent="center">
-                  <Text
-                    fontSize="sm"
-                    color="gray.400"
-                    border="1px solid"
-                    borderColor="purple"
-                    borderRadius="md"
-                    paddingX={4}
-                  >
-                    versus
-                  </Text>
-                </Flex>
-                <Text fontSize="sm" isTruncated>
-                  {randomMarket?.OptionB}
-                </Text>
-                <Flex flexDirection="column">
-                  <Text fontSize="xs" color="gray.400">
-                    Expires on:
-                  </Text>
-                  <Text fontSize="xs" color="gray.400">
-                    {randomMarket?.Duration
-                      ? formatUnixTimestamp(randomMarket?.Duration)
-                      : ""}
-                  </Text>
-                </Flex>
-              </Flex>
-            </Link>
-          </Flex>
+          <MarketCard market={randomMarket} onShare={handleShare} />
         )}
 
         <Flex
@@ -301,87 +234,16 @@ export default function Home() {
           maxW="1050px"
           justifyContent="flex-start"
         >
-          {/* <Text fontSize="xs" color="gray.400" paddingBottom={2}>
-            Most Recent
-          </Text> */}
         </Flex>
 
         {!isLoading && markets && markets.length > 0 && (
           <Flex wrap="wrap" justify="center" gap={4} maxW="1200px">
             {markets.map((market, index) => (
-              <Flex
-                key={index}
-                flexDirection="column"
-                w="250px"
-                border="1px solid"
-                borderColor="purple.700"
-                paddingX={4}
-                paddingBottom={8}
-                borderRadius="md"
-                textAlign="center"
-              >
-                <Flex w="100%" justify="flex-end">
-                  <IconButton
-                    icon={<ShareIcon strokeColor="#FFFFFF7A" size={14} />}
-                    colorScheme="whiteAlpha"
-                    variant="ghost"
-                    aria-label="Share"
-                    onClick={() => {
-                      const text = `Check out this market on dumpet.fun - `
-                      const url =
-                        window.location.origin + `/market/${market?.ProcessId}`
-                      const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
-                        text
-                      )}&url=${encodeURIComponent(url)}`
-                      window.open(twitterUrl, "_blank")
-                    }}
-                  />
-                </Flex>
-                <Link
-                  // target="_blank"
-                  // rel="noopener noreferrer"
-                  href={`/market/${market.ProcessId}`}
-                >
-                  <Flex flexDirection="column" gap={2}>
-                    <Text
-                      fontSize="md"
-                      fontWeight="bold"
-                      color="purple.300"
-                      isTruncated
-                    >
-                      {market.Title}
-                    </Text>
-                    <Text fontSize="sm" isTruncated>
-                      {market.OptionA}
-                    </Text>
-                    <Flex justifyContent="center">
-                      <Text
-                        fontSize="sm"
-                        color="gray.400"
-                        border="1px solid"
-                        borderColor="purple"
-                        borderRadius="md"
-                        paddingX={4}
-                      >
-                        versus
-                      </Text>
-                    </Flex>
-                    <Text fontSize="sm" isTruncated>
-                      {market.OptionB}
-                    </Text>
-                    <Flex flexDirection="column">
-                      <Text fontSize="xs" color="gray.400">
-                        Expires on:
-                      </Text>
-                      <Text fontSize="xs" color="gray.400">
-                        {market.Duration
-                          ? formatUnixTimestamp(market.Duration)
-                          : ""}
-                      </Text>
-                    </Flex>
-                  </Flex>
-                </Link>
-              </Flex>
+              <MarketCard
+                key={`${market.ProcessId}-${index}`}
+                market={market}
+                onShare={handleShare}
+              />
             ))}
           </Flex>
         )}
@@ -398,12 +260,6 @@ export default function Home() {
             Show More
           </Button>
         )}
-
-        {/* {!isLoading && !hasMore && (
-          <Text fontSize="sm" color="gray.400">
-            No more markets to fetch.
-          </Text>
-        )} */}
 
         <Flex paddingY={8}></Flex>
       </Flex>
