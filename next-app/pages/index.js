@@ -62,6 +62,16 @@ export default function Home() {
     })()
   }, [hasCachedMarkets])
 
+  useEffect(() => {
+    ;(async () => {
+      if (isCachedDataStale) {
+        console.log("useEffect isCachedDataStale")
+        fetchRandomMarket()
+        fetchMarkets()
+      }
+    })()
+  }, [isCachedDataStale])
+
   const getCachedData = async () => {
     const _randomMarket = await localforage.getItem(
       `${MAIN_PROCESS_ID}-${CACHE_KEYS.RANDOM_MARKET}`
@@ -71,11 +81,12 @@ export default function Home() {
     )
     console.log("_randomMarket", _randomMarket)
     console.log("_markets", _markets)
+    const hasRandomMarket = !!_randomMarket
+    const hasMarkets = !!_markets
 
     if (_randomMarket) {
       setRandomMarket(_randomMarket)
       setHasCachedRandomMarket(true)
-      fetchRandomMarket()
     } else {
       setHasCachedRandomMarket(false)
     }
@@ -83,10 +94,11 @@ export default function Home() {
     if (_markets) {
       setMarkets(_markets)
       setHasCachedMarkets(true)
-      fetchMarkets()
     } else {
       setHasCachedMarkets(false)
     }
+
+    setIsCachedDataStale(hasRandomMarket || hasMarkets)
   }
 
   const fetchMarkets = async (nextPage = 1) => {
