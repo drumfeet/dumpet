@@ -60,10 +60,8 @@ export default function Home() {
   useEffect(() => {
     ;(async () => {
       if (!hasCachedMarkets) {
-        setIsLoading(true)
         console.log("useEffect fetching markets")
         await fetchMarkets()
-        setIsLoading(false)
       }
     })()
   }, [hasCachedMarkets])
@@ -87,8 +85,8 @@ export default function Home() {
     )
     console.log("_randomMarket", _randomMarket)
     console.log("_markets", _markets)
-    const hasRandomMarket = !!_randomMarket
-    const hasMarkets = !!_markets
+    const hasCachedRandomMarket = !!_randomMarket
+    const hasCachedMarkets = !!_markets
 
     if (_randomMarket) {
       setRandomMarket(_randomMarket)
@@ -106,7 +104,7 @@ export default function Home() {
       setHasCachedMarkets(false)
     }
 
-    setIsCachedDataStale(hasRandomMarket || hasMarkets)
+    setIsCachedDataStale(hasCachedRandomMarket || hasCachedMarkets)
   }
 
   const fetchMarkets = async (nextPage = 1) => {
