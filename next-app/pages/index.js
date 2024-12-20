@@ -115,8 +115,9 @@ export default function Home() {
       console.log("jsonData", jsonData)
       if (handleMessageResultError(_result)) return
 
-      // Append new markets to the existing list and localforage cache
-      const newMarkets = [...markets, ...jsonData.Markets]
+      // If it's the first page, replace the markets; otherwise, append
+      const newMarkets =
+        nextPage === 1 ? jsonData.Markets : [...markets, ...jsonData.Markets]
       console.log("newMarkets", newMarkets)
       await localforage.setItem(
         `${MAIN_PROCESS_ID}-${CACHE_KEYS.MARKETS_LIST}`,
