@@ -47,8 +47,10 @@ export default function Home() {
   useEffect(() => {
     ;(async () => {
       if (!hasCachedRandomMarket) {
+        setIsLoading(true)
         console.log("useEffect fetching random market")
         await fetchRandomMarket()
+        setIsLoading(false)
       }
     })()
   }, [hasCachedRandomMarket])
@@ -56,8 +58,10 @@ export default function Home() {
   useEffect(() => {
     ;(async () => {
       if (!hasCachedMarkets) {
+        setIsLoading(true)
         console.log("useEffect fetching markets")
         await fetchMarkets()
+        setIsLoading(false)
       }
     })()
   }, [hasCachedMarkets])
@@ -134,7 +138,6 @@ export default function Home() {
   }
 
   const fetchRandomMarket = async () => {
-    setIsLoading(true)
     try {
       const _result = await dryrun({
         process: MAIN_PROCESS_ID,
@@ -152,8 +155,6 @@ export default function Home() {
       setRandomMarket(jsonData)
     } catch (error) {
       console.error(error)
-    } finally {
-      setIsLoading(false)
     }
   }
 
