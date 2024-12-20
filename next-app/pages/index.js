@@ -16,6 +16,15 @@ import { Link } from "arnext"
 import { useEffect, useState } from "react"
 import { MAIN_PROCESS_ID } from "@/context/AppContext"
 import { StarIcon } from "@chakra-ui/icons"
+import localforage from "localforage"
+
+const CACHE_KEYS = {
+  RANDOM_MARKET: "randomMarket",
+  MARKETS_LIST: "marketsList",
+  CACHE_TIMESTAMP: "marketsTimestamp",
+}
+
+const DEFAULT_LIMIT = 12
 
 export default function Home() {
   const toast = useToast()
@@ -24,24 +33,81 @@ export default function Home() {
   const [hasMore, setHasMore] = useState(false)
   const [nextPage, setNextPage] = useState(1)
   const [isLoading, setIsLoading] = useState(false)
+  const [hasCachedMarkets, setHasCachedMarkets] = useState(true)
+  const [hasCachedRandomMarket, setHasCachedRandomMarket] = useState(true)
+  const [isCachedDataStale, setIsCachedDataStale] = useState(false)
 
   const { handleMessageResultError } = useAppContext()
 
   useEffect(() => {
     ;(async () => {
-      await fetchRandomMarket()
+      console.log("useEffect getCachedData")
+      await getCachedData()
     })()
   }, [])
 
   useEffect(() => {
     ;(async () => {
-      if (randomMarket) {
+      if (!hasCachedRandomMarket) {
+        setIsLoading(true)
+        console.log("useEffect fetching random market")
+        await fetchRandomMarket()
+        setIsLoading(false)
+      }
+    })()
+  }, [hasCachedRandomMarket])
+
+  useEffect(() => {
+    ;(async () => {
+      if (!hasCachedMarkets) {
+        console.log("useEffect fetching markets")
         await fetchMarkets()
       }
     })()
-  }, [randomMarket])
+  }, [hasCachedMarkets])
 
-  async function fetchMarkets(nextPage = 1) {
+  useEffect(() => {
+    ;(async () => {
+      if (isCachedDataStale) {
+        console.log("useEffect isCachedDataStale")
+        fetchRandomMarket()
+        fetchMarkets()
+      }
+    })()
+  }, [isCachedDataStale])
+
+  const getCachedData = async () => {
+    const _randomMarket = await localforage.getItem(
+      `${MAIN_PROCESS_ID}-${CACHE_KEYS.RANDOM_MARKET}`
+    )
+    const _markets = await localforage.getItem(
+      `${MAIN_PROCESS_ID}-${CACHE_KEYS.MARKETS_LIST}`
+    )
+    console.log("_randomMarket", _randomMarket)
+    console.log("_markets", _markets)
+    const hasCachedRandomMarket = !!_randomMarket
+    const hasCachedMarkets = !!_markets
+
+    if (_randomMarket) {
+      setRandomMarket(_randomMarket)
+      setHasCachedRandomMarket(true)
+    } else {
+      setHasCachedRandomMarket(false)
+    }
+
+    if (_markets) {
+      const limitedMarkets = _markets.slice(0, DEFAULT_LIMIT)
+      console.log("limitedMarkets", limitedMarkets)
+      setMarkets(limitedMarkets)
+      setHasCachedMarkets(true)
+    } else {
+      setHasCachedMarkets(false)
+    }
+
+    setIsCachedDataStale(hasCachedRandomMarket || hasCachedMarkets)
+  }
+
+  const fetchMarkets = async (nextPage = 1) => {
     try {
       const _result = await dryrun({
         process: MAIN_PROCESS_ID,
@@ -50,13 +116,20 @@ export default function Home() {
           { name: "Page", value: nextPage.toString() },
         ],
       })
-
       console.log("_result", _result)
       const jsonData = JSON.parse(_result?.Messages[0]?.Data)
       console.log("jsonData", jsonData)
+      if (handleMessageResultError(_result)) return
 
-      // Append new markets to the existing list
-      setMarkets((prevMarkets) => [...prevMarkets, ...jsonData.Markets])
+      // If it's the first page, replace the markets; otherwise, append
+      const newMarkets =
+        nextPage === 1 ? jsonData.Markets : [...markets, ...jsonData.Markets]
+      console.log("newMarkets", newMarkets)
+      await localforage.setItem(
+        `${MAIN_PROCESS_ID}-${CACHE_KEYS.MARKETS_LIST}`,
+        newMarkets
+      )
+      setMarkets(newMarkets)
 
       // Update `hasMore` and `nextPage` state
       setHasMore(jsonData.HasMore)
@@ -67,7 +140,6 @@ export default function Home() {
   }
 
   const fetchRandomMarket = async () => {
-    setIsLoading(true)
     try {
       const _result = await dryrun({
         process: MAIN_PROCESS_ID,
@@ -78,11 +150,13 @@ export default function Home() {
       if (handleMessageResultError(_result)) return
       const jsonData = JSON.parse(_result?.Messages[0]?.Data)
       console.log("fetchRandomMarket jsonData", jsonData)
+      await localforage.setItem(
+        `${MAIN_PROCESS_ID}-${CACHE_KEYS.RANDOM_MARKET}`,
+        jsonData
+      )
       setRandomMarket(jsonData)
     } catch (error) {
       console.error(error)
-    } finally {
-      setIsLoading(false)
     }
   }
 
