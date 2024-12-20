@@ -24,6 +24,8 @@ const CACHE_KEYS = {
   CACHE_TIMESTAMP: "marketsTimestamp",
 }
 
+const DEFAULT_LIMIT = 12
+
 export default function Home() {
   const toast = useToast()
   const [markets, setMarkets] = useState([])
@@ -96,7 +98,9 @@ export default function Home() {
     }
 
     if (_markets) {
-      setMarkets(_markets)
+      const limitedMarkets = _markets.slice(0, DEFAULT_LIMIT)
+      console.log("limitedMarkets", limitedMarkets)
+      setMarkets(limitedMarkets)
       setHasCachedMarkets(true)
     } else {
       setHasCachedMarkets(false)
