@@ -83,6 +83,7 @@ Handlers.add("Create", Handlers.utils.hasMatchingTag("Action", "Create"), functi
         elseif duration_num > max_duration then
             sendErrorMessage(msg,
                 'Max duration must be 8 days in milliseconds')
+            return
         end
 
         if type(msg.Tags.TokenTxId) ~= 'string' or msg.Tags.TokenTxId:match("^%s*$") then
