@@ -1,3 +1,4 @@
+import "@/styles/globals.css"
 import HeadTag from "@/components/HeadTag"
 import { AppContextProvider } from "@/context/AppContext"
 import { ArNext } from "arnext"
