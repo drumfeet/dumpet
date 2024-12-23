@@ -1193,9 +1193,8 @@ Handlers.add("RandomMarket", Handlers.utils.hasMatchingTag("Action", "RandomMark
         local length = #MarketKeys
         local timestampStr = tostring(msg["Timestamp"])
         local blockHeightStr = tostring(msg["Block-Height"])
-        local randomNum = crypto.random(0, length, timestampStr)
-        local randomIndex = randomNum
-        -- local randomIndex = math.random(#MarketKeys)
+        local randomNum = crypto.random(0, length - 1, timestampStr) -- Ensure the range is correct
+        local randomIndex = randomNum + 1                          -- Adjust for Lua's 1-based indexing
         local randomKey = MarketKeys[randomIndex]
         local randomMarket = Markets[randomKey]
 
