@@ -22,7 +22,7 @@ export default function TeaserPage() {
 
           <div className="space-y-4">
             <h1 className="text-5xl md:text-6xl font-bold tracking-tight text-[#FF9500] drop-shadow-md">
-              Meet $DINDIN
+              DINDIN
             </h1>
             <p className="text-2xl md:text-3xl text-muted-foreground font-semibold italic">
               The sleepiest dinosaur is coming to DUMPET soon...
