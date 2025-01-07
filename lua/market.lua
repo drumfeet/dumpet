@@ -713,7 +713,7 @@ end)
 
 Handlers.add("AddChat", { Action = "AddChat" }, function(msg)
     local userId = msg.From
-    local chatMsg = msg.Tags.ChatMsg
+    local chatMsg = msg.Tags.ChatMsg or ""
     local timestamp = msg["Timestamp"]
 
     -- insertion at the end of the array table
