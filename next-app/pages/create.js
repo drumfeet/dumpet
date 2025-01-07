@@ -364,16 +364,14 @@ export default function Home() {
                 <Box width="100%">
                   <Link href={`/profile/${userAddress}`} passHref>
                     <Button
-                      variant="outline"
-                      color="white"
-                      border="1px solid"
-                      borderColor="#6b46c1"
-                      _hover={{ bg: "#6b46c1", color: "white" }}
-                      colorScheme="purple"
-                      width="100%"
                       rightIcon={<UserIcon strokeColor="#ffffff" />}
+                      width="100%"
+                      colorScheme="purple"
+                      bg="none"
+                      border="1px solid"
+                      borderColor="purple.600"
                     >
-                      View My Profile
+                      View Profile
                     </Button>
                   </Link>
                 </Box>
@@ -381,15 +379,12 @@ export default function Home() {
             ) : (
               <>
                 <Button
-                  variant="outline"
-                  color="white"
-                  border="1px solid"
-                  borderColor="#6b46c1"
-                  _hover={{ bg: "#6b46c1", color: "white" }}
                   rightIcon={<WalletIcon strokeColor="#ffffff" />}
                   width="100%"
                   colorScheme="purple"
-                  // bg="#7023b6"
+                  bg="none"
+                  border="1px solid"
+                  borderColor="purple.600"
                   onClick={async () => {
                     await connectWallet()
                   }}
