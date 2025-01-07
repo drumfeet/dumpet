@@ -40,20 +40,27 @@ export default function AppHeader() {
           <button
             onClick={toggleDrawer}
             className="text-purple-400 hover:text-purple-600 transition-colors"
+            aria-label="Open menu"
           >
             <PanelsTopLeftIcon className="h-6 w-6" />
           </button>
         </div>
       </div>
 
-      {/* Drawer */}
       {isDrawerOpen && (
-        <div className="fixed inset-0 z-50 bg-black/50 flex justify-end">
-          <div className="w-64 bg-background p-6 shadow-lg">
+        <div
+          className="fixed inset-0 z-50 bg-black/50 flex justify-end transform transition-transform"
+          onClick={toggleDrawer}
+        >
+          <div
+            className="w-64 bg-background p-6 shadow-lg transform transition-transform translate-x-0"
+            onClick={(e) => e.stopPropagation()} // Prevent close when clicking inside
+          >
             {/* Close Button */}
             <button
               onClick={toggleDrawer}
               className="text-purple-400 hover:text-purple-600 transition-colors mb-4"
+              aria-label="Close menu"
             >
               <X className="h-6 w-6" />
             </button>
@@ -62,6 +69,7 @@ export default function AppHeader() {
             <nav className="flex flex-col gap-4">
               <Link
                 href="/faq"
+                onClick={toggleDrawer} // Close drawer on navigation
                 className="text-sm text-muted-foreground hover:text-purple-400 transition-colors"
               >
                 FAQ
@@ -70,6 +78,7 @@ export default function AppHeader() {
                 href="https://twitter.com"
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={toggleDrawer} // Close drawer on navigation
                 className="text-sm text-muted-foreground hover:text-purple-400 transition-colors flex items-center gap-1"
               >
                 <Twitter className="h-4 w-4" />
@@ -79,6 +88,7 @@ export default function AppHeader() {
                 href="https://telegram.org"
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={toggleDrawer} // Close drawer on navigation
                 className="text-sm text-muted-foreground hover:text-purple-400 transition-colors flex items-center gap-1"
               >
                 <Send className="h-4 w-4" />
