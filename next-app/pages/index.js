@@ -1,5 +1,4 @@
 import AppHeader from "@/components/AppHeader"
-import SubHeader from "@/components/SubHeader"
 import { useAppContext } from "@/context/AppContext"
 import {
   Button,
@@ -12,9 +11,9 @@ import { dryrun } from "@permaweb/aoconnect"
 import { Link } from "arnext"
 import { useEffect, useState, useCallback } from "react"
 import { MAIN_PROCESS_ID } from "@/context/AppContext"
-import { StarIcon } from "@chakra-ui/icons"
 import localforage from "localforage"
 import { MarketCard } from "@/components/MarketCard"
+import { Plus } from "lucide-react"
 
 const CACHE_KEYS = {
   RANDOM_MARKET: "randomMarket",
@@ -193,15 +192,14 @@ export default function Home() {
         color="white"
       >
         <AppHeader />
-        <SubHeader />
+        {/* <SubHeader /> */}
         <Flex paddingY={8}></Flex>
 
-        <Link
-          href="/create"
-        >
+        <Link href="/create">
           <Button
-            leftIcon={<StarIcon />}
+            leftIcon={<Plus />}
             colorScheme="purple"
+            bg="#7023b6" // Primary purple
             paddingY={8}
             paddingX={4}
             fontSize="lg"
@@ -233,8 +231,7 @@ export default function Home() {
           w="100%"
           maxW="1050px"
           justifyContent="flex-start"
-        >
-        </Flex>
+        ></Flex>
 
         {!isLoading && markets && markets.length > 0 && (
           <Flex wrap="wrap" justify="center" gap={4} maxW="1200px">
@@ -253,6 +250,9 @@ export default function Home() {
         {!isLoading && hasMore && (
           <Button
             colorScheme="purple"
+            bg="none"
+            border="2px solid"
+            borderColor="purple.600"
             onClick={async () => {
               await fetchMarkets(nextPage)
             }}
