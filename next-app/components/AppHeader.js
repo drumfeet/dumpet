@@ -128,6 +128,14 @@ export default function AppHeader() {
                     FAQ
                   </MenuItem>
                 </Link>
+                <Link href="/dindin">
+                  <MenuItem
+                    icon={<ExternalLinkIcon color="#ded6e5" boxSize={4} />}
+                    _hover={{ bg: "red.200" }}
+                  >
+                    DINDIN
+                  </MenuItem>
+                </Link>
               </MenuGroup>
               <MenuDivider />
               <MenuGroup title="Social">
