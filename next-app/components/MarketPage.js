@@ -172,7 +172,7 @@ export default function MarketPage() {
               Chat
             </TabsTrigger>
             <TabsTrigger
-              value="account"
+              value="balance"
               className="data-[state=active]:bg-[#2f2f5a]"
             >
               <Wallet className="mr-2 h-4 w-4" />
@@ -195,8 +195,42 @@ export default function MarketPage() {
           <TabsContent value="chat">
             <PlaceholderContent title="Chat Interface" />
           </TabsContent>
-          <TabsContent value="account">
-            <PlaceholderContent title="Account Settings" />
+          <TabsContent value="balance">
+            <div className="bg-[#232344] p-4 sm:p-6 rounded-lg space-y-4">
+              <div className="flex flex-col sm:flex-row justify-between gap-4">
+                <div className="bg-[#2f2f5a] p-4 rounded-lg flex-1">
+                  <p className="text-sm text-gray-400 mb-1">
+                    Market Deposit Balance
+                  </p>
+                  <p className="text-lg sm:text-xl font-bold truncate">
+                    500 $DUMPET
+                  </p>
+                </div>
+                <div className="bg-[#2f2f5a] p-4 rounded-lg flex-1">
+                  <p className="text-sm text-gray-400 mb-1">
+                    Your Wallet Balance
+                  </p>
+                  <p className="text-lg sm:text-xl font-bold truncate">
+                    500 $DUMPET
+                  </p>
+                </div>
+              </div>
+              <div className="flex flex-col gap-2">
+                <input
+                  type="number"
+                  placeholder="Amount"
+                  className="flex-grow bg-transparent text-center border border-[#3a3a6a] rounded-md p-1 text-lg min-w-0 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent hover:border-blue-400 transition-colors"
+                />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <button className="w-full bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors">
+                    Deposit
+                  </button>
+                  <button className="w-full bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors">
+                    Withdraw
+                  </button>
+                </div>
+              </div>
+            </div>
           </TabsContent>
         </Tabs>
       </div>
