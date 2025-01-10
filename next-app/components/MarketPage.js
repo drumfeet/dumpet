@@ -53,7 +53,7 @@ const VoteContent = ({
   setArVotes,
   setVoteAmount,
 }) => (
-  <div className="w-full max-w-2xl mx-auto space-y-4 sm:space-y-8 px-4 sm:px-0">
+  <div className="w-full max-w-2xl mx-auto space-y-4 sm:space-y-8 px-4 sm:px-0 pt-6">
     <h1 className="text-2xl sm:text-3xl font-bold text-center text-white break-words">
       Which token will pump in 2025?
     </h1>
@@ -341,7 +341,14 @@ const InfoContent = ({ title }) => {
                               className="border-t border-gray-700"
                             >
                               <td className="py-2 pr-4 text-gray-300">
-                                {user.address}
+                                <a
+                                  href={`https://ao.link/#/entity/${user.address}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="hover:underline"
+                                >
+                                  {user.address}
+                                </a>
                               </td>
                               <td className="py-2 text-gray-300">
                                 {user.balance} $DUMPET
@@ -473,7 +480,7 @@ export default function MarketPage() {
             <ChatSection />
           </TabsContent>
           <TabsContent value="balance">
-            <div className="bg-[#232344] p-4 sm:p-6 rounded-lg space-y-4">
+            <div className="mt-8 bg-[#232344] p-4 sm:p-4 rounded-lg space-y-8">
               <div className="flex flex-col sm:flex-row justify-between gap-4">
                 <div className="bg-[#2f2f5a] p-4 rounded-lg flex-1">
                   <p className="text-sm text-gray-400 mb-1">
@@ -499,10 +506,10 @@ export default function MarketPage() {
                   className="flex-grow bg-transparent text-center border border-[#3a3a6a] rounded-md p-1 text-lg min-w-0 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent hover:border-blue-400 transition-colors"
                 />
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  <button className="w-full bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors">
+                  <button className="w-full bg-emerald-600/20 px-4 py-2 rounded-md transition-colors hover:bg-emerald-600/30 text-emerald-200">
                     Deposit
                   </button>
-                  <button className="w-full bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors">
+                  <button className="w-full bg-rose-600/20 px-4 py-2 rounded-md transition-colors hover:bg-rose-600/30 text-rose-200">
                     Withdraw
                   </button>
                 </div>
