@@ -16,6 +16,8 @@ import {
   Calendar,
   XCircle,
   CheckCircle,
+  CopyIcon,
+  ExternalLink,
 } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
@@ -152,8 +154,16 @@ const InfoContent = ({ title }) => {
   const [showBalances, setShowBalances] = useState(false)
 
   const userBalances = [
-    { address: "0x1234...5678", balance: 1000, vote: "Option A" },
-    { address: "0x8765...4321", balance: 750, vote: "Option B" },
+    {
+      address: "0x1234...5678",
+      balance: 10001000100010001000,
+      vote: "Option A",
+    },
+    {
+      address: "0x8765...4321",
+      balance: 7501000100010001000,
+      vote: "Option B",
+    },
     { address: "0x2468...1357", balance: 500, vote: "Option A" },
     { address: "0x1357...2468", balance: 250, vote: "Option B" },
   ]
@@ -164,23 +174,37 @@ const InfoContent = ({ title }) => {
         {title}
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <InfoItem icon={Clock} label="Expires on" value="2025-12-31" />
+        <InfoItem
+          icon={Clock}
+          label="Expires on"
+          value="Tue, Jan 07, 2025, 18:08"
+        />
         <InfoItem
           icon={Hash}
           label="Market ProcessId"
           value="process_1234567890"
+          copyable={true}
+          link="https://ao.link/#/entity/replacethisprocessid"
         />
         <InfoItem
           icon={Hash}
           label="Bet Token ProcessId"
           value="token_9876543210"
+          copyable={true}
+          link="https://ao.link/#/entity/replacethisprocessid"
         />
-        <InfoItem icon={User} label="Creator" value="0x1234...5678" />
+        <InfoItem
+          icon={User}
+          label="Creator"
+          value="0x1234...5678"
+          copyable={true}
+          link="https://ao.link/#/entity/replacethisprocessid"
+        />
         <InfoItem icon={Layers} label="BlockHeight" value="1234567" />
         <InfoItem
           icon={Calendar}
           label="Block Timestamp"
-          value="2023-05-20 12:34:56"
+          value="Tue, Jan 08, 2025, 14:12"
         />
       </div>
       <div className="flex flex-col sm:flex-row justify-center gap-4 mt-6">
@@ -203,7 +227,7 @@ const InfoContent = ({ title }) => {
       <div className="mt-8">
         <button
           onClick={() => setShowBalances(!showBalances)}
-          className="w-full bg-[#2a2a4a] text-gray-200 px-4 py-2 rounded-md hover:bg-[#3a3a5a] transition-colors duration-200 flex items-center justify-center gap-2 text-sm"
+          className="w-full bg-[#3a3a6a] text-gray-200 px-4 py-2 rounded-md hover:bg-[#4a4a7a] transition-colors duration-200 flex items-center justify-center gap-2 text-sm"
         >
           <Wallet size={16} />
           {showBalances ? "Hide" : "Show"} User Balances
@@ -259,15 +283,52 @@ const InfoContent = ({ title }) => {
   )
 }
 
-const InfoItem = ({ icon: Icon, label, value }) => (
-  <div className="bg-[#1e1e38] p-3 rounded-md flex items-center space-x-3 border border-[#3a3a6a]">
-    <Icon size={20} className="text-gray-300" />
-    <div>
-      <p className="text-xs text-gray-400">{label}</p>
-      <p className="text-sm font-medium text-gray-200 truncate">{value}</p>
+const InfoItem = ({
+  icon: Icon,
+  label,
+  value,
+  copyable = false,
+  link = "",
+}) => {
+  const handleCopy = (e) => {
+    e.stopPropagation()
+    navigator.clipboard.writeText(value)
+    // You might want to add a toast notification here to inform the user that the value has been copied
+  }
+
+  const handleLink = (e) => {
+    e.stopPropagation()
+    if (link) {
+      window.open(link, "_blank")
+    }
+  }
+
+  return (
+    <div className="bg-[#1e1e38] p-3 rounded-md flex items-center space-x-3 border border-[#3a3a6a]">
+      <Icon size={20} className="text-gray-300 flex-shrink-0" />
+      <div className="flex-grow min-w-0">
+        <p className="text-xs text-gray-400">{label}</p>
+        <p className="text-sm font-medium text-gray-200 truncate">{value}</p>
+      </div>
+      <div className="flex-shrink-0 flex space-x-2">
+        {copyable && (
+          <CopyIcon
+            size={16}
+            className="text-gray-400 cursor-pointer hover:text-gray-200 transition-colors"
+            onClick={handleCopy}
+          />
+        )}
+        {link && (
+          <ExternalLink
+            size={16}
+            className="text-gray-400 cursor-pointer hover:text-gray-200 transition-colors"
+            onClick={handleLink}
+          />
+        )}
+      </div>
     </div>
-  </div>
-)
+  )
+}
 
 const ActionButton = ({ text, color, icon: Icon }) => (
   <button
