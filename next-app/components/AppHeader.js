@@ -168,7 +168,7 @@ export default function AppHeader() {
           </Menu>
         </Flex>
       </Flex>
-      <Divider borderColor="purple.400" />
+      <Divider borderColor="purple.800" />
       {/* <Flex paddingY={8}></Flex> */}
     </ChakraProvider>
   )
