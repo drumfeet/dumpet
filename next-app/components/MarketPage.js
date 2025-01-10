@@ -173,26 +173,32 @@ const ChatSection = () => {
   }
 
   return (
-    <div className="bg-[#232344] p-6 rounded-lg space-y-6">
+    <div className="space-y-4 pt-6 text-gray-100">
       <form onSubmit={handleSubmit} className="space-y-4">
         <Textarea
           placeholder="Type your message..."
           value={newChat}
           onChange={(e) => setNewChat(e.target.value)}
-          className="w-full bg-[#2f2f5a] text-white border-[#3a3a6a] focus:border-blue-400"
+          className="w-full bg-[#1e1e38] text-gray-100 border-[#3a3a6a] focus:border-indigo-400"
         />
-        <Button type="submit" className="w-full bg-blue-500 hover:bg-blue-600">
-          Send message
+        <Button
+          type="submit"
+          className="w-full bg-indigo-600 hover:bg-indigo-700 transition-colors duration-300 text-gray-100 font-semibold py-2 px-4 rounded-md shadow-md hover:shadow-lg"
+        >
+          Send chat
         </Button>
       </form>
-      <div className="space-y-4">
+      <div className="space-y-4 max-h-[400px] overflow-y-auto">
         {chats.map((chat) => (
-          <div key={chat.id} className="bg-[#2f2f5a] p-4 rounded-lg">
-            <div className="flex items-center space-x-2 mb-2">
-              <span className="font-semibold">{chat.author}</span>
+          <div
+            key={chat.id}
+            className="py-2 border-b border-[#3a3a6a] last:border-b-0"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs text-gray-400">{chat.author}</span>
               <span className="text-xs text-gray-400">{chat.timestamp}</span>
             </div>
-            <p className="text-gray-300">{chat.content}</p>
+            <p className="text-gray-200 break-words">{chat.content}</p>
           </div>
         ))}
       </div>
