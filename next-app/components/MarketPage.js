@@ -59,27 +59,15 @@ const VoteContent = ({
     <div className="bg-[#232344] p-4 sm:p-6 rounded-lg">
       <div className="flex flex-col sm:flex-row justify-between items-center mb-4 sm:mb-6 space-y-2 sm:space-y-0">
         <span className="text-sm text-gray-300">Set Voting Amount</span>
-        <div className="flex items-center gap-2 w-full">
+        <div className="w-full">
           <input
             type="number"
             value={voteAmount}
             onChange={(e) =>
               setVoteAmount(Math.max(1, parseInt(e.target.value) || 1))
             }
-            className="flex-grow bg-transparent text-center border border-[#3a3a6a] rounded-md p-1 text-lg min-w-0 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent hover:border-blue-400 transition-colors"
+            className="w-full bg-transparent text-center border border-[#3a3a6a] rounded-md p-1 text-lg min-w-0 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent hover:border-blue-400 transition-colors"
           />
-          <button
-            onClick={() => setVoteAmount(Math.max(1, voteAmount - 1))}
-            className="bg-[#2f2f5a] hover:bg-[#3a3a6a] text-white p-2 rounded-full transition-colors flex-shrink-0"
-          >
-            <ArrowDownCircle size={20} />
-          </button>
-          <button
-            onClick={() => setVoteAmount(voteAmount + 1)}
-            className="bg-[#2f2f5a] hover:bg-[#3a3a6a] text-white p-2 rounded-full transition-colors flex-shrink-0"
-          >
-            <ArrowUpCircle size={20} />
-          </button>
         </div>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -123,6 +111,7 @@ const VoteContent = ({
             dataKey="value"
             startAngle={90}
             endAngle={450}
+            stroke="none"
           >
             {["#ff6b6b", "#4d7cfe"].map((color, index) => (
               <Cell key={`cell-${index}`} fill={color} />
