@@ -243,10 +243,11 @@ export default function Home({ _id = null }) {
           </Button>
 
           <Button
-            variant="outline"
             width="100%"
             colorScheme="purple"
-            _hover={{ bg: "#6c45c1", color: "white", border: "none" }}
+            background="none"
+            border="1px solid"
+            borderColor="purple.600"
             onClick={async (event) => {
               const button = event.target
               button.disabled = true

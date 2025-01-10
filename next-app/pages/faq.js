@@ -37,7 +37,6 @@ export default function Home() {
         color="white"
       >
         <AppHeader />
-        <SubHeader />
         <Flex paddingY={8}></Flex>
 
         <Flex gap={4} flexDirection="column" color="whiteAlpha.800">
