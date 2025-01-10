@@ -14,8 +14,9 @@ import {
   Calendar,
   XCircle,
   CheckCircle,
-  CopyIcon,
   ExternalLink,
+  Copy,
+  SendHorizontal,
 } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
@@ -183,8 +184,9 @@ const ChatSection = () => {
         />
         <Button
           type="submit"
-          className="w-full bg-indigo-600 hover:bg-indigo-700 transition-colors duration-300 text-gray-100 font-semibold py-2 px-4 rounded-md shadow-md hover:shadow-lg"
+          className="w-full bg-indigo-600 hover:bg-indigo-700 transition-colors duration-300 text-gray-100 font-semibold py-2 px-4 rounded-md shadow-md hover:shadow-lg flex items-center justify-center gap-2"
         >
+          <SendHorizontal size={18} />
           Send chat
         </Button>
       </form>
@@ -195,7 +197,27 @@ const ChatSection = () => {
             className="py-2 border-b border-[#3a3a6a] last:border-b-0"
           >
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs text-gray-400">{chat.author}</span>
+              <span className="text-xs text-gray-400 flex items-center gap-2">
+                {chat.author}
+                <Copy
+                  size={12}
+                  className="cursor-pointer hover:text-gray-200 transition-colors"
+                  onClick={() => {
+                    navigator.clipboard.writeText(chat.author)
+                    // You might want to add a toast notification here to inform the user that the value has been copied
+                  }}
+                />
+                <ExternalLink
+                  size={12}
+                  className="cursor-pointer hover:text-gray-200 transition-colors"
+                  onClick={() =>
+                    window.open(
+                      `https://example.com/address/${chat.author}`,
+                      "_blank"
+                    )
+                  }
+                />
+              </span>
               <span className="text-xs text-gray-400">{chat.timestamp}</span>
             </div>
             <p className="text-gray-200 break-words">{chat.content}</p>
@@ -368,7 +390,7 @@ const InfoItem = ({
       </div>
       <div className="flex-shrink-0 flex space-x-2">
         {copyable && (
-          <CopyIcon
+          <Copy
             size={16}
             className="text-gray-400 cursor-pointer hover:text-gray-200 transition-colors"
             onClick={handleCopy}
