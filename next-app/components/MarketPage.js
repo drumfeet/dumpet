@@ -17,6 +17,8 @@ import {
   ExternalLink,
   Copy,
   SendHorizontal,
+  Share2,
+  Link,
 } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
@@ -96,31 +98,57 @@ const VoteContent = ({
         />
       </div>
     </div>
-    <div className="bg-[#232344] rounded-xl p-6 relative h-64">
-      <ResponsiveContainer width="100%" height="100%">
-        <PieChart>
-          <Pie
-            data={[
-              { name: "ao", value: aoVotes || 1 },
-              { name: "ar", value: arVotes || 1 },
-            ]}
-            cx="50%"
-            cy="50%"
-            innerRadius={0}
-            outerRadius="80%"
-            fill="#8884d8"
-            dataKey="value"
-            startAngle={90}
-            endAngle={450}
-            stroke="none"
-          >
-            {["#ff6b6b", "#4d7cfe"].map((color, index) => (
-              <Cell key={`cell-${index}`} fill={color} />
-            ))}
-          </Pie>
-        </PieChart>
-      </ResponsiveContainer>
-      <div className="absolute bottom-4 left-4 flex gap-4">
+    <div className="bg-[#232344] rounded-xl p-6 flex flex-col h-96">
+      <div className="flex justify-end gap-4">
+        <button
+          className="p-2 rounded-md hover:bg-[#3a3a6a] transition-colors"
+          onClick={() => {
+            const text = `Check out this market on dumpet.fun - `
+            const url = window.location.href
+            const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+              text
+            )}&url=${encodeURIComponent(url)}`
+            window.open(twitterUrl, "_blank")
+          }}
+        >
+          <Share2 className="w-5 h-5 text-gray-300" />
+        </button>
+        <button
+          className="p-2 rounded-md hover:bg-[#3a3a6a] transition-colors"
+          onClick={() => {
+            navigator.clipboard.writeText(window.location.href)
+            // You might want to add a toast notification here to inform the user that the URL has been copied
+          }}
+        >
+          <Link className="w-5 h-5 text-gray-300" />
+        </button>
+      </div>
+      <div className="flex-grow relative">
+        <ResponsiveContainer width="100%" height="100%" className="flex-grow">
+          <PieChart>
+            <Pie
+              data={[
+                { name: "ao", value: aoVotes || 1 },
+                { name: "ar", value: arVotes || 1 },
+              ]}
+              cx="50%"
+              cy="50%"
+              innerRadius={0}
+              outerRadius="90%"
+              fill="#8884d8"
+              dataKey="value"
+              startAngle={90}
+              endAngle={450}
+              stroke="none"
+            >
+              {["#ff6b6b", "#4d7cfe"].map((color, index) => (
+                <Cell key={`cell-${index}`} fill={color} />
+              ))}
+            </Pie>
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
+      <div className="flex gap-4">
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 bg-[#ff6b6b] rounded-sm"></div>
           <span className="text-xs font-medium">ao</span>
