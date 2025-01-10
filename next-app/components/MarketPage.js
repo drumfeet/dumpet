@@ -2,13 +2,11 @@ import { useState } from "react"
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts"
 import {
   ArrowUpCircle,
-  ArrowDownCircle,
   RefreshCcw,
   Vote,
   Activity,
   MessageCircle,
   Wallet,
-  Info,
   Clock,
   Hash,
   User,
@@ -20,6 +18,8 @@ import {
   ExternalLink,
 } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Button } from "@/components/ui/button"
+import { Textarea } from "@/components/ui/textarea"
 
 const VoteCard = ({ title, votes, onVote, color }) => (
   <div
@@ -133,11 +133,72 @@ const VoteContent = ({
   </div>
 )
 
-const PlaceholderContent = ({ title }) => (
-  <div className="h-[200px] flex items-center justify-center">
-    <p className="text-gray-400">Coming soon: {title}</p>
-  </div>
-)
+const ChatSection = () => {
+  const [chats, setChats] = useState([
+    {
+      id: 1,
+      author: "0x1234...5678",
+      content: "Great initiative!",
+      timestamp: "Tue, Jan 07, 2025, 18:08",
+    },
+    {
+      id: 2,
+      author: "0x8765...4321",
+      content: "I think ar will win.",
+      timestamp: "Tue, Jan 07, 2025, 18:09",
+    },
+  ])
+  const [newChat, setNewChat] = useState("")
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    if (newChat.trim()) {
+      const newChatObj = {
+        id: chats.length + 1,
+        author: "0xYOUR...WALLET", // Replace with actual wallet address
+        content: newChat.trim(),
+        timestamp: new Date().toLocaleString("en-US", {
+          weekday: "short",
+          year: "numeric",
+          month: "short",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false,
+        }),
+      }
+      setChats([...chats, newChatObj])
+      setNewChat("")
+    }
+  }
+
+  return (
+    <div className="bg-[#232344] p-6 rounded-lg space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <Textarea
+          placeholder="Type your message..."
+          value={newChat}
+          onChange={(e) => setNewChat(e.target.value)}
+          className="w-full bg-[#2f2f5a] text-white border-[#3a3a6a] focus:border-blue-400"
+        />
+        <Button type="submit" className="w-full bg-blue-500 hover:bg-blue-600">
+          Send message
+        </Button>
+      </form>
+      <div className="space-y-4">
+        {chats.map((chat) => (
+          <div key={chat.id} className="bg-[#2f2f5a] p-4 rounded-lg">
+            <div className="flex items-center space-x-2 mb-2">
+              <span className="font-semibold">{chat.author}</span>
+              <span className="text-xs text-gray-400">{chat.timestamp}</span>
+            </div>
+            <p className="text-gray-300">{chat.content}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
 
 const InfoContent = ({ title }) => {
   const [showBalances, setShowBalances] = useState(false)
@@ -381,7 +442,7 @@ export default function MarketPage() {
             <InfoContent title="Market Information" />
           </TabsContent>
           <TabsContent value="chat">
-            <PlaceholderContent title="Chat Interface" />
+            <ChatSection />
           </TabsContent>
           <TabsContent value="balance">
             <div className="bg-[#232344] p-4 sm:p-6 rounded-lg space-y-4">
