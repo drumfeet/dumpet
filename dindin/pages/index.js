@@ -1,160 +1,174 @@
-"use client"
-
-import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { DiscIcon as Discord, Twitter } from "lucide-react"
 import Image from "next/image"
+import Link from "next/link"
+import { Twitter, MessageSquareMore } from "lucide-react"
+import { useState, useEffect } from "react"
 
-export default function Landing() {
-  const [currentImage, setCurrentImage] = useState(0)
-  const images = [
-    "/dumpet1.jpg",
-    "/dumpet2.jpg",
-    "/dumpet3.jpg",
-    "/dumpet_14.png",
-    "/dumpet_15.png",
-    "/dumpet_17.png",
-    "/dumpet_18.png",
-  ]
+// const nftImages = Array.from(
+//   { length: 18 },
+//   (_, i) => `/placeholder.svg?height=200&width=200`
+// )
+const nftImages = [
+  "/dumpet1.jpg?height=200&width=200",
+  "/dumpet2.jpg?height=200&width=200",
+  "/dumpet3.jpg?height=200&width=200",
+  "/dumpet4.jpg?height=200&width=200",
+  "/dumpet5.png?height=200&width=200",
+  "/dumpet6.png?height=200&width=200",
+  "/dumpet7.png?height=200&width=200",
+  "/dumpet8.png?height=200&width=200",
+  "/dumpet9.jpg?height=200&width=200",
+  "/dumpet10.png?height=200&width=200",
+  "/dumpet11.png?height=200&width=200",
+  "/dumpet12.png?height=200&width=200",
+  "/dumpet13.jpg?height=200&width=200",
+  "/dumpet14.png?height=200&width=200",
+  "/dumpet15.png?height=200&width=200",
+  "/dumpet16.png?height=200&width=200",
+  "/dumpet17.png?height=200&width=200",
+  "/dumpet18.png?height=200&width=200",
+]
+export default function TeaserPage() {
+  const [hoveredNft, setHoveredNft] = useState(null)
+
+  const [isFloating, setIsFloating] = useState(false)
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentImage((prev) => (prev + 1) % images.length)
-    }, 3000)
-    return () => clearInterval(timer)
+    const floatInterval = setInterval(() => {
+      setIsFloating((prev) => !prev)
+    }, 2000)
+
+    return () => clearInterval(floatInterval)
   }, [])
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#FF9500] to-[#FF5C00]">
-      {/* Hero Section */}
-      <header className="container mx-auto px-4 py-6 flex justify-end items-center">
-        {/* <h1 className="text-4xl font-bold text-white"></h1> */}
-        <div className="flex gap-4">
-          <Button variant="secondary" size="icon">
-            <Discord className="h-5 w-5" />
-          </Button>
-          <Button variant="secondary" size="icon">
-            <Twitter className="h-5 w-5" />
-          </Button>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-[#FFD700] via-[#FF69B4] to-[#00CED1] flex flex-col justify-between overflow-hidden">
+      <header className="w-full bg-[#FF1493]/80 backdrop-blur-sm p-4 shadow-lg">
+        <nav className="max-w-7xl mx-auto flex justify-between items-center">
+          <h1 className="text-4xl font-extrabold text-white font-comic">
+            DINDIN
+          </h1>
+          <div className="flex space-x-6">
+            <Link
+              href="https://x.com/dumpetdotfun"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-white hover:text-[#FFD700] transition-transform duration-300 hover:scale-110"
+            >
+              <Twitter size={28} />
+              <span className="sr-only">Twitter</span>
+            </Link>
+            <Link
+              href="https://t.me/dumpetdotfun"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-white hover:text-[#FFD700] transition-transform duration-300 hover:scale-110"
+            >
+              <MessageSquareMore size={28} />
+              <span className="sr-only">Telegram</span>
+            </Link>
+          </div>
+        </nav>
       </header>
 
-      <main className="container mx-auto px-4 py-12">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          <div className="space-y-6">
-            <Badge className="bg-green-600 text-white hover:bg-green-700">
-              Coming Soon
-            </Badge>
-            <h2 className="text-6xl font-bold text-white">DINDIN</h2>
-            <p className="text-xl text-white/90">
-              The sleepiest dinosaur on AO is about to wake up! Join our
-              community and be part of this unique collection of 4,444 sleepy
-              dinos.
-            </p>
-            <div className="flex gap-4">
-              <Button size="lg" className="bg-purple-600 hover:bg-purple-700">
-                Join Whitelist
-              </Button>
-              <Button size="lg" variant="secondary">
-                Learn More
-              </Button>
+      <main className="flex-grow flex flex-col items-center justify-center p-8 space-y-12 relative">
+        <div className="absolute inset-0 bg-[url('/placeholder.svg?height=20&width=20')] opacity-10 animate-spin-slow"></div>
+
+        <div className="w-full max-w-6xl bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl overflow-hidden transform rotate-1 hover:rotate-0 transition-transform duration-300">
+          <div className="md:flex items-center">
+            <div className="md:w-1/2 p-8 flex items-center justify-center">
+              <div
+                className={`relative w-80 h-80 ${
+                  isFloating ? "animate-float" : "animate-float-reverse"
+                }`}
+              >
+                <Image
+                  src="/dumpet3.jpg?height=400&width=400"
+                  alt="$DINDIN - The DUMPET Dinosaur"
+                  fill
+                  className="object-contain drop-shadow-2xl"
+                  priority
+                />
+              </div>
+            </div>
+            <div className="md:w-1/2 p-8 flex flex-col justify-center space-y-6">
+              <div>
+                <h2 className="text-5xl font-extrabold text-[#FF1493] mb-4 font-comic animate-bounce-slow">
+                  DINDIN
+                </h2>
+                <p className="text-2xl text-[#00CED1] font-bold italic animate-pulse">
+                  Meet the sleepiest dinosaur—here to bring some chill vibes to
+                  DUMPET, powered by AO!
+                </p>
+              </div>
+              <p className="text-xl text-[#FF69B4] font-semibold">
+                Join our community and be part of this unique collection of
+                4,444 sleepy dinos.
+              </p>
+              <div className="flex flex-wrap gap-6">
+                <Link
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href="https://bazar.arweave.dev/#/profile/cqzGhzTgsCq33HP89gdONqdji7dgWuB2AiZzf0vku2Y/assets/"
+                >
+                  <button className="px-8 py-4 bg-[#FFD700] hover:bg-[#FFA500] text-white font-extrabold rounded-full text-xl transition-all duration-300 transform hover:scale-105 hover:rotate-3 shadow-lg">
+                    Coming Soon
+                  </button>
+                </Link>
+                <Link
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href="https://dumpet.fun"
+                >
+                  <button className="px-8 py-4 bg-[#00CED1] hover:bg-[#20B2AA] text-white font-extrabold rounded-full text-xl transition-all duration-300 transform hover:scale-105 hover:rotate-3 shadow-lg">
+                    Try DUMPET
+                  </button>
+                </Link>
+              </div>
             </div>
           </div>
-
-          <div className="relative h-[500px] rounded-xl overflow-hidden">
-            {images.map((src, index) => (
-              <Image
-                key={src}
-                src={src}
-                alt={`DINDIN #${index + 1}`}
-                fill
-                className={`object-contain transition-opacity duration-1000 ${
-                  currentImage === index ? "opacity-100" : "opacity-0"
-                }`}
-                priority={index === 0}
-              />
-            ))}
-          </div>
         </div>
 
-        {/* Features */}
-        <div className="grid md:grid-cols-3 gap-6 mt-24">
-          <Card className="p-6 bg-white/10 backdrop-blur border-0">
-            <h3 className="text-2xl font-bold text-white mb-4">
-              Unique Traits
-            </h3>
-            <p className="text-white/80">
-              Each DINDIN comes with unique accessories, colors, and sleepiness
-              levels.
-            </p>
-          </Card>
-          <Card className="p-6 bg-white/10 backdrop-blur border-0">
-            <h3 className="text-2xl font-bold text-white mb-4">Community</h3>
-            <p className="text-white/80">
-              Join our growing community of DINDIN lovers and collectors.
-            </p>
-          </Card>
-          <Card className="p-6 bg-white/10 backdrop-blur border-0">
-            <h3 className="text-2xl font-bold text-white mb-4">Utility</h3>
-            <p className="text-white/80">
-              Exclusive access to future drops, merch, and community events.
-            </p>
-          </Card>
-        </div>
-
-        {/* Roadmap */}
-        <section className="mt-24">
-          <h2 className="text-4xl font-bold text-white text-center mb-12">
-            Roadmap
+        <div className="w-full max-w-6xl">
+          <h2 className="text-4xl font-extrabold text-white mb-8 text-center font-comic animate-pulse">
+            NFT Collection Preview
           </h2>
-          <div className="space-y-8">
-            {[
-              {
-                phase: "Phase 1",
-                title: "Community Building",
-                description:
-                  "Launch Discord and Twitter. Build initial community.",
-              },
-              {
-                phase: "Phase 2",
-                title: "Whitelist",
-                description: "Open whitelist for early supporters.",
-              },
-              {
-                phase: "Phase 3",
-                title: "Mint Event",
-                description: "Public mint goes live.",
-              },
-              {
-                phase: "Phase 4",
-                title: "Expansion",
-                description: "Merchandise store and community events.",
-              },
-            ].map((item) => (
-              <Card
-                key={item.phase}
-                className="p-6 bg-white/10 backdrop-blur border-0"
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+            {nftImages.map((src, index) => (
+              <div
+                key={index}
+                className="aspect-square relative overflow-hidden rounded-2xl cursor-pointer group transform transition-transform duration-300 hover:scale-105 hover:rotate-3"
+                onMouseEnter={() => setHoveredNft(index)}
+                onMouseLeave={() => setHoveredNft(null)}
               >
-                <div className="flex items-start gap-4">
-                  <Badge variant="secondary">{item.phase}</Badge>
-                  <div>
-                    <h3 className="text-xl font-bold text-white">
-                      {item.title}
-                    </h3>
-                    <p className="text-white/80">{item.description}</p>
-                  </div>
+                <Image
+                  src={src}
+                  alt={`DINDIN NFT ${index + 1}`}
+                  fill
+                  className="object-cover transition-transform duration-300 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#FF1493] opacity-0 group-hover:opacity-100 flex items-end justify-center p-4 transition-opacity duration-300">
+                  <p className="text-white font-extrabold text-2xl font-comic">
+                    #{index + 1}
+                  </p>
                 </div>
-              </Card>
+              </div>
             ))}
           </div>
-        </section>
+        </div>
       </main>
 
-      {/* Footer */}
-      <footer className="container mx-auto px-4 py-12 text-center text-white/60">
-        <p>© 2024 DINDIN NFT Collection. All rights reserved.</p>
+      <footer className="w-full bg-[#FF1493]/80 backdrop-blur-sm p-6 text-center">
+        <p className="text-lg text-white font-comic">
+          Art by{" "}
+          <a
+            href="https://x.com/Mellowkyokai"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-[#FFD700] transition-colors duration-300 underline"
+          >
+            @Mellowkyokai
+          </a>
+        </p>
       </footer>
     </div>
   )
