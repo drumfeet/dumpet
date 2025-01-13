@@ -1,27 +1,9 @@
 import { Link, useParams } from "arnext"
 import { useEffect, useState } from "react"
-import ChatBox from "@/components/ChatBox"
 import {
-  Button,
   ChakraProvider,
   Flex,
   useToast,
-  Text,
-  FormControl,
-  FormHelperText,
-  Spacer,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
-  Box,
-  Spinner,
-  Accordion,
-  AccordionItem,
-  AccordionButton,
-  AccordionPanel,
-  IconButton,
 } from "@chakra-ui/react"
 import {
   createDataItemSigner,
@@ -31,17 +13,8 @@ import {
 } from "@permaweb/aoconnect"
 import AppHeader from "@/components/AppHeader"
 import { useAppContext } from "@/context/AppContext"
-import {
-  CheckCircleIcon,
-  CheckIcon,
-  ExternalLinkIcon,
-  RepeatIcon,
-  TimeIcon,
-  UpDownIcon,
-} from "@chakra-ui/icons"
 import { Pie } from "react-chartjs-2"
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js"
-import ShareIcon from "@/components/icons/ShareIcon"
 import Head from "next/head"
 import MarketPage from "@/components/MarketPage"
 ChartJS.register(ArcElement, Tooltip, Legend) // Register the required components
@@ -61,124 +34,26 @@ const DEFAULT_PRECISION = 12
 export default function Home({ _id = null }) {
   const {
     connectWallet,
-    disconnectWallet,
     isConnected,
-    setIsConnected,
-    userAddress,
-    setUserAddress,
     multiplyByPower,
-    divideByPower,
     handleMessageResultError,
   } = useAppContext()
 
   const toast = useToast()
   const { id } = useParams()
   const [pid, setPid] = useState(_id)
-  const [showChatBox, setShowChatBox] = useState(false)
-  const [jsonData, setJsonData] = useState()
   const [tokenProcessId, setTokenProcessId] = useState("")
-  const [tokenDenomination, setTokenDenomination] = useState(0)
-  const [tokenSymbol, setTokenSymbol] = useState("")
-  const [tokenLogo, setTokenLogo] = useState("")
-  const [tokenName, setTokenName] = useState("")
   const [amount, setAmount] = useState(1)
   const [amountOfVote, setAmountOfVote] = useState(1)
   const [userDepositBalance, setUserDepositBalance] = useState(null) // must be a number
   const [userBalanceVoteA, setUserBalanceVoteA] = useState(0)
   const [userBalanceVoteB, setUserBalanceVoteB] = useState(0)
-  const [totalBalanceVoteA, setTotalBalanceVoteA] = useState(0)
-  const [totalBalanceVoteB, setTotalBalanceVoteB] = useState(0)
-  const [optionA, setOptionA] = useState("")
-  const [optionB, setOptionB] = useState("")
-  const [isFetchingData, setIsFetchingData] = useState(false)
-
-  const adjustedData =
-    totalBalanceVoteA <= 0 && totalBalanceVoteB <= 0
-      ? [1, 1]
-      : [
-          divideByPower(totalBalanceVoteA, tokenDenomination),
-          divideByPower(totalBalanceVoteB, tokenDenomination),
-        ]
-
-  const data = {
-    labels: [optionA, optionB],
-    datasets: [
-      {
-        data: adjustedData,
-        backgroundColor: ["#dc2625", "#2463eb"], // red, blue
-        hoverBackgroundColor: ["#dc2625", "#2463eb"],
-        borderWidth: 0,
-      },
-    ],
-  }
 
   useEffect(() => {
     ;(async () => {
       _id ?? setPid(await getID(id, _id))
     })()
   }, [])
-
-  useEffect(() => {
-    console.log("pid", pid)
-    if (pid) {
-      ;(async () => {
-        await getMarketInfo()
-      })()
-    }
-  }, [pid])
-
-  useEffect(() => {
-    if (tokenProcessId) {
-      ;(async () => {
-        if (!tokenSymbol) {
-          await getTokenInfo()
-        }
-      })()
-    }
-  }, [tokenProcessId])
-
-  useEffect(() => {
-    console.log("pid", pid)
-    if (isConnected) {
-      ;(async () => {
-        await getUserBalancesAllVotes()
-      })()
-    }
-  }, [isConnected])
-
-  function formatUnixTimestamp(timestamp) {
-    try {
-      // Ensure the timestamp is a number or a numeric string
-      const parsedTimestamp = Number(timestamp)
-      if (isNaN(parsedTimestamp)) {
-        throw new Error("Invalid timestamp: Not a number.")
-      }
-
-      // Create a date object
-      const date = new Date(parsedTimestamp)
-      if (isNaN(date.getTime())) {
-        throw new Error("Invalid timestamp: Unable to parse into a valid date.")
-      }
-
-      // Formatting options
-      const options = {
-        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone, // Use the local timezone
-        weekday: "short",
-        month: "short",
-        day: "2-digit",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false, // 24-hour format
-      }
-
-      // Format the date
-      return new Intl.DateTimeFormat("en-US", options).format(date)
-    } catch (error) {
-      console.error("Error formatting timestamp:", error.message)
-      return "" // Default error message for invalid input
-    }
-  }
 
   const getTokenInfo = async () => {
     try {
@@ -246,41 +121,6 @@ export default function Home({ _id = null }) {
     setTotalBalanceVoteA(jsonData?.TotalBalanceVoteA)
     setTotalBalanceVoteB(jsonData?.TotalBalanceVoteB)
     console.log("updateBalances() jsonData", jsonData)
-  }
-
-  const updateUserBalances = async (jsonData = {}) => {
-    setUserDepositBalance(Number(jsonData?.UserDepositBalance))
-    setUserBalanceVoteA(jsonData?.BalanceVoteA)
-    setUserBalanceVoteB(jsonData?.BalanceVoteB)
-    console.log("updateUserBalances() jsonData", jsonData)
-  }
-
-  const getUserBalancesAllVotes = async () => {
-    const _connected = await connectWallet()
-    if (_connected.success === false) {
-      return
-    }
-    const _userAddress = _connected.userAddress
-
-    setIsFetchingData(true)
-    try {
-      console.log("UserBalancesAllVotes pid", pid)
-      const _result = await dryrun({
-        process: pid,
-        tags: [
-          { name: "Action", value: "UserBalancesAllVotes" },
-          { name: "Recipient", value: _userAddress },
-        ],
-      })
-      console.log("UserBalancesAllVotes _result", _result)
-      const jsonData = JSON.parse(_result?.Messages[0]?.Data)
-      console.log("UserBalancesAllVotes jsonData", jsonData)
-      updateUserBalances(jsonData)
-    } catch (error) {
-      console.error(error)
-    } finally {
-      setIsFetchingData(false)
-    }
   }
 
   const getTotalBalanceAllVotes = async () => {
@@ -663,7 +503,7 @@ export default function Home({ _id = null }) {
         <AppHeader />
         <Flex paddingY={8}></Flex>
       </Flex>
-      <MarketPage />
+      <MarketPage pid={pid}/>
     </ChakraProvider>
   )
 }
