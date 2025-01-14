@@ -636,20 +636,34 @@ export default function Home({ _id = null }) {
   return (
     <ChakraProvider>
       <Head>
-        <title>{meta.title}</title>
-        <meta name="description" content={meta.description} />
+        <title>dumpet.fun</title>
+        <meta name="description" content="Popularity contest duel platform" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href=".././favicon.ico" />
+
+        {/* Twitter Meta Tags */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={`${meta.title}`} />
-        <meta name="twitter:description" content={meta.description} />
+        <meta name="twitter:title" content="dumpet.fun" />
+        <meta
+          name="twitter:description"
+          content="Popularity contest duel platform"
+        />
         <meta
           name="twitter:image"
-          content={`https://arweave.net/${meta.image}`}
+          content="https://arweave.net/EPhdFc3HwFgZ0MO49g5Mb1yUHMU4ZDeuVPpgtNYAw7I"
         />
-        <meta property="og:title" content={`${meta.title}`} />
-        <meta name="og:description" content={meta.description} />
-        <meta name="og:image" content={`https://arweave.net/${meta.image}`} />
-        <link rel="icon" href=".././favicon.ico" />
+
+        {/* Open Graph / Facebook Meta Tags */}
+        <meta property="og:url" content="https://dumpet.fun" />
+        <meta property="og:title" content="dumpet.fun" />
+        <meta
+          name="og:description"
+          content="Popularity contest duel platform"
+        />
+        <meta
+          name="og:image"
+          content="https://arweave.net/EPhdFc3HwFgZ0MO49g5Mb1yUHMU4ZDeuVPpgtNYAw7I"
+        />
       </Head>
       <Flex
         direction="column"
