@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import { useAppContext } from "@/context/AppContext"
 import { Spinner, ChakraProvider } from "@chakra-ui/react"
+import ChatBox from "@/components/ChatBox"
 import VoteContent from "./VoteContent"
 import InfoContent from "./InfoContent"
 import {
@@ -21,100 +22,6 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-
-const ChatSection = () => {
-  const [chats, setChats] = useState([
-    {
-      id: 1,
-      author: "0x1234...5678",
-      content: "Great initiative!",
-      timestamp: "Tue, Jan 07, 2025, 18:08",
-    },
-    {
-      id: 2,
-      author: "0x8765...4321",
-      content: "I think ar will win.",
-      timestamp: "Tue, Jan 07, 2025, 18:09",
-    },
-  ])
-  const [newChat, setNewChat] = useState("")
-
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    if (newChat.trim()) {
-      const newChatObj = {
-        id: chats.length + 1,
-        author: "0xYOUR...WALLET", // Replace with actual wallet address
-        content: newChat.trim(),
-        timestamp: new Date().toLocaleString("en-US", {
-          weekday: "short",
-          year: "numeric",
-          month: "short",
-          day: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: false,
-        }),
-      }
-      setChats([...chats, newChatObj])
-      setNewChat("")
-    }
-  }
-
-  return (
-    <div className="space-y-4 pt-6 text-gray-100">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <Textarea
-          placeholder="Type your message..."
-          value={newChat}
-          onChange={(e) => setNewChat(e.target.value)}
-          className="w-full bg-[#1e1e38] text-gray-100 border-[#3a3a6a] focus:border-indigo-400"
-        />
-        <Button
-          type="submit"
-          className="w-full bg-indigo-600 hover:bg-indigo-700 transition-colors duration-300 text-gray-100 font-semibold py-2 px-4 rounded-md shadow-md hover:shadow-lg flex items-center justify-center gap-2"
-        >
-          <SendHorizontal size={18} />
-          Send chat
-        </Button>
-      </form>
-      <div className="space-y-4 max-h-[400px] overflow-y-auto">
-        {chats.map((chat) => (
-          <div
-            key={chat.id}
-            className="py-2 border-b border-[#3a3a6a] last:border-b-0"
-          >
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs text-gray-400 flex items-center gap-2">
-                {chat.author}
-                <Copy
-                  size={12}
-                  className="cursor-pointer hover:text-gray-200 transition-colors"
-                  onClick={() => {
-                    navigator.clipboard.writeText(chat.author)
-                    // You might want to add a toast notification here to inform the user that the value has been copied
-                  }}
-                />
-                <ExternalLink
-                  size={12}
-                  className="cursor-pointer hover:text-gray-200 transition-colors"
-                  onClick={() =>
-                    window.open(
-                      `https://example.com/address/${chat.author}`,
-                      "_blank"
-                    )
-                  }
-                />
-              </span>
-              <span className="text-xs text-gray-400">{chat.timestamp}</span>
-            </div>
-            <p className="text-gray-200 break-words">{chat.content}</p>
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-}
 
 export default function MarketPage({ pid }) {
   const {
@@ -358,7 +265,7 @@ export default function MarketPage({ pid }) {
               />
             </TabsContent>
             <TabsContent value="chat">
-              <ChatSection />
+              { showChatBox ? <ChatBox pid={pid}/> : <p>Chat is not enabled for this market</p>}
             </TabsContent>
             <TabsContent value="balance">
               <div className="mt-8 bg-[#232344] p-4 sm:p-4 rounded-lg space-y-8">

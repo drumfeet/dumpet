@@ -22,13 +22,13 @@ const VoteCard = ({
         Your Total Vote: {divideByPower(votes, tokenDenomination)} {` $${tokenSymbol}`}
       </p>
       <button
-      onClick={async (event) => {
-        const button = event.target
-        button.disabled = true
-        await onVote()
-        button.disabled = false
-      }}
-      className={`w-full ${color.bg} ${color.hoverBg} py-4 rounded-lg flex items-center justify-center gap-2 transition-colors`}
+        onClick={async (event) => {
+          const button = event.target
+          button.disabled = true
+          await onVote()
+          button.disabled = false
+        }}
+        className={`w-full ${color.bg} ${color.hoverBg} py-4 rounded-lg flex items-center justify-center gap-2 transition-colors`}
       >
         Vote
       </button>
