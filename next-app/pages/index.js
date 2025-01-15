@@ -114,8 +114,8 @@ export default function LandingPage() {
               <li className="flex items-center">
                 <Trophy className="mr-2 text-purple-500" />
                 <span>
-                  The mightiest roar wins! Losers' tokens become the victory
-                  feast.
+                  The mightiest roar wins! Losers&apos; tokens become the
+                  victory feast.
                 </span>
               </li>
             </ol>
