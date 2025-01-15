@@ -1,6 +1,5 @@
 import Image from "next/image"
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
 import { Twitter, Send, Trophy, Users, Clock, VoteIcon } from "lucide-react"
 
 export default function LandingPage() {
@@ -53,35 +52,23 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12 group">
-            <Button
-              asChild
-              size="lg"
-              className="text-lg py-6 bg-yellow-400 hover:bg-yellow-500 text-black transform hover:scale-110 transition-all duration-300 rounded-full shadow-lg group-hover:rotate-3"
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+            <Link
+              href="https://dindin.dumpet.fun"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center text-lg py-6 px-8 bg-yellow-400 hover:bg-yellow-500 text-black transform hover:scale-110 transition-all duration-300 rounded-full shadow-lg hover:rotate-3"
             >
-              <Link
-                href="https://dindin.dumpet.fun"
-                rel="noopener noreferrer"
-                className="flex items-center"
-              >
-                <span className="mr-2 text-2xl">🦖</span>
-                DINDIN
-              </Link>
-            </Button>
-            <Button
-              asChild
-              size="lg"
-              className="text-lg py-6 bg-purple-500 hover:bg-purple-600 text-white transform hover:scale-110 transition-all duration-300 rounded-full shadow-lg group-hover:rotate-3"
+              <span className="mr-2 text-2xl">🦖</span>
+              DINDIN
+            </Link>
+            <Link
+              href="/duel"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center text-lg py-6 px-8 bg-purple-500 hover:bg-purple-600 text-white transform hover:scale-110 transition-all duration-300 rounded-full shadow-lg hover:rotate-3"
             >
-              <Link
-                href="/duel"
-                rel="noopener noreferrer"
-                className="flex items-center"
-              >
-                <span className="mr-2 text-2xl">🥊</span>
-                Duel on DUMPET
-              </Link>
-            </Button>
+              <span className="mr-2 text-2xl">🥊</span>
+              Duel on DUMPET
+            </Link>
           </div>
 
           <div className="bg-white text-black p-6 rounded-lg shadow-lg mb-12 transform -rotate-1 hover:rotate-0 transition-transform">
@@ -114,8 +101,8 @@ export default function LandingPage() {
               <li className="flex items-center">
                 <Trophy className="mr-2 text-purple-500" />
                 <span>
-                  The mightiest roar wins! Losers&apos; tokens become the
-                  victory feast.
+                  The mightiest roar wins! Losers' tokens become the victory
+                  feast.
                 </span>
               </li>
             </ol>
