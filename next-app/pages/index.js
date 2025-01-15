@@ -1,268 +1,164 @@
-import AppHeader from "@/components/AppHeader"
-import { useAppContext } from "@/context/AppContext"
-import {
-  Button,
-  ChakraProvider,
-  Flex,
-  useToast,
-  Spinner,
-} from "@chakra-ui/react"
-import { dryrun } from "@permaweb/aoconnect"
-import { Link } from "arnext"
-import { useEffect, useState, useCallback } from "react"
-import { MAIN_PROCESS_ID } from "@/context/AppContext"
-import localforage from "localforage"
-import { MarketCard } from "@/components/MarketCard"
-import { Plus } from "lucide-react"
+import Image from "next/image"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { Twitter, Send, Trophy, Users, Clock, VoteIcon } from "lucide-react"
 
-const CACHE_KEYS = {
-  RANDOM_MARKET: "randomMarket",
-  MARKETS_LIST: "marketsList",
-  CACHE_TIMESTAMP: "marketsTimestamp",
-}
-
-const DEFAULT_LIMIT = 12
-
-export default function Home() {
-  const toast = useToast()
-  const [markets, setMarkets] = useState([])
-  const [randomMarket, setRandomMarket] = useState(null)
-  const [hasMore, setHasMore] = useState(false)
-  const [nextPage, setNextPage] = useState(1)
-  const [isLoading, setIsLoading] = useState(false)
-  const [hasCachedMarkets, setHasCachedMarkets] = useState(true)
-  const [hasCachedRandomMarket, setHasCachedRandomMarket] = useState(true)
-  const [isCachedDataStale, setIsCachedDataStale] = useState(false)
-
-  const { handleMessageResultError } = useAppContext()
-
-  useEffect(() => {
-    ;(async () => {
-      console.log("useEffect getCachedData")
-      await getCachedData()
-    })()
-  }, [])
-
-  useEffect(() => {
-    ;(async () => {
-      if (!hasCachedRandomMarket) {
-        setIsLoading(true)
-        console.log("useEffect fetching random market")
-        await fetchRandomMarket()
-        setIsLoading(false)
-      }
-    })()
-  }, [hasCachedRandomMarket])
-
-  useEffect(() => {
-    ;(async () => {
-      if (!hasCachedMarkets) {
-        console.log("useEffect fetching markets")
-        await fetchMarkets()
-      }
-    })()
-  }, [hasCachedMarkets])
-
-  useEffect(() => {
-    ;(async () => {
-      if (isCachedDataStale) {
-        console.log("useEffect isCachedDataStale")
-        fetchRandomMarket()
-        fetchMarkets()
-      }
-    })()
-  }, [isCachedDataStale])
-
-  const handleShare = useCallback((processId) => {
-    const text = `Check out this market on dumpet.fun - `
-    const url = `${window.location.origin}/market/${processId}`
-    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
-      text
-    )}&url=${encodeURIComponent(url)}`
-    window.open(twitterUrl, "_blank")
-  }, [])
-
-  const getCachedData = async () => {
-    const _randomMarket = await localforage.getItem(
-      `${MAIN_PROCESS_ID}-${CACHE_KEYS.RANDOM_MARKET}`
-    )
-    const _markets = await localforage.getItem(
-      `${MAIN_PROCESS_ID}-${CACHE_KEYS.MARKETS_LIST}`
-    )
-    console.log("_randomMarket", _randomMarket)
-    console.log("_markets", _markets)
-    const hasCachedRandomMarket = !!_randomMarket
-    const hasCachedMarkets = !!_markets
-
-    if (_randomMarket) {
-      setRandomMarket(_randomMarket)
-      setHasCachedRandomMarket(true)
-    } else {
-      setHasCachedRandomMarket(false)
-    }
-
-    if (_markets) {
-      const limitedMarkets = _markets.slice(0, DEFAULT_LIMIT)
-      console.log("limitedMarkets", limitedMarkets)
-      setMarkets(limitedMarkets)
-      setHasCachedMarkets(true)
-    } else {
-      setHasCachedMarkets(false)
-    }
-
-    setIsCachedDataStale(hasCachedRandomMarket || hasCachedMarkets)
-  }
-
-  const fetchMarkets = async (nextPage = 1) => {
-    try {
-      const _result = await dryrun({
-        process: MAIN_PROCESS_ID,
-        tags: [
-          { name: "Action", value: "List" },
-          { name: "Page", value: nextPage.toString() },
-        ],
-      })
-      console.log("_result", _result)
-      const jsonData = JSON.parse(_result?.Messages[0]?.Data)
-      console.log("jsonData", jsonData)
-      if (handleMessageResultError(_result)) return
-
-      // If it's the first page, replace the markets; otherwise, append
-      const newMarkets =
-        nextPage === 1 ? jsonData.Markets : [...markets, ...jsonData.Markets]
-      console.log("newMarkets", newMarkets)
-      await localforage.setItem(
-        `${MAIN_PROCESS_ID}-${CACHE_KEYS.MARKETS_LIST}`,
-        newMarkets
-      )
-      setMarkets(newMarkets)
-
-      // Update `hasMore` and `nextPage` state
-      setHasMore(jsonData.HasMore)
-      if (jsonData?.NextPage) setNextPage(jsonData.NextPage)
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
-  const fetchRandomMarket = async () => {
-    try {
-      const _result = await dryrun({
-        process: MAIN_PROCESS_ID,
-        tags: [{ name: "Action", value: "RandomMarket" }],
-      })
-      console.log(_result?.Messages[0])
-      console.log("fetchRandomMarket _result", _result)
-      if (handleMessageResultError(_result)) return
-      const jsonData = JSON.parse(_result?.Messages[0]?.Data)
-      console.log("fetchRandomMarket jsonData", jsonData)
-      await localforage.setItem(
-        `${MAIN_PROCESS_ID}-${CACHE_KEYS.RANDOM_MARKET}`,
-        jsonData
-      )
-      setRandomMarket(jsonData)
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
-  function formatUnixTimestamp(timestamp) {
-    const date = new Date(Number(timestamp))
-    const options = {
-      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone, // Use the local timezone
-      weekday: "short",
-      month: "short",
-      day: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false, // 24-hour format
-    }
-    return new Intl.DateTimeFormat("en-US", options).format(date)
-  }
-
+export default function LandingPage() {
   return (
-    <ChakraProvider>
-      <Flex
-        direction="column"
-        align="center"
-        p={4}
-        bg="#1a1a2e" // Dark purple background
-        minHeight="100vh"
-        color="white"
-      >
-        <AppHeader />
-        {/* <SubHeader /> */}
-        <Flex paddingY={8}></Flex>
+    <div className="min-h-screen bg-gradient-to-b from-green-400 to-blue-500 text-white overflow-hidden relative">
+      {/* Decorative elements */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+        <Image
+          src="/dumpet3.jpg?height=200&width=200"
+          width={200}
+          height={200}
+          alt="Dinosaur footprint"
+          className="absolute top-10 left-10 opacity-20 transform rotate-45"
+        />
+        <Image
+          src="/dumpet3.jpg?height=150&width=150"
+          width={150}
+          height={150}
+          alt="Speech bubble"
+          className="absolute top-1/4 right-10 opacity-20 animate-bounce"
+        />
+        <Image
+          src="/dumpet3.jpg?height=180&width=180"
+          width={180}
+          height={180}
+          alt="Dinosaur egg"
+          className="absolute bottom-10 left-20 opacity-20 animate-pulse"
+        />
+      </div>
 
-        <Link href="/create">
-          <Button
-            leftIcon={<Plus />}
-            colorScheme="purple"
-            bg="#7023b6" // Primary purple
-            paddingY={8}
-            paddingX={4}
-            fontSize="lg"
-          >
-            CREATE DUEL
-          </Button>
-        </Link>
-
-        <Flex paddingY={8}></Flex>
-
-        {isLoading && (
-          <Flex justifyContent="center">
-            <Spinner
-              thickness="4px"
-              speed="0.65s"
-              emptyColor="gray.200"
-              color="purple.500"
-              size="xl"
+      <main className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 py-12 text-center">
+        <div className="max-w-4xl mx-auto">
+          <div className="mb-8 relative">
+            <Image
+              src="/dumpet3.jpg?height=400&width=400"
+              width={400}
+              height={400}
+              alt="DINDIN the Dinosaur"
+              className="mx-auto animate-wiggle rounded-3xl"
             />
-          </Flex>
-        )}
-        {!isLoading && randomMarket && (
-          <MarketCard market={randomMarket} onShare={handleShare} />
-        )}
+            <h1 className="text-6xl font-extrabold tracking-tight mt-4 mb-2 text-yellow-300 drop-shadow-lg animate-pop-in">
+              Welcome to DUMPET
+            </h1>
+            <p className="text-3xl font-bold mb-6 text-pink-200 drop-shadow-md animate-slide-up">
+              The Jurassic Gossip Arena!
+            </p>
+            <p className="text-xl mb-8 text-white drop-shadow-sm animate-fade-in">
+              Spread rumors, spark outrage, and become the apex predator of
+              popularity!
+            </p>
+          </div>
 
-        <Flex
-          paddingTop={20}
-          paddingBottom={2}
-          w="100%"
-          maxW="1050px"
-          justifyContent="flex-start"
-        ></Flex>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12 group">
+            <Button
+              asChild
+              size="lg"
+              className="text-lg py-6 bg-yellow-400 hover:bg-yellow-500 text-black transform hover:scale-110 transition-all duration-300 rounded-full shadow-lg group-hover:rotate-3"
+            >
+              <Link
+                href="https://dindin.dumpet.fun"
+                rel="noopener noreferrer"
+                className="flex items-center"
+              >
+                <span className="mr-2 text-2xl">🦖</span>
+                DINDIN
+              </Link>
+            </Button>
+            <Button
+              asChild
+              size="lg"
+              className="text-lg py-6 bg-purple-500 hover:bg-purple-600 text-white transform hover:scale-110 transition-all duration-300 rounded-full shadow-lg group-hover:rotate-3"
+            >
+              <Link
+                href="/duel"
+                rel="noopener noreferrer"
+                className="flex items-center"
+              >
+                <span className="mr-2 text-2xl">🥊</span>
+                Duel on DUMPET
+              </Link>
+            </Button>
+          </div>
 
-        {!isLoading && markets && markets.length > 0 && (
-          <Flex wrap="wrap" justify="center" gap={4} maxW="1200px">
-            {markets.map((market, index) => (
-              <MarketCard
-                key={`${market.ProcessId}-${index}`}
-                market={market}
-                onShare={handleShare}
-              />
-            ))}
-          </Flex>
-        )}
+          <div className="bg-white text-black p-6 rounded-lg shadow-lg mb-12 transform -rotate-1 hover:rotate-0 transition-transform">
+            <h2 className="text-2xl font-bold mb-4 text-purple-600">
+              How to Play
+            </h2>
+            <ol className="list-none text-left space-y-4">
+              <li className="flex items-center">
+                <Trophy className="mr-2 text-yellow-500" />
+                <span>
+                  Select an active market or create your own prehistoric
+                  playground.
+                </span>
+              </li>
+              <li className="flex items-center">
+                <Users className="mr-2 text-green-500" />
+                <span>Deposit dino-tokens to join the rumble.</span>
+              </li>
+              <li className="flex items-center">
+                <VoteIcon className="mr-2 text-blue-500" />
+                <span>Vote for your favorite dino or support your pack.</span>
+              </li>
+              <li className="flex items-center">
+                <Clock className="mr-2 text-red-500" />
+                <span>
+                  Wait for the meteor (8 mins to 8 days) to hit and end the
+                  market.
+                </span>
+              </li>
+              <li className="flex items-center">
+                <Trophy className="mr-2 text-purple-500" />
+                <span>
+                  The mightiest roar wins! Losers' tokens become the victory
+                  feast.
+                </span>
+              </li>
+            </ol>
+          </div>
 
-        <Flex paddingY={4}></Flex>
+          <div className="space-y-8 animate-float">
+            <h2 className="text-3xl font-bold text-yellow-300">
+              Join the Dino-mite Community!
+            </h2>
+            <p className="text-xl text-white">
+              Connect with fellow time-traveling gossipers. Get the juiciest
+              Jurassic juice!
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-4">
+              <Link
+                className="flex items-center justify-center rounded-full bg-blue-500 px-6 py-3 text-lg font-medium text-white shadow-lg transition-all hover:bg-blue-600 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
+                href="https://x.com/dumpetdotfun"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Twitter className="mr-2 h-5 w-5" />
+                Follow Our Footprints
+              </Link>
+              <Link
+                className="flex items-center justify-center rounded-full bg-green-500 px-6 py-3 text-lg font-medium text-white shadow-lg transition-all hover:bg-green-600 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-400"
+                href="https://t.me/dumpetdotfun"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Send className="mr-2 h-5 w-5" />
+                Roar on Telegram
+              </Link>
+            </div>
+          </div>
+        </div>
+      </main>
 
-        {!isLoading && hasMore && (
-          <Button
-            colorScheme="purple"
-            bg="none"
-            border="2px solid"
-            borderColor="purple.600"
-            onClick={async () => {
-              await fetchMarkets(nextPage)
-            }}
-          >
-            Show More
-          </Button>
-        )}
-
-        <Flex paddingY={8}></Flex>
-      </Flex>
-    </ChakraProvider>
+      <footer className="relative z-10 w-full py-6 px-4 bg-purple-800 bg-opacity-80 text-white text-center">
+        <p className="text-sm">
+          © DUMPET. All rights reserved. No dinosaurs were harmed in the making
+          of this gossip.
+        </p>
+      </footer>
+    </div>
   )
 }
