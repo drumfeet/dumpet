@@ -128,7 +128,7 @@ export default function AppHeader() {
                     FAQ
                   </MenuItem>
                 </Link>
-                <Link href="/dindin">
+                <Link href="https://dindin.dumpet.fun">
                   <MenuItem
                     icon={<ExternalLinkIcon color="#ded6e5" boxSize={4} />}
                     _hover={{ bg: "red.200" }}
