@@ -1,5 +1,5 @@
 import Image from "next/image"
-import Link from "next/link"
+import { Link } from "arnext"
 import { Twitter, MessageSquareMore } from "lucide-react"
 import { useState, useEffect } from "react"
 import Head from "next/head"

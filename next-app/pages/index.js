@@ -1,5 +1,5 @@
 import Image from "next/image"
-import Link from "next/link"
+import { Link } from "arnext"
 import { Twitter, Send, Trophy, Users, Clock, VoteIcon } from "lucide-react"
 
 export default function LandingPage() {
@@ -52,21 +52,20 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+          <div className="flex flex-col md:flex-row gap-6 mb-12 justify-center items-center w-full">
             <Link
               href="https://dindin.dumpet.fun"
               rel="noopener noreferrer"
-              className="flex items-center justify-center text-lg py-6 px-8 bg-yellow-400 hover:bg-yellow-500 text-black transform hover:scale-110 transition-all duration-300 rounded-full shadow-lg hover:rotate-3"
+              className="font-medium w-full md:flex-1 flex items-center justify-center text-lg py-2 px-8 bg-yellow-400 hover:bg-yellow-500 text-black transform hover:scale-110 transition-all duration-300 rounded-full shadow-lg hover:rotate-3"
             >
-              <span className="mr-2 text-2xl">🦖</span>
+              <span className="mr-4 text-2xl">🦖</span>
               DINDIN
             </Link>
             <Link
               href="/duel"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center text-lg py-6 px-8 bg-purple-500 hover:bg-purple-600 text-white transform hover:scale-110 transition-all duration-300 rounded-full shadow-lg hover:rotate-3"
+              className="font-medium w-full md:flex-1 flex items-center justify-center text-lg py-2 px-8 bg-purple-500 hover:bg-purple-600 text-white transform hover:scale-110 transition-all duration-300 rounded-full shadow-lg hover:rotate-3"
             >
-              <span className="mr-2 text-2xl">🥊</span>
+              <span className="mr-4 text-2xl">🥊</span>
               Duel on DUMPET
             </Link>
           </div>
