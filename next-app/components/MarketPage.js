@@ -1,6 +1,15 @@
 import { useState, useEffect } from "react"
 import { useAppContext } from "@/context/AppContext"
-import { Spinner, ChakraProvider } from "@chakra-ui/react"
+import {
+  Spinner,
+  ChakraProvider,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
+  useToast
+} from "@chakra-ui/react"
 import ChatBox from "@/components/ChatBox"
 import VoteContent from "./VoteContent"
 import InfoContent from "./InfoContent"
@@ -23,17 +32,24 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 
+const DEFAULT_PRECISION = 12
+
 export default function MarketPage({ pid }) {
   const {
     connectWallet,
     isConnected,
+    multiplyByPower,
     handleMessageResultError,
+    divideByPower
   } = useAppContext()
+
+  const toast = useToast()
 
   const [activeIndex, setActiveIndex] = useState(0)
   const [totalBalanceVoteA, setTotalBalanceVoteA] = useState(0)
   const [totalBalanceVoteB, setTotalBalanceVoteB] = useState(0)
   const [voteAmount, setVoteAmount] = useState(1)
+  const [amount, setAmount] = useState(1)
   const [showChatBox, setShowChatBox] = useState(false)
   const [marketData, setMarketData] = useState()
   const [optionA, setOptionA] = useState("")
@@ -44,6 +60,7 @@ export default function MarketPage({ pid }) {
   const [tokenSymbol, setTokenSymbol] = useState("")
   const [tokenLogo, setTokenLogo] = useState("")
   const [tokenName, setTokenName] = useState("")
+  const [userWalletBalance, setUserWalletBalance] = useState(0)
   const [userDepositBalance, setUserDepositBalance] = useState(null) // must be a number
   const [userBalanceVoteA, setUserBalanceVoteA] = useState(0)
   const [userBalanceVoteB, setUserBalanceVoteB] = useState(0)
@@ -108,6 +125,110 @@ export default function MarketPage({ pid }) {
     }
   }
 
+  const deposit = async () => {
+    const _connected = await connectWallet()
+    if (_connected.success === false) {
+      return
+    }
+
+    const _amount = multiplyByPower(amount)
+    console.log("_amount", _amount)
+
+    try {
+      const messageId = await message({
+        process: tokenProcessId,
+        tags: [
+          {
+            name: "Action",
+            value: "Transfer",
+          },
+          {
+            name: "Quantity",
+            value: _amount.toString(),
+          },
+          {
+            name: "Recipient",
+            value: pid,
+          },
+        ],
+        signer: createDataItemSigner(globalThis.arweaveWallet),
+      })
+      console.log("messageId", messageId)
+
+      const _result = await result({
+        message: messageId,
+        process: tokenProcessId,
+      })
+      console.log("_result", _result)
+      if (handleMessageResultError(_result)) return
+
+      await getUserBalancesAllVotes()
+      await getUserWalletBalance()
+      console.log("userDepositBalance", userDepositBalance)
+      console.log("_amount", _amount)
+      toast({
+        description: "Transaction completed",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+        position: "top",
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const withdraw = async () => {
+    const _connected = await connectWallet()
+    if (_connected.success === false) {
+      return
+    }
+
+    const _amount = multiplyByPower(amount)
+    console.log("_amount", _amount)
+
+    try {
+      const messageId = await message({
+        process: pid,
+        tags: [
+          {
+            name: "Action",
+            value: "Withdraw",
+          },
+          {
+            name: "Quantity",
+            value: _amount.toString(),
+          },
+        ],
+        signer: createDataItemSigner(globalThis.arweaveWallet),
+      })
+      console.log("messageId", messageId)
+
+      const _result = await result({
+        message: messageId,
+        process: pid,
+      })
+      console.log("_result", _result)
+      if (handleMessageResultError(_result)) return
+
+      console.log("userDepositBalance", userDepositBalance)
+      console.log("_amount", _amount)
+      const _updatedBalance = userDepositBalance - _amount
+      console.log("_updatedBalance", _updatedBalance)
+      setUserDepositBalance(_updatedBalance)
+
+      toast({
+        description: "Withdraw success",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+        position: "top",
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   const getTokenInfo = async () => {
     try {
       const _result = await dryrun({
@@ -141,6 +262,34 @@ export default function MarketPage({ pid }) {
       setTokenName(nameTag?.value ?? "")
     } catch (error) {
       console.error(error)
+    }
+  }
+
+  const getUserWalletBalance = async () => {
+    try {
+      const _connected = await connectWallet()
+      if (_connected.success === false) {
+        return
+      }
+      const _userAddress = _connected.userAddress
+      const _result = await dryrun({
+        process: tokenProcessId,
+        tags: [
+          { name: "Action", value: "Balance" },
+          { name: "Recipient", value: _userAddress }
+  
+        ],
+      })
+      console.log("_result", _result)
+      setUserWalletBalance(_result?.Messages?.[0]?.Data)
+    } catch (error) {
+      toast({
+        description: "Error getting user wallet balance",
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+        position: "top",
+      })
     }
   }
 
@@ -185,6 +334,7 @@ export default function MarketPage({ pid }) {
     if (isConnected) {
       ;(async () => {
         await getUserBalancesAllVotes()
+        await getUserWalletBalance()
       })()
     }
   }, [isConnected])
@@ -275,7 +425,8 @@ export default function MarketPage({ pid }) {
                       Market Deposit Balance
                     </p>
                     <p className="text-lg sm:text-xl font-bold truncate">
-                      500 $DUMPET
+                      {divideByPower(userDepositBalance, tokenDenomination)}
+                      {` $${tokenSymbol}`}
                     </p>
                   </div>
                   <div className="bg-[#2f2f5a] p-4 rounded-lg flex-1">
@@ -283,21 +434,57 @@ export default function MarketPage({ pid }) {
                       Your Wallet Balance
                     </p>
                     <p className="text-lg sm:text-xl font-bold truncate">
-                      500 $DUMPET
+                      {divideByPower(userWalletBalance, tokenDenomination)}
+                      {` $${tokenSymbol}`}
                     </p>
                   </div>
                 </div>
                 <div className="flex flex-col gap-2">
-                  <input
-                    type="number"
-                    placeholder="Amount"
-                    className="flex-grow bg-transparent text-center border border-[#3a3a6a] rounded-md p-1 text-lg min-w-0 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent hover:border-blue-400 transition-colors"
-                  />
+                  <NumberInput
+                    focusBorderColor="#7023b6"
+                    precision={DEFAULT_PRECISION}
+                    value={amount}
+                    min={0.000000000001}
+                    onChange={(e) => {
+                      console.log("e", e)
+                      setAmount(e)
+                    }}
+                  >
+                    <NumberInputField
+                      bg="#2d2d44"
+                      borderColor="#2d2d44"
+                      borderRadius="none"
+                    />
+                    <NumberInputStepper>
+                      <NumberIncrementStepper
+                        borderColor="#2d2d44"
+                        color="gray.200"
+                      />
+                      <NumberDecrementStepper
+                        borderColor="#2d2d44"
+                        color="gray.200"
+                      />
+                    </NumberInputStepper>
+                  </NumberInput>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    <button className="w-full bg-emerald-600/20 px-4 py-2 rounded-md transition-colors hover:bg-emerald-600/30 text-emerald-200">
+                    <button
+                      className="w-full bg-emerald-600/20 px-4 py-2 rounded-md transition-colors hover:bg-emerald-600/30 text-emerald-200"
+                      onClick={async (event) => {
+                        const button = event.target
+                        button.disabled = true
+                        await deposit()
+                        button.disabled = false
+                      }}>
                       Deposit
                     </button>
-                    <button className="w-full bg-rose-600/20 px-4 py-2 rounded-md transition-colors hover:bg-rose-600/30 text-rose-200">
+                    <button
+                      className="w-full bg-rose-600/20 px-4 py-2 rounded-md transition-colors hover:bg-rose-600/30 text-rose-200"
+                      onClick={async (event) => {
+                        const button = event.target
+                        button.disabled = true
+                        await withdraw()
+                        button.disabled = false
+                      }}>
                       Withdraw
                     </button>
                   </div>
