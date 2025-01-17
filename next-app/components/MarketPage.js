@@ -64,6 +64,7 @@ export default function MarketPage({ pid }) {
   const [userDepositBalance, setUserDepositBalance] = useState(null) // must be a number
   const [userBalanceVoteA, setUserBalanceVoteA] = useState(0)
   const [userBalanceVoteB, setUserBalanceVoteB] = useState(0)
+  const [allVotesBalances, setAllVotesBalances] = useState([])
 
   const updateUserBalances = async (jsonData) => {
     setUserDepositBalance(Number(jsonData?.UserDepositBalance))
@@ -265,6 +266,44 @@ export default function MarketPage({ pid }) {
     }
   }
 
+  const getAllVoteBalances = async () => {
+    try {
+      const _connected = await connectWallet()
+      if (_connected.success === false) {
+        return
+      }
+      const _result = await dryrun({
+        process: pid,
+        tags: [{ name: "Action", value: "AllVotesBalances" }],
+      })
+      const data = JSON.parse(_result?.Messages?.[0]?.Data)
+      const allData = []
+      Object.keys(data.BalancesVoteA).forEach((key) => {
+        allData.push({
+          address: key,
+          balance: data.BalancesVoteA[key],
+          vote: optionA
+        });
+      });
+      Object.keys(data.BalancesVoteB).forEach((key) => {
+        allData.push({
+          address: key,
+          balance: data.BalancesVoteB[key],
+          vote: optionB
+        });
+      });
+      setAllVotesBalances(allData)
+    } catch (error) {
+      toast({
+        description: "Error getting all vote balances",
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+        position: "top",
+      })
+    }
+  }
+
   const getUserWalletBalance = async () => {
     try {
       const _connected = await connectWallet()
@@ -412,6 +451,11 @@ export default function MarketPage({ pid }) {
                 creator={marketData?.Creator}
                 blockHeight={marketData?.MarketInfo?.BlockHeight}
                 timestamp={marketData?.MarketInfo?.Timestamp}
+                allVotesBalances={allVotesBalances}
+                getAllVoteBalances={getAllVoteBalances}
+                options={[optionA, optionB]}
+                tokenSymbol={tokenSymbol}
+                tokenDenomination={tokenDenomination}
               />
             </TabsContent>
             <TabsContent value="chat">

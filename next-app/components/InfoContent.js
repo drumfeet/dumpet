@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useAppContext } from "@/context/AppContext"
 import {
   Clock,
   Hash,
@@ -70,23 +71,24 @@ const ActionButton = ({ text, color, icon: Icon }) => (
   </button>
 )
 
-const InfoContent = ({ title, duration, pid, betTokenId, creator, blockHeight, timestamp }) => {
-  const [showBalances, setShowBalances] = useState(false);
+const InfoContent = ({
+  title,
+  duration,
+  pid,
+  betTokenId,
+  creator,
+  blockHeight,
+  timestamp,
+  tokenSymbol,
+  options,
+  allVotesBalances,
+  tokenDenomination,
+  getAllVoteBalances }) => {
+  const {
+    divideByPower
+  } = useAppContext()
 
-  const userBalances = [
-    {
-      address: "0x1234...5678",
-      balance: 10001000100010001000,
-      vote: "Option A",
-    },
-    {
-      address: "0x8765...4321",
-      balance: 7501000100010001000,
-      vote: "Option B",
-    },
-    { address: "0x2468...1357", balance: 500, vote: "Option A" },
-    { address: "0x1357...2468", balance: 250, vote: "Option B" },
-  ];
+  const [showBalances, setShowBalances] = useState(false);
 
   return (
     <div className="bg-gradient-to-br from-slate-800 to-slate-700 p-6 rounded-lg space-y-6 shadow-lg">
@@ -153,7 +155,13 @@ const InfoContent = ({ title, duration, pid, betTokenId, creator, blockHeight, t
 
       <div className="mt-8">
         <button
-          onClick={() => setShowBalances(!showBalances)}
+          onClick={async (event) => {
+            const button = event.target
+            button.disabled = true
+            setShowBalances(!showBalances)
+            getAllVoteBalances()
+            button.disabled = false
+          }}
           className="w-full bg-slate-700 text-gray-200 px-4 py-2 rounded-md hover:bg-slate-600 transition-colors duration-200 flex items-center justify-center gap-2 text-sm"
         >
           <Wallet size={16} />
@@ -163,7 +171,7 @@ const InfoContent = ({ title, duration, pid, betTokenId, creator, blockHeight, t
         {showBalances && (
           <div className="mt-4 bg-[#2a2a4a] rounded-md p-3 max-h-[60vh] overflow-y-auto">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {["Option A", "Option B"].map((option, index) => (
+              {options.map((option, index) => (
                 <div key={option} className="space-y-2">
                   <h3
                     className={`text-sm font-medium mb-2 ${
@@ -183,7 +191,7 @@ const InfoContent = ({ title, duration, pid, betTokenId, creator, blockHeight, t
                         </tr>
                       </thead>
                       <tbody>
-                        {userBalances
+                        {allVotesBalances
                           .filter((user) => user.vote === option)
                           .map((user, userIndex) => (
                             <tr
@@ -201,7 +209,7 @@ const InfoContent = ({ title, duration, pid, betTokenId, creator, blockHeight, t
                                 </a>
                               </td>
                               <td className="py-2 text-gray-300">
-                                {user.balance} $DUMPET
+                                {divideByPower(user.balance, tokenDenomination)} ${tokenSymbol}
                               </td>
                             </tr>
                           ))}
