@@ -94,11 +94,10 @@ const InfoContent = ({
   const [showBalances, setShowBalances] = useState(false)
 
   return (
-    <div className="bg-gradient-to-br from-slate-800 to-slate-700 p-6 rounded-lg space-y-6 shadow-lg">
+    <div className="bg-gradient-to-br from-[#232344] to-[#2a2a5a] p-6 rounded-lg space-y-6 shadow-lg">
       <h2 className="text-2xl font-semibold text-center text-gray-200 mb-4">
         {title}
       </h2>
-
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <InfoItem
           icon={Clock}
@@ -133,7 +132,6 @@ const InfoContent = ({
           value={formatUnixTimestamp(timestamp).toString()}
         />
       </div>
-
       <div className="flex flex-col sm:flex-row justify-center gap-4 mt-6">
         <ActionButton
           text="Withdraw AO"
@@ -169,7 +167,6 @@ const InfoContent = ({
           }}
         />
       </div>
-
       <div className="mt-8">
         <button
           onClick={async (event) => {
@@ -179,7 +176,7 @@ const InfoContent = ({
             getAllVoteBalances()
             button.disabled = false
           }}
-          className="w-full bg-slate-700 text-gray-200 px-4 py-2 rounded-md hover:bg-slate-600 transition-colors duration-200 flex items-center justify-center gap-2 text-sm"
+          className="w-full bg-[#3a3a6a] text-gray-200 px-4 py-2 rounded-md hover:bg-[#4a4a7a] transition-colors duration-200 flex items-center justify-center gap-2 text-sm"
         >
           <Wallet size={16} />
           {showBalances ? "Hide" : "Show"} User Balances
