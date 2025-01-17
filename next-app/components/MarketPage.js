@@ -8,7 +8,7 @@ import {
   NumberInputStepper,
   NumberIncrementStepper,
   NumberDecrementStepper,
-  useToast
+  useToast,
 } from "@chakra-ui/react"
 import ChatBox from "@/components/ChatBox"
 import VoteContent from "./VoteContent"
@@ -40,7 +40,7 @@ export default function MarketPage({ pid }) {
     isConnected,
     multiplyByPower,
     handleMessageResultError,
-    divideByPower
+    divideByPower,
   } = useAppContext()
 
   const toast = useToast()
@@ -122,6 +122,13 @@ export default function MarketPage({ pid }) {
       setTokenName(_jsonData?.MarketInfo?.TokenName)
       updateBalances(_jsonData)
     } catch (error) {
+      toast({
+        description: "Error getting market info",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "top",
+      })
       console.error(error)
     }
   }
@@ -282,16 +289,16 @@ export default function MarketPage({ pid }) {
         allData.push({
           address: key,
           balance: data.BalancesVoteA[key],
-          vote: optionA
-        });
-      });
+          vote: optionA,
+        })
+      })
       Object.keys(data.BalancesVoteB).forEach((key) => {
         allData.push({
           address: key,
           balance: data.BalancesVoteB[key],
-          vote: optionB
-        });
-      });
+          vote: optionB,
+        })
+      })
       setAllVotesBalances(allData)
     } catch (error) {
       toast({
@@ -315,8 +322,7 @@ export default function MarketPage({ pid }) {
         process: tokenProcessId,
         tags: [
           { name: "Action", value: "Balance" },
-          { name: "Recipient", value: _userAddress }
-  
+          { name: "Recipient", value: _userAddress },
         ],
       })
       console.log("_result", _result)
@@ -339,7 +345,7 @@ export default function MarketPage({ pid }) {
   }
 
   const handleTabChange = async (value) => {
-    setActiveIndex(value);
+    setActiveIndex(value)
     if (value === "vote" || value === "info") {
       if (!marketData && pid) {
         setIsLoading(true)
@@ -493,7 +499,11 @@ export default function MarketPage({ pid }) {
     <ChakraProvider>
       <div className="min-h-screen bg-[#1a1a2e] text-white p-8">
         <div className="max-w-5xl mx-auto space-y-8">
-          <Tabs defaultValue="vote" className="w-full" onValueChange={handleTabChange}>
+          <Tabs
+            defaultValue="vote"
+            className="w-full"
+            onValueChange={handleTabChange}
+          >
             <TabsList className="grid w-full grid-cols-4 bg-[#232344]">
               <TabsTrigger
                 value="vote"
@@ -573,7 +583,11 @@ export default function MarketPage({ pid }) {
               />
             </TabsContent>
             <TabsContent value="chat">
-              { showChatBox ? <ChatBox pid={pid}/> : <p>Chat is not enabled for this market</p>}
+              {showChatBox ? (
+                <ChatBox pid={pid} />
+              ) : (
+                <p>Chat is not enabled for this market</p>
+              )}
             </TabsContent>
             <TabsContent value="balance">
               <div className="mt-8 bg-[#232344] p-4 sm:p-4 rounded-lg space-y-8">
@@ -632,7 +646,8 @@ export default function MarketPage({ pid }) {
                         button.disabled = true
                         await deposit()
                         button.disabled = false
-                      }}>
+                      }}
+                    >
                       Deposit
                     </button>
                     <button
@@ -642,7 +657,8 @@ export default function MarketPage({ pid }) {
                         button.disabled = true
                         await withdraw()
                         button.disabled = false
-                      }}>
+                      }}
+                    >
                       Withdraw
                     </button>
                   </div>

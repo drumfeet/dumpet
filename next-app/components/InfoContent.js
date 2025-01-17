@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react"
 import { useAppContext } from "@/context/AppContext"
 import {
   Clock,
@@ -11,9 +11,9 @@ import {
   CheckCircle,
   ExternalLink,
   Wallet,
-  Copy
-} from 'lucide-react';
-import formatUnixTimestamp from '@/utils/FormatUnixTimeStamp';
+  Copy,
+} from "lucide-react"
+import formatUnixTimestamp from "@/utils/FormatUnixTimeStamp"
 
 const InfoItem = ({
   icon: Icon,
@@ -61,7 +61,7 @@ const InfoItem = ({
     </div>
   )
 }
-  
+
 const ActionButton = ({ text, color, icon: Icon, onClick }) => (
   <button
     className={`${color} px-4 py-2 rounded-md transition-colors duration-200 flex items-center justify-center gap-2 text-sm`}
@@ -87,19 +87,18 @@ const InfoContent = ({
   cancelVote,
   withdrawRewards,
   conclude,
-  getAllVoteBalances }) => {
-  const {
-    divideByPower
-  } = useAppContext()
+  getAllVoteBalances,
+}) => {
+  const { divideByPower } = useAppContext()
 
-  const [showBalances, setShowBalances] = useState(false);
+  const [showBalances, setShowBalances] = useState(false)
 
   return (
     <div className="bg-gradient-to-br from-slate-800 to-slate-700 p-6 rounded-lg space-y-6 shadow-lg">
       <h2 className="text-2xl font-semibold text-center text-gray-200 mb-4">
         {title}
       </h2>
-      
+
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <InfoItem
           icon={Clock}
@@ -127,11 +126,7 @@ const InfoContent = ({
           copyable={true}
           link="https://ao.link/#/entity/replacethisprocessid"
         />
-        <InfoItem 
-          icon={Layers} 
-          label="BlockHeight" 
-          value={blockHeight} 
-        />
+        <InfoItem icon={Layers} label="BlockHeight" value={blockHeight} />
         <InfoItem
           icon={Calendar}
           label="Block Timestamp"
@@ -189,7 +184,7 @@ const InfoContent = ({
           <Wallet size={16} />
           {showBalances ? "Hide" : "Show"} User Balances
         </button>
-        
+
         {showBalances && (
           <div className="mt-4 bg-[#2a2a4a] rounded-md p-3 max-h-[60vh] overflow-y-auto">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -231,7 +226,8 @@ const InfoContent = ({
                                 </a>
                               </td>
                               <td className="py-2 text-gray-300">
-                                {divideByPower(user.balance, tokenDenomination)} ${tokenSymbol}
+                                {divideByPower(user.balance, tokenDenomination)}{" "}
+                                ${tokenSymbol}
                               </td>
                             </tr>
                           ))}
@@ -245,7 +241,7 @@ const InfoContent = ({
         )}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default InfoContent;
+export default InfoContent

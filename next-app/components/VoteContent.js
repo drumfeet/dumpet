@@ -1,9 +1,9 @@
-import React from 'react';
-import VoteCard from './VoteCard';
-import { Share2, Link } from 'lucide-react';
-import { ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import React from "react"
+import VoteCard from "./VoteCard"
+import { Share2, Link } from "lucide-react"
+import { ResponsiveContainer, PieChart, Pie, Cell } from "recharts"
 import { useAppContext } from "@/context/AppContext"
-import { useToast } from '@chakra-ui/react';
+import { useToast } from "@chakra-ui/react"
 import {
   createDataItemSigner,
   message,
@@ -18,24 +18,26 @@ const VoteInput = ({ voteAmount, setVoteAmount }) => (
       <input
         type="number"
         value={voteAmount}
-        onChange={(e) => setVoteAmount(Math.max(1, parseInt(e.target.value) || 1))}
+        onChange={(e) =>
+          setVoteAmount(Math.max(1, parseInt(e.target.value) || 1))
+        }
         className="w-full bg-transparent text-center border border-gray-600 rounded-md p-1 text-lg min-w-0 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent hover:border-blue-400 transition-colors"
       />
     </div>
   </div>
-);
+)
 
 const ShareButtons = () => {
   const handleTweetShare = () => {
-    const text = `Check out this market on dumpet.fun - `;
-    const url = window.location.href;
-    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
-    window.open(twitterUrl, "_blank");
-  };
+    const text = `Check out this market on dumpet.fun - `
+    const url = window.location.href
+    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`
+    window.open(twitterUrl, "_blank")
+  }
 
   const handleCopyLink = () => {
-    navigator.clipboard.writeText(window.location.href);
-  };
+    navigator.clipboard.writeText(window.location.href)
+  }
 
   return (
     <div className="flex justify-end gap-4">
@@ -52,8 +54,8 @@ const ShareButtons = () => {
         <Link className="w-5 h-5 text-gray-300" />
       </button>
     </div>
-  );
-};
+  )
+}
 
 const ChartLegend = ({ optionA, optionB }) => (
   <div className="flex gap-4">
@@ -66,7 +68,7 @@ const ChartLegend = ({ optionA, optionB }) => (
       <span className="text-xs font-medium">{optionB}</span>
     </div>
   </div>
-);
+)
 
 const VoteContent = ({
   totalBalanceVoteA = 0,
@@ -81,15 +83,12 @@ const VoteContent = ({
   setUserDepositBalance,
   setVoteAmount,
   marketInfo = {},
-  tokenSymbol = 'DUMPET',
+  tokenSymbol = "DUMPET",
   tokenDenomination,
-  pid
+  pid,
 }) => {
-  const {
-    connectWallet,
-    multiplyByPower,
-    handleMessageResultError
-  } = useAppContext()
+  const { connectWallet, multiplyByPower, handleMessageResultError } =
+    useAppContext()
 
   const toast = useToast()
 
@@ -97,7 +96,7 @@ const VoteContent = ({
     await voteA()
   }
 
-  const  handleVoteB = async () => {
+  const handleVoteB = async () => {
     await voteB()
   }
 
@@ -106,10 +105,10 @@ const VoteContent = ({
     if (_connected.success === false) {
       return
     }
-  
+
     const _amount = multiplyByPower(voteAmount)
     console.log("_amount", _amount)
-  
+
     try {
       const messageId = await message({
         process: pid,
@@ -126,21 +125,21 @@ const VoteContent = ({
         signer: createDataItemSigner(globalThis.arweaveWallet),
       })
       console.log("messageId", messageId)
-  
+
       const _result = await result({
         message: messageId,
         process: pid,
       })
       console.log("_result", _result)
       if (handleMessageResultError(_result)) return
-  
+
       const jsonData = JSON.parse(_result?.Messages[0]?.Data)
       console.log("jsonData", jsonData)
-  
+
       setTotalBalanceVoteA(jsonData?.TotalBalanceVoteA)
       setUserBalanceVoteA(jsonData?.BalanceVoteA)
       setUserDepositBalance(Number(jsonData?.NewBalance))
-  
+
       toast({
         description: "Vote A success",
         status: "success",
@@ -149,19 +148,26 @@ const VoteContent = ({
         position: "top",
       })
     } catch (error) {
+      toast({
+        description: error.toString(),
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+        position: "top",
+      })
       console.error(error)
     }
   }
-  
+
   const voteB = async () => {
     const _connected = await connectWallet()
     if (_connected.success === false) {
       return
     }
-  
+
     const _amount = multiplyByPower(voteAmount)
     console.log("_amount", _amount)
-  
+
     try {
       const messageId = await message({
         process: pid,
@@ -178,21 +184,21 @@ const VoteContent = ({
         signer: createDataItemSigner(globalThis.arweaveWallet),
       })
       console.log("messageId", messageId)
-  
+
       const _result = await result({
         message: messageId,
         process: pid,
       })
       console.log("_result", _result)
       if (handleMessageResultError(_result)) return
-  
+
       const jsonData = JSON.parse(_result?.Messages[0]?.Data)
       console.log("jsonData", jsonData)
-  
+
       setTotalBalanceVoteB(jsonData?.TotalBalanceVoteB)
       setUserBalanceVoteB(jsonData?.BalanceVoteB)
       setUserDepositBalance(Number(jsonData?.NewBalance))
-  
+
       toast({
         description: "Vote B success",
         status: "success",
@@ -201,6 +207,13 @@ const VoteContent = ({
         position: "top",
       })
     } catch (error) {
+      toast({
+        description: error.toString(),
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+        position: "top",
+      })
       console.error(error)
     }
   }
@@ -208,7 +221,7 @@ const VoteContent = ({
   const chartData = [
     { name: marketInfo?.OptionA, value: totalBalanceVoteA || 1 },
     { name: marketInfo?.OptionB, value: totalBalanceVoteB || 1 },
-  ];
+  ]
 
   return (
     <div className="w-full max-w-2xl mx-auto space-y-4 sm:space-y-8 px-4 sm:px-0 pt-6">
@@ -218,7 +231,7 @@ const VoteContent = ({
 
       <div className="bg-slate-900 p-4 sm:p-6 rounded-lg">
         <VoteInput voteAmount={voteAmount} setVoteAmount={setVoteAmount} />
-        
+
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <VoteCard
             title={marketInfo?.OptionA}
@@ -253,7 +266,7 @@ const VoteContent = ({
 
       <div className="bg-slate-900 rounded-xl p-6 flex flex-col h-96">
         <ShareButtons />
-        
+
         <div className="flex-grow relative">
           <ResponsiveContainer width="100%" height="100%" className="flex-grow">
             <PieChart>
@@ -277,13 +290,13 @@ const VoteContent = ({
           </ResponsiveContainer>
         </div>
 
-        <ChartLegend 
-          optionA={marketInfo?.OptionA} 
-          optionB={marketInfo?.OptionB} 
+        <ChartLegend
+          optionA={marketInfo?.OptionA}
+          optionB={marketInfo?.OptionB}
         />
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default VoteContent;
+export default VoteContent
