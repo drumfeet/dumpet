@@ -15,6 +15,7 @@ import {
 } from "lucide-react"
 import formatUnixTimestamp from "@/utils/FormatUnixTimeStamp"
 import { Link } from "arnext"
+import { useToast } from "@chakra-ui/react"
 
 const InfoItem = ({
   icon: Icon,
@@ -26,8 +27,17 @@ const InfoItem = ({
   const handleCopy = (e) => {
     e.stopPropagation()
     navigator.clipboard.writeText(value)
+    toast({
+      description: `${label} has been copied!`,
+      status: "success",
+      duration: 2000,
+      isClosable: true,
+      position: "top",
+    })
     // You might want to add a toast notification here to inform the user that the value has been copied
   }
+
+  const toast = useToast()
 
   return (
     <div className="bg-[#1e1e38] p-3 rounded-md flex items-center space-x-3 border border-[#3a3a6a]">

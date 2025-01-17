@@ -28,6 +28,8 @@ const VoteInput = ({ voteAmount, setVoteAmount }) => (
 )
 
 const ShareButtons = () => {
+  const toast = useToast()
+
   const handleTweetShare = () => {
     const text = `Check out this market on dumpet.fun - `
     const url = window.location.href
@@ -39,6 +41,13 @@ const ShareButtons = () => {
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(window.location.href)
+    toast({
+      description: `Market link has been copied!`,
+      status: "success",
+      duration: 2000,
+      isClosable: true,
+      position: "top",
+    })
   }
 
   return (
