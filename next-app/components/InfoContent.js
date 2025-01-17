@@ -62,9 +62,10 @@ const InfoItem = ({
   )
 }
   
-const ActionButton = ({ text, color, icon: Icon }) => (
+const ActionButton = ({ text, color, icon: Icon, onClick }) => (
   <button
     className={`${color} px-4 py-2 rounded-md transition-colors duration-200 flex items-center justify-center gap-2 text-sm`}
+    onClick={onClick}
   >
     <Icon size={16} />
     {text}
@@ -83,6 +84,9 @@ const InfoContent = ({
   options,
   allVotesBalances,
   tokenDenomination,
+  cancelVote,
+  withdrawRewards,
+  conclude,
   getAllVoteBalances }) => {
   const {
     divideByPower
@@ -140,16 +144,34 @@ const InfoContent = ({
           text="Withdraw AO"
           color="bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-200"
           icon={ArrowUpCircle}
+          onClick={async (event) => {
+            const button = event.target
+            button.disabled = true
+            await withdrawRewards()
+            button.disabled = false
+          }}
         />
         <ActionButton
           text="Cancel my votes"
           color="bg-amber-600/20 hover:bg-amber-600/30 text-amber-200"
           icon={XCircle}
+          onClick={async (event) => {
+            const button = event.target
+            button.disabled = true
+            await cancelVote()
+            button.disabled = false
+          }}
         />
         <ActionButton
           text="Conclude"
           color="bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-200"
           icon={CheckCircle}
+          onClick={async (event) => {
+            const button = event.target
+            button.disabled = true
+            await conclude()
+            button.disabled = false
+          }}
         />
       </div>
 
