@@ -241,10 +241,10 @@ const VoteContent = ({
             tokenDenomination={tokenDenomination}
             onVote={handleVoteA}
             color={{
-              border: "border-red-400",
-              hoverBorder: "hover:border-red-300",
+              border: "border-red-400/20",
+              hoverBorder: "hover:border-red-400/40",
               bg: "bg-red-400",
-              hoverBg: "hover:bg-red-300",
+              hoverBg: "hover:bg-red-400/90",
             }}
           />
           <VoteCard
@@ -255,10 +255,10 @@ const VoteContent = ({
             tokenDenomination={tokenDenomination}
             onVote={handleVoteB}
             color={{
-              border: "border-blue-400",
-              hoverBorder: "hover:border-blue-300",
+              border: "border-blue-400/20",
+              hoverBorder: "hover:border-blue-400/40",
               bg: "bg-blue-400",
-              hoverBg: "hover:bg-blue-300",
+              hoverBg: "hover:bg-blue-400/90",
             }}
           />
         </div>
