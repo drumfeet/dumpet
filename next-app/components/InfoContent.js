@@ -168,7 +168,7 @@ const InfoContent = ({
             const button = event.target
             button.disabled = true
             setShowBalances(!showBalances)
-            getAllVoteBalances()
+            if (!showBalances) getAllVoteBalances()
             button.disabled = false
           }}
           className="w-full bg-[#3a3a6a] text-gray-200 px-4 py-2 rounded-md hover:bg-[#4a4a7a] transition-colors duration-200 flex items-center justify-center gap-2 text-sm"

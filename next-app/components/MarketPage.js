@@ -19,18 +19,8 @@ import {
   result,
   dryrun,
 } from "@permaweb/aoconnect"
-import {
-  Vote,
-  Activity,
-  MessageCircle,
-  Wallet,
-  ExternalLink,
-  Copy,
-  SendHorizontal,
-} from "lucide-react"
+import { Vote, Activity, MessageCircle, Wallet } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
 
 const DEFAULT_PRECISION = 12
 
