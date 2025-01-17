@@ -14,6 +14,7 @@ import {
   Copy,
 } from "lucide-react"
 import formatUnixTimestamp from "@/utils/FormatUnixTimeStamp"
+import { Link } from "arnext"
 
 const InfoItem = ({
   icon: Icon,
@@ -26,13 +27,6 @@ const InfoItem = ({
     e.stopPropagation()
     navigator.clipboard.writeText(value)
     // You might want to add a toast notification here to inform the user that the value has been copied
-  }
-
-  const handleLink = (e) => {
-    e.stopPropagation()
-    if (link) {
-      window.open(link, "_blank")
-    }
   }
 
   return (
@@ -51,11 +45,12 @@ const InfoItem = ({
           />
         )}
         {link && (
-          <ExternalLink
-            size={16}
-            className="text-gray-400 cursor-pointer hover:text-gray-200 transition-colors"
-            onClick={handleLink}
-          />
+          <Link target="_blank" rel="noopener noreferrer" href={link}>
+            <ExternalLink
+              size={16}
+              className="text-gray-400 cursor-pointer hover:text-gray-200 transition-colors"
+            />
+          </Link>
         )}
       </div>
     </div>
@@ -109,21 +104,21 @@ const InfoContent = ({
           label="Market ProcessId"
           value={pid}
           copyable={true}
-          link="https://ao.link/#/entity/replacethisprocessid"
+          link={`https://ao.link/#/entity/${pid}`}
         />
         <InfoItem
           icon={Hash}
           label="Bet Token ProcessId"
           value={betTokenId}
           copyable={true}
-          link="https://ao.link/#/entity/replacethisprocessid"
+          link={`https://ao.link/#/entity/${betTokenId}`}
         />
         <InfoItem
           icon={User}
           label="Creator"
           value={creator}
           copyable={true}
-          link="https://ao.link/#/entity/replacethisprocessid"
+          link={`https://ao.link/#/entity/${creator}`}
         />
         <InfoItem icon={Layers} label="BlockHeight" value={blockHeight} />
         <InfoItem
