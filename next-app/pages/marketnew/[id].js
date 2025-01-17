@@ -2,10 +2,8 @@ import { useParams } from "arnext"
 import { useEffect, useState } from "react"
 import { ChakraProvider, Flex } from "@chakra-ui/react"
 import AppHeader from "@/components/AppHeader"
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js"
 import Head from "next/head"
 import MarketPage from "@/components/MarketPage"
-ChartJS.register(ArcElement, Tooltip, Legend) // Register the required components
 
 const getID = async (id, pid) => `${pid ?? id}`
 

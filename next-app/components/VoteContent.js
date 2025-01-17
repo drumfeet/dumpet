@@ -31,7 +31,9 @@ const ShareButtons = () => {
   const handleTweetShare = () => {
     const text = `Check out this market on dumpet.fun - `
     const url = window.location.href
-    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`
+    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+      text
+    )}&url=${encodeURIComponent(url)}`
     window.open(twitterUrl, "_blank")
   }
 
@@ -87,8 +89,12 @@ const VoteContent = ({
   tokenDenomination,
   pid,
 }) => {
-  const { connectWallet, multiplyByPower, handleMessageResultError } =
-    useAppContext()
+  const {
+    connectWallet,
+    divideByPower,
+    multiplyByPower,
+    handleMessageResultError,
+  } = useAppContext()
 
   const toast = useToast()
 
@@ -218,10 +224,22 @@ const VoteContent = ({
     }
   }
 
-  const chartData = [
-    { name: marketInfo?.OptionA, value: totalBalanceVoteA || 1 },
-    { name: marketInfo?.OptionB, value: totalBalanceVoteB || 1 },
-  ]
+  const chartData =
+    totalBalanceVoteA <= 0 && totalBalanceVoteB <= 0
+      ? [
+          { name: marketInfo?.OptionA, value: 1 },
+          { name: marketInfo?.OptionB, value: 1 },
+        ]
+      : [
+          {
+            name: marketInfo?.OptionA,
+            value: Number(divideByPower(totalBalanceVoteA, tokenDenomination)),
+          },
+          {
+            name: marketInfo?.OptionB,
+            value: Number(divideByPower(totalBalanceVoteB, tokenDenomination)),
+          },
+        ]
 
   return (
     <div className="w-full max-w-2xl mx-auto space-y-4 sm:space-y-8 px-4 sm:px-0 pt-6">

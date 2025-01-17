@@ -96,7 +96,6 @@ export default function MarketPage({ pid }) {
     } catch (error) {
       console.error(error)
     } finally {
-      //setIsFetchingData(false)
     }
   }
 
@@ -613,7 +612,6 @@ export default function MarketPage({ pid }) {
                 </div>
                 <div className="flex flex-col gap-2">
                   <NumberInput
-                    focusBorderColor="#7023b6"
                     precision={DEFAULT_PRECISION}
                     value={amount}
                     min={0.000000000001}
@@ -623,7 +621,6 @@ export default function MarketPage({ pid }) {
                     }}
                   >
                     <NumberInputField
-                      bg="#2d2d44"
                       borderColor="#2d2d44"
                       borderRadius="none"
                     />
