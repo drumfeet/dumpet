@@ -181,12 +181,6 @@ export default function Home({ _id = null }) {
     }
   }
 
-  const meta = {
-    title: "dumpet.fun",
-    description: "Popularity contest duel platform",
-    image: "T2q7IO67TYEhuk1CIPVxHX9MdEmzTUocZjScmdWTHK0",
-  }
-
   return (
     <ChakraProvider>
       <Head>
@@ -204,7 +198,7 @@ export default function Home({ _id = null }) {
         />
         <meta
           name="twitter:image"
-          content="https://arweave.net/EPhdFc3HwFgZ0MO49g5Mb1yUHMU4ZDeuVPpgtNYAw7I"
+          content="https://arweave.net/QifSiTK9jez7w1km9r9QM7BdNM_ddhyjK0g-gD2hKn0"
         />
 
         {/* Open Graph / Facebook Meta Tags */}
@@ -216,7 +210,7 @@ export default function Home({ _id = null }) {
         />
         <meta
           name="og:image"
-          content="https://arweave.net/EPhdFc3HwFgZ0MO49g5Mb1yUHMU4ZDeuVPpgtNYAw7I"
+          content="https://arweave.net/QifSiTK9jez7w1km9r9QM7BdNM_ddhyjK0g-gD2hKn0"
         />
       </Head>
       <Flex

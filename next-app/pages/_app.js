@@ -8,8 +8,8 @@ import { Analytics } from "@vercel/analytics/next"
 export default function App(props) {
   return (
     <>
+      <HeadTag />
       <AppContextProvider>
-        <HeadTag />
         <ArNext {...props} />
         <Analytics />
       </AppContextProvider>

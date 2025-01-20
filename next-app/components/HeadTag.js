@@ -17,7 +17,7 @@ export default function HeadTag() {
       />
       <meta
         name="twitter:image"
-        content="https://arweave.net/EPhdFc3HwFgZ0MO49g5Mb1yUHMU4ZDeuVPpgtNYAw7I"
+        content="https://arweave.net/QifSiTK9jez7w1km9r9QM7BdNM_ddhyjK0g-gD2hKn0"
       />
 
       {/* Open Graph / Facebook Meta Tags */}
@@ -26,7 +26,7 @@ export default function HeadTag() {
       <meta name="og:description" content="Popularity contest duel platform" />
       <meta
         name="og:image"
-        content="https://arweave.net/EPhdFc3HwFgZ0MO49g5Mb1yUHMU4ZDeuVPpgtNYAw7I"
+        content="https://arweave.net/QifSiTK9jez7w1km9r9QM7BdNM_ddhyjK0g-gD2hKn0"
       />
     </Head>
   )
