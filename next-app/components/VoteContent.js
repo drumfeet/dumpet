@@ -18,8 +18,9 @@ const VoteInput = ({ voteAmount, setVoteAmount }) => (
       <input
         type="number"
         value={voteAmount}
+        min={0.000000000001}
         onChange={(e) =>
-          setVoteAmount(Math.max(1, parseInt(e.target.value) || 1))
+          setVoteAmount(e.target.value)
         }
         className="w-full bg-transparent text-center border border-gray-600 rounded-md p-1 text-lg min-w-0 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent hover:border-blue-400 transition-colors"
       />
