@@ -93,7 +93,7 @@ export default function ChatTab({ pid = null }) {
     }
   }
 
-  const get = async (nextPage = 1, limit = 10) => {
+  const get = async (nextPage = 1, limit = 100) => {
     try {
       const result = await dryrun({
         process: chatId,
@@ -179,7 +179,7 @@ export default function ChatTab({ pid = null }) {
           Send chat
         </Button>
       </form>
-      <div className="space-y-4 max-h-[400px] overflow-y-auto">
+      <div className="space-y-4 max-h-[3000px] overflow-y-auto">
         {messages.map((msg, index) => (
           <div
             key={index}
