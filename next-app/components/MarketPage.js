@@ -10,7 +10,7 @@ import {
   NumberDecrementStepper,
   useToast,
 } from "@chakra-ui/react"
-import ChatBox from "@/components/ChatBox"
+import ChatTab from "@/components/ChatTab"
 import VoteContent from "./VoteContent"
 import InfoContent from "./InfoContent"
 import {
@@ -573,7 +573,7 @@ export default function MarketPage({ pid }) {
             </TabsContent>
             <TabsContent value="chat">
               {showChatBox ? (
-                <ChatBox pid={pid} />
+                <ChatTab pid={pid} />
               ) : (
                 <p>Chat is not enabled for this market</p>
               )}

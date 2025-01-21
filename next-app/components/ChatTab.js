@@ -16,13 +16,14 @@ import {
   result,
   dryrun,
 } from "@permaweb/aoconnect"
+import { SendHorizontal, Copy, ExternalLink } from "lucide-react"
 import { useState, useEffect, useRef } from "react"
 import areArraysEqual from "@/utils/AreArrayEquals"
 import { ArrowRightIcon, ChatIcon } from "@chakra-ui/icons"
 
 const POLLING_INTERVAL = 5000
 
-export default function ChatBox({ pid = null }) {
+export default function ChatSection({ pid = null }) {
   const [chatId, setChatId] = useState(pid)
   const [chatMsg, setChatMsg] = useState("")
   const [messages, setMessages] = useState([])
@@ -163,117 +164,57 @@ export default function ChatBox({ pid = null }) {
   }
 
   return (
-    <ChakraProvider>
-      <Flex
-        direction="column"
-        w="100%"
-        h="100%"
-        bg="#1a1a2e"
-        minH="100vh"
-        color="white"
-      >
-        <Flex
-          direction="column"
-          w="100%"
-          h="100%"
-          flex={1}
-          bg="purple.800"
-          borderRadius={{ base: "0", md: "md" }}
-          p={4}
+    <div className="space-y-4 pt-6 text-gray-100">
+      <form onSubmit={post} className="space-y-4">
+        <Textarea
+          placeholder="Type your message..."
+          value={chatMsg}
+          onKeyPress={handleKeyPress}
+          onChange={(e) => setChatMsg(e.target.value)}
+          className="w-full bg-[#1e1e38] text-gray-100 border-[#3a3a6a] focus:border-indigo-400"
+        />
+        <Button
+          onClick={post}
+          className="w-full bg-indigo-600 hover:bg-indigo-700 transition-colors duration-300 text-gray-100 font-semibold py-2 px-4 rounded-md shadow-md hover:shadow-lg flex items-center justify-center gap-2"
         >
-          <Text fontSize="2xl" fontWeight="bold" mb={4}>
-            <ChatIcon /> Chat
-          </Text>
-          <FormControl>
-            <Textarea
-              placeholder="Type your message..."
-              _placeholder={{ color: "gray.400" }}
-              onChange={(e) => setChatMsg(e.target.value)}
-              onKeyPress={handleKeyPress}
-              value={chatMsg}
-              focusBorderColor="#7023b6"
-              bg="#2d2d44"
-              borderColor="#2d2d44"
-              borderRadius="md"
-            />
-          </FormControl>
-
-          <Button
-            leftIcon={<ArrowRightIcon />}
-            mt={4}
-            w="100%"
-            variant="outline"
-            border="2px solid"
-            borderColor="purple.700"
-            color="white"
-            _hover={{ bg: "purple.700" }}
-            colorScheme="purple"
-            onClick={post}
-            isLoading={isLoading}
-            loadingText="Sending..."
+          <SendHorizontal size={18} />
+          Send chat
+        </Button>
+      </form>
+      <div className="space-y-4 max-h-[400px] overflow-y-auto">
+        {messages.map((msg, index) => (
+          <div
+            key={msg.id}
+            className="py-2 border-b border-[#3a3a6a] last:border-b-0"
           >
-            Send Message
-          </Button>
-          <Flex paddingY={4}></Flex>
-
-          <VStack
-            flex={1}
-            w="100%"
-            overflowY="auto"
-            spacing={4}
-            align="stretch"
-            maxH="calc(100vh - 200px)"
-            mb={4}
-            css={{
-              "&::-webkit-scrollbar": {
-                width: "4px",
-              },
-              "&::-webkit-scrollbar-track": {
-                width: "6px",
-              },
-              "&::-webkit-scrollbar-thumb": {
-                background: "purple.500",
-                borderRadius: "24px",
-              },
-            }}
-          >
-            {messages.map((msg, index) => (
-              <Box
-                key={index}
-                p={3}
-                alignSelf={
-                  msg.UserId === globalThis.arweaveWallet?.getActiveAddress()
-                    ? "flex-end"
-                    : "flex-start"
-                }
-                maxWidth="100%"
-              >
-                <Text fontSize="xs" color="purple.300" mb={1}>
-                  {msg.UserId?.slice(0, 8)}...{msg.UserId?.slice(-8)}
-                </Text>
-                <Text>{msg.ChatMsg}</Text>
-                <Text fontSize="xs" color="gray.400" mt={1}>
-                  {new Date(msg.Timestamp).toLocaleTimeString()}
-                </Text>
-              </Box>
-            ))}
-            {hasMore && (
-              <Flex justify="center" mb={4}>
-                <Button
-                  onClick={handleLoadMore}
-                  isLoading={isLoadingMore}
-                  loadingText="Loading..."
-                  size="sm"
-                  colorScheme="purple"
-                >
-                  Show More
-                </Button>
-              </Flex>
-            )}
-            <div ref={chatEndRef} />
-          </VStack>
-        </Flex>
-      </Flex>
-    </ChakraProvider>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs text-gray-400 flex items-center gap-2">
+                {msg.UserId?.slice(0, 8)}...{msg.UserId?.slice(-8)}
+                <Copy
+                  size={12}
+                  className="cursor-pointer hover:text-gray-200 transition-colors"
+                  onClick={() => {
+                    navigator.clipboard.writeText(msg.UserId)
+                    // You might want to add a toast notification here to inform the user that the value has been copied
+                  }}
+                />
+                <ExternalLink
+                  size={12}
+                  className="cursor-pointer hover:text-gray-200 transition-colors"
+                  onClick={() =>
+                    window.open(
+                      `https://example.com/address/${msg.UserId}`,
+                      "_blank"
+                    )
+                  }
+                />
+              </span>
+              <span className="text-xs text-gray-400">{new Date(msg.Timestamp).toLocaleTimeString()}</span>
+            </div>
+            <p className="text-gray-200 break-words">{msg.ChatMsg}</p>
+          </div>
+        ))}
+      </div>
+    </div>
   )
 }
