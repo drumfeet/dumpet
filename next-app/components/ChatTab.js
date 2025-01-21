@@ -1,14 +1,6 @@
 import { useAppContext } from "@/context/AppContext"
 import {
-  Button,
-  ChakraProvider,
-  Flex,
-  FormControl,
-  Text,
-  VStack,
-  Box,
-  useToast,
-  Textarea,
+  useToast
 } from "@chakra-ui/react"
 import {
   createDataItemSigner,
@@ -16,6 +8,8 @@ import {
   result,
   dryrun,
 } from "@permaweb/aoconnect"
+import { Button } from "@/components/ui/button"
+import { Textarea } from "@/components/ui/textarea"
 import { SendHorizontal, Copy, ExternalLink } from "lucide-react"
 import { useState, useEffect, useRef } from "react"
 import areArraysEqual from "@/utils/AreArrayEquals"
@@ -23,7 +17,7 @@ import { ArrowRightIcon, ChatIcon } from "@chakra-ui/icons"
 
 const POLLING_INTERVAL = 5000
 
-export default function ChatSection({ pid = null }) {
+export default function ChatTab({ pid = null }) {
   const [chatId, setChatId] = useState(pid)
   const [chatMsg, setChatMsg] = useState("")
   const [messages, setMessages] = useState([])
@@ -49,7 +43,9 @@ export default function ChatSection({ pid = null }) {
     return () => clearInterval(interval)
   }, [currentPage])
 
-  const post = async () => {
+  const post = async (event) => {
+    event.preventDefault();
+    event.stopPropagation();
     const _connected = await connectWallet()
     if (_connected.success === false) {
       return
@@ -184,7 +180,7 @@ export default function ChatSection({ pid = null }) {
       <div className="space-y-4 max-h-[400px] overflow-y-auto">
         {messages.map((msg, index) => (
           <div
-            key={msg.id}
+            key={index}
             className="py-2 border-b border-[#3a3a6a] last:border-b-0"
           >
             <div className="flex items-center justify-between mb-2">
