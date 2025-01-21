@@ -120,6 +120,14 @@ export default function AppHeader() {
               </MenuGroup>
               <MenuDivider />
               <MenuGroup title="Menu">
+                <Link href="/duel">
+                  <MenuItem
+                    icon={<ExternalLinkIcon color="#ded6e5" boxSize={4} />}
+                    _hover={{ bg: "red.200" }}
+                  >
+                    Duel
+                  </MenuItem>
+                </Link>
                 <Link href="/faq">
                   <MenuItem
                     icon={<ExternalLinkIcon color="#ded6e5" boxSize={4} />}
@@ -148,7 +156,7 @@ export default function AppHeader() {
                     })
                   }}
                 >
-                  Token Swap
+                  Token
                 </MenuItem>
               </MenuGroup>
               <MenuDivider />
