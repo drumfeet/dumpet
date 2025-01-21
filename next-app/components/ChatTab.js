@@ -1,7 +1,5 @@
 import { useAppContext } from "@/context/AppContext"
-import {
-  useToast
-} from "@chakra-ui/react"
+import { useToast } from "@chakra-ui/react"
 import {
   createDataItemSigner,
   message,
@@ -13,7 +11,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { SendHorizontal, Copy, ExternalLink } from "lucide-react"
 import { useState, useEffect, useRef } from "react"
 import areArraysEqual from "@/utils/AreArrayEquals"
-import { ArrowRightIcon, ChatIcon } from "@chakra-ui/icons"
+import formatUnixTimestamp from "@/utils/FormatUnixTimeStamp"
 
 const POLLING_INTERVAL = 5000
 
@@ -45,8 +43,8 @@ export default function ChatTab({ pid = null }) {
 
   const post = async (event) => {
     if (event) {
-      event.preventDefault();
-      event.stopPropagation();
+      event.preventDefault()
+      event.stopPropagation()
     }
     const _connected = await connectWallet()
     if (_connected.success === false) {
@@ -179,7 +177,7 @@ export default function ChatTab({ pid = null }) {
           Send chat
         </Button>
       </form>
-      <div className="space-y-4 max-h-[3000px] overflow-y-auto">
+      <div className="space-y-4">
         {messages.map((msg, index) => (
           <div
             key={index}
@@ -193,7 +191,13 @@ export default function ChatTab({ pid = null }) {
                   className="cursor-pointer hover:text-gray-200 transition-colors"
                   onClick={() => {
                     navigator.clipboard.writeText(msg.UserId)
-                    // You might want to add a toast notification here to inform the user that the value has been copied
+                    toast({
+                      description: `${msg.UserId} has been copied!`,
+                      status: "success",
+                      duration: 2000,
+                      isClosable: true,
+                      position: "top",
+                    })
                   }}
                 />
                 <ExternalLink
@@ -201,13 +205,15 @@ export default function ChatTab({ pid = null }) {
                   className="cursor-pointer hover:text-gray-200 transition-colors"
                   onClick={() =>
                     window.open(
-                      `https://example.com/address/${msg.UserId}`,
+                      `https://ao.link/#/entity/${msg.UserId}`,
                       "_blank"
                     )
                   }
                 />
               </span>
-              <span className="text-xs text-gray-400">{new Date(msg.Timestamp).toLocaleTimeString()}</span>
+              <span className="text-xs text-gray-400">
+                {formatUnixTimestamp(msg.Timestamp)}
+              </span>
             </div>
             <p className="text-gray-200 break-words">{msg.ChatMsg}</p>
           </div>
