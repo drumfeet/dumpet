@@ -44,8 +44,10 @@ export default function ChatTab({ pid = null }) {
   }, [currentPage])
 
   const post = async (event) => {
-    event.preventDefault();
-    event.stopPropagation();
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
     const _connected = await connectWallet()
     if (_connected.success === false) {
       return
