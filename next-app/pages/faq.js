@@ -40,6 +40,7 @@ export default function Home() {
         <Flex paddingY={8}></Flex>
 
         <Flex gap={4} flexDirection="column" color="whiteAlpha.800">
+          <Text>Derived from "Dumb Bet" and "Dump It"</Text>
           <Text>dumpet.fun is a popularity contest duel platform.</Text>
           <Text>
             <Link
