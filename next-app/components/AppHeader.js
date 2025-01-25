@@ -21,6 +21,7 @@ import TelegramIcon from "./icons/TelegramIcon"
 import { ExternalLinkIcon } from "@chakra-ui/icons"
 import { useAppContext } from "@/context/AppContext"
 import UserIcon from "./icons/UserIcon"
+import DiscordIcon from "./icons/DiscordIcon"
 
 export default function AppHeader() {
   const {
@@ -183,6 +184,14 @@ export default function AppHeader() {
                     _hover={{ bg: "red.200" }}
                   >
                     Telegram
+                  </MenuItem>
+                </Link>
+                <Link target="_blank" rel="noopener noreferrer" href="/discord">
+                  <MenuItem
+                    icon={<DiscordIcon strokeColor="#ded6e5" size={22} />}
+                    _hover={{ bg: "red.200" }}
+                  >
+                    Discord
                   </MenuItem>
                 </Link>
               </MenuGroup>
