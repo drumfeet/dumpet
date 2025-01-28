@@ -274,15 +274,6 @@ Handlers.add("Credit-Notice", Handlers.utils.hasMatchingTag("Action", "Credit-No
         return
     end
 
-    ao.send({
-        Target = UserTxProcessId,
-        Action = "Upsert",
-        ProfileId = msg.Tags.Sender,
-        MarketProcessId = MarketInfo.ProcessId,
-        Title = MarketInfo
-            .Title
-    })
-
     if msg.Tags.Sender == msg.From then
         local currentVal = Balances[ao.id] or "0"
         Balances[ao.id] = utils.add(currentVal, msg.Tags.Quantity)
