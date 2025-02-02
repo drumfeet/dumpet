@@ -160,7 +160,7 @@ export default function LandingPage() {
                 </Link>
                 <Link
                   className="flex-1 min-w-[200px] flex items-center justify-center rounded-full bg-green-500 px-6 py-3 text-lg font-medium text-white shadow-lg transition-all hover:bg-green-600 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-400"
-                  href="https://t.me/dumpetdotfun"
+                  href="/discord"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
