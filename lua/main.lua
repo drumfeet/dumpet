@@ -24,8 +24,11 @@ Markets = Markets or {}
 MarketKeys = MarketKeys or {}
 WaitFor = WaitFor or {}
 Creators = Creators or {}
+USER_TX_PROCESS_ID = "566F7MCrrBhr87n7Hs5JKyEQeRlAT9A14G4OWxfS4kQ"
+DUMPET_WALLET = "UE6P4ymh6AKDRJsmzdJLagQfLNmfcMauchZCWHZhWK8"
+AO_TOKEN_PROCESS_ID = "0syT13r0s0tgPmIed95bJnuSqaD29HQNN8D3ElLSrsc"
 
-SupportedTokens = SupportedTokens or {
+SupportedTokens = {
     ["-Sty2cdyM4jZc_Nb4mCFlQj-1qzjVR0l6_CKsNZfLPs"] = { Denomination = 12, Name = "TAE", Ticker = "TAE", Logo = "EPhdFc3HwFgZ0MO49g5Mb1yUHMU4ZDeuVPpgtNYAw7I" },
     ["0syT13r0s0tgPmIed95bJnuSqaD29HQNN8D3ElLSrsc"] = { Denomination = 12, Name = "AO", Ticker = "AO", Logo = "UkS-mdoiG8hcAClhKK8ch4ZhEzla0mCPDOix9hpdSFE" },
     ["QD3R6Qes15eQqIN_TK5s7ttawzAiX8ucYI2AUXnuS18"] = { Denomination = 12, Name = "DUMPET", Ticker = "DUMPET", Logo = "62Xi37z2A3zf74EH8WcdHsgerupea3xGgC6L_M3HT50" },
@@ -130,7 +133,7 @@ Handlers.add("Create", Handlers.utils.hasMatchingTag("Action", "Create"), functi
             BlockHeight = tostring(msg["Block-Height"]),
             Timestamp = tostring(msg["Timestamp"]),
             Concluded = false,
-            AoTokenProcessId = "m3PaWzK4PTG9lAaqYQPaPdOcXdO8hYqi5Fe9NWqXd0w"
+            AoTokenProcessId = AO_TOKEN_PROCESS_ID,
         }
         printData("marketInfo", marketInfo)
 
@@ -1091,8 +1094,8 @@ end)
                     }
                 Creator = "]] .. msg.From .. [["
                 MainProcessId = "]] .. ao.id .. [["
-                UserTxProcessId = "566F7MCrrBhr87n7Hs5JKyEQeRlAT9A14G4OWxfS4kQ"
-                DumpetWallet = "UE6P4ymh6AKDRJsmzdJLagQfLNmfcMauchZCWHZhWK8"
+                UserTxProcessId = "]] .. USER_TX_PROCESS_ID .. [["
+                DumpetWallet = "]] .. DUMPET_WALLET .. [["
                 IsChatEnabled = true
                 Owner = ""
             ]])
