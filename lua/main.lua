@@ -26,6 +26,8 @@ WaitFor = WaitFor or {}
 Creators = Creators or {}
 
 SupportedTokens = SupportedTokens or {
+    ["-Sty2cdyM4jZc_Nb4mCFlQj-1qzjVR0l6_CKsNZfLPs"] = { Denomination = 12, Name = "TAE", Ticker = "TAE", Logo = "EPhdFc3HwFgZ0MO49g5Mb1yUHMU4ZDeuVPpgtNYAw7I" },
+    ["0syT13r0s0tgPmIed95bJnuSqaD29HQNN8D3ElLSrsc"] = { Denomination = 12, Name = "AO", Ticker = "AO", Logo = "UkS-mdoiG8hcAClhKK8ch4ZhEzla0mCPDOix9hpdSFE" },
     ["QD3R6Qes15eQqIN_TK5s7ttawzAiX8ucYI2AUXnuS18"] = { Denomination = 12, Name = "DUMPET", Ticker = "DUMPET", Logo = "62Xi37z2A3zf74EH8WcdHsgerupea3xGgC6L_M3HT50" },
     ["NG-0lVX882MG5nhARrSzyprEK6ejonHpdUmaaMPsHE8"] = { Denomination = 12, Name = "Q Arweave", Ticker = "qAR", Logo = "26yDr08SuwvNQ4VnhAfV4IjJcOOlQ4tAQLc1ggrCPu0" },
     ["xU9zFkq3X2ZQ6olwNVvr1vUWIjc3kXTWr7xKQD6dh10"] = { Denomination = 12, Name = "Wrapped AR", Ticker = "wAR", Logo = "L99jaxRKQKJt9CqoJtPaieGPEhJD3wNhR4iGqc8amXs" },
@@ -1194,7 +1196,7 @@ Handlers.add("RandomMarket", Handlers.utils.hasMatchingTag("Action", "RandomMark
         local timestampStr = tostring(msg["Timestamp"])
         local blockHeightStr = tostring(msg["Block-Height"])
         local randomNum = crypto.random(0, length - 1, timestampStr) -- Ensure the range is correct
-        local randomIndex = randomNum + 1                          -- Adjust for Lua's 1-based indexing
+        local randomIndex = randomNum + 1                            -- Adjust for Lua's 1-based indexing
         local randomKey = MarketKeys[randomIndex]
         local randomMarket = Markets[randomKey]
 
