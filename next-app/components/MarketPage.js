@@ -478,14 +478,44 @@ export default function MarketPage({ pid }) {
   }, [tokenProcessId])
 
   useEffect(() => {
-    console.log("pid", pid)
-    if (isConnected && pid) {
-      ;(async () => {
+    const fetchUserVoteBalances = async () => {
+      if (!isConnected || !pid) {
+        console.log("Missing required data:", {
+          isConnected,
+          pid,
+        })
+        return
+      }
+
+      try {
         await getUserBalancesAllVotes()
-        await getUserWalletBalance()
-      })()
+      } catch (error) {
+        console.error("fetchUserVoteBalances() error:", error)
+      }
     }
+
+    fetchUserVoteBalances()
   }, [isConnected, pid])
+
+  useEffect(() => {
+    const fetchWalletBalance = async () => {
+      if (!isConnected || !tokenProcessId) {
+        console.log("Missing required data:", {
+          isConnected,
+          tokenProcessId,
+        })
+        return
+      }
+
+      try {
+        await getUserWalletBalance()
+      } catch (error) {
+        console.error("fetchWalletBalance() error:", error)
+      }
+    }
+
+    fetchWalletBalance()
+  }, [isConnected, tokenProcessId])
 
   return (
     <ChakraProvider>
