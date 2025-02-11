@@ -315,7 +315,10 @@ export default function MarketPage({ pid }) {
         ],
       })
       console.log("_result", _result)
-      setUserWalletBalance(_result?.Messages?.[0]?.Data)
+      if (_result.error) {
+        throw new Error(_result.error)
+      }
+      setUserWalletBalance(_result?.Messages?.[0]?.Data || 0)
     } catch (error) {
       toast({
         description: "Error getting user wallet balance",
@@ -476,13 +479,13 @@ export default function MarketPage({ pid }) {
 
   useEffect(() => {
     console.log("pid", pid)
-    if (isConnected) {
+    if (isConnected && pid) {
       ;(async () => {
         await getUserBalancesAllVotes()
         await getUserWalletBalance()
       })()
     }
-  }, [isConnected])
+  }, [isConnected, pid])
 
   return (
     <ChakraProvider>
