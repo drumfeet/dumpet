@@ -32,7 +32,7 @@ SupportedTokens = {
     ["-Sty2cdyM4jZc_Nb4mCFlQj-1qzjVR0l6_CKsNZfLPs"] = { Denomination = 12, Name = "TAE", Ticker = "TAE", Logo = "EPhdFc3HwFgZ0MO49g5Mb1yUHMU4ZDeuVPpgtNYAw7I" },
     ["0syT13r0s0tgPmIed95bJnuSqaD29HQNN8D3ElLSrsc"] = { Denomination = 12, Name = "AO", Ticker = "AO", Logo = "UkS-mdoiG8hcAClhKK8ch4ZhEzla0mCPDOix9hpdSFE" },
     ["5d91yO7AQxeHr3XNWIomRsfqyhYbeKPG2awuZd-EyH4"] = { Denomination = 12, Name = "BCAT", Ticker = "BCAT", Logo = "y-DopVgrkv6E6NxrgZUR9TD2SdzkeVGbCAVIw4lBgHs" },
-    ["jtGHIv6MRIwUSlxVUTDwX7X0gYEGKQynIqvkelIOdL4"] = { Denomination = 12, Name = "Dumdum", Ticker = "DUMDUM", Logo = "uKrcXiZgJg32Q1JmOyjSWlvfR0saFn-yUMHMw79lfsE" },
+    -- ["jtGHIv6MRIwUSlxVUTDwX7X0gYEGKQynIqvkelIOdL4"] = { Denomination = 12, Name = "Dumdum", Ticker = "DUMDUM", Logo = "uKrcXiZgJg32Q1JmOyjSWlvfR0saFn-yUMHMw79lfsE" },
     ["NG-0lVX882MG5nhARrSzyprEK6ejonHpdUmaaMPsHE8"] = { Denomination = 12, Name = "Q Arweave", Ticker = "qAR", Logo = "26yDr08SuwvNQ4VnhAfV4IjJcOOlQ4tAQLc1ggrCPu0" },
     ["xU9zFkq3X2ZQ6olwNVvr1vUWIjc3kXTWr7xKQD6dh10"] = { Denomination = 12, Name = "Wrapped AR", Ticker = "wAR", Logo = "L99jaxRKQKJt9CqoJtPaieGPEhJD3wNhR4iGqc8amXs" },
     ["7zH9dlMNoxprab9loshv3Y7WG45DOny_Vrq9KrXObdQ"] = { Denomination = 6, Name = "Ethereum-Wrapped USDC", Ticker = "wUSDC", Logo = "HZlLK9uWlNbhDbxXXe8aPaXZPqq9PKzpdH93ol-BKis" },
