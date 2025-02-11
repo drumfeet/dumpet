@@ -315,7 +315,10 @@ export default function MarketPage({ pid }) {
         ],
       })
       console.log("_result", _result)
-      setUserWalletBalance(_result?.Messages?.[0]?.Data)
+      if (_result.error) {
+        throw new Error(_result.error)
+      }
+      setUserWalletBalance(_result?.Messages?.[0]?.Data || 0)
     } catch (error) {
       toast({
         description: "Error getting user wallet balance",
@@ -475,14 +478,44 @@ export default function MarketPage({ pid }) {
   }, [tokenProcessId])
 
   useEffect(() => {
-    console.log("pid", pid)
-    if (isConnected) {
-      ;(async () => {
+    const fetchUserVoteBalances = async () => {
+      if (!isConnected || !pid) {
+        console.log("Missing required data:", {
+          isConnected,
+          pid,
+        })
+        return
+      }
+
+      try {
         await getUserBalancesAllVotes()
-        await getUserWalletBalance()
-      })()
+      } catch (error) {
+        console.error("fetchUserVoteBalances() error:", error)
+      }
     }
-  }, [isConnected])
+
+    fetchUserVoteBalances()
+  }, [isConnected, pid])
+
+  useEffect(() => {
+    const fetchWalletBalance = async () => {
+      if (!isConnected || !tokenProcessId) {
+        console.log("Missing required data:", {
+          isConnected,
+          tokenProcessId,
+        })
+        return
+      }
+
+      try {
+        await getUserWalletBalance()
+      } catch (error) {
+        console.error("fetchWalletBalance() error:", error)
+      }
+    }
+
+    fetchWalletBalance()
+  }, [isConnected, tokenProcessId])
 
   return (
     <ChakraProvider>
