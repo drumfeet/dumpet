@@ -46,10 +46,10 @@ export default function Home() {
             <Link
               target="_blank"
               rel="noopener noreferrer"
-              href="https://www.arconnect.io"
+              href="https://wander.app"
               style={{ textDecoration: "underline" }}
             >
-              ArConnect
+              Wander
             </Link>{" "}
             wallet is required.
           </Text>
