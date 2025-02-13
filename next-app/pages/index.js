@@ -22,7 +22,7 @@ export default function LandingPage() {
         />
         <meta
           name="twitter:image"
-          content="https://arweave.net/QifSiTK9jez7w1km9r9QM7BdNM_ddhyjK0g-gD2hKn0"
+          content="https://arweave.net/cdWaWLoAhyO-0gZdH97TzqzmMSpHMEoXWbGBBXMED1M"
         />
 
         {/* Open Graph / Facebook Meta Tags */}
@@ -34,7 +34,7 @@ export default function LandingPage() {
         />
         <meta
           name="og:image"
-          content="https://arweave.net/QifSiTK9jez7w1km9r9QM7BdNM_ddhyjK0g-gD2hKn0"
+          content="https://arweave.net/cdWaWLoAhyO-0gZdH97TzqzmMSpHMEoXWbGBBXMED1M"
         />
       </Head>
       <div className="min-h-screen bg-gradient-to-b from-green-400 to-blue-500 text-white overflow-hidden relative">
