@@ -69,7 +69,7 @@ const InfoItem = ({
 
 const ActionButton = ({ text, color, icon: Icon, onClick }) => (
   <button
-    className={`${color} px-4 py-2 rounded-md transition-colors duration-200 flex items-center justify-center gap-2 text-sm`}
+    className={`${color} px-4 py-2 rounded-md transition-colors duration-200 flex items-center justify-center gap-2 text-sm min-w-[150px] w-full sm:w-auto flex-1`}
     onClick={onClick}
   >
     <Icon size={16} />
@@ -138,7 +138,7 @@ const InfoContent = ({
         />
       </div>
       <div className="flex flex-col sm:flex-row justify-center gap-4 mt-6">
-        <ActionButton
+        {/* <ActionButton
           text="Withdraw AO"
           color="bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-200"
           icon={ArrowUpCircle}
@@ -148,7 +148,7 @@ const InfoContent = ({
             await withdrawRewards()
             button.disabled = false
           }}
-        />
+        /> */}
         <ActionButton
           text="Cancel my votes"
           color="bg-amber-600/20 hover:bg-amber-600/30 text-amber-200"
