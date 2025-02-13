@@ -529,28 +529,28 @@ export default function MarketPage({ pid }) {
             <TabsList className="grid w-full grid-cols-4 bg-[#232344]">
               <TabsTrigger
                 value="vote"
-                className="data-[state=active]:bg-[#2f2f5a]"
+                className="data-[state=active]:bg-[#393963]"
               >
                 <Vote className="mr-2 h-4 w-4" />
                 Vote
               </TabsTrigger>
               <TabsTrigger
                 value="info"
-                className="data-[state=active]:bg-[#2f2f5a]"
+                className="data-[state=active]:bg-[#393963]"
               >
                 <Activity className="mr-2 h-4 w-4" />
                 Info
               </TabsTrigger>
               <TabsTrigger
                 value="chat"
-                className="data-[state=active]:bg-[#2f2f5a]"
+                className="data-[state=active]:bg-[#393963]"
               >
                 <MessageCircle className="mr-2 h-4 w-4" />
                 Chat
               </TabsTrigger>
               <TabsTrigger
                 value="balance"
-                className="data-[state=active]:bg-[#2f2f5a]"
+                className="data-[state=active]:bg-[#393963]"
               >
                 <Wallet className="mr-2 h-4 w-4" />
                 Balance
