@@ -242,9 +242,15 @@ export default function Home({ _id = null }) {
             bg="#7023b6"
             onClick={async (event) => {
               const button = event.target
-              button.disabled = true
-              await hasWaitFor()
-              button.disabled = false
+              try {
+                button.disabled = true
+                await hasWaitFor()
+                await fetchMarkets()
+              } catch (error) {
+                console.error(error)
+              } finally {
+                button.disabled = false
+              }
             }}
           >
             Check Pending Market
@@ -258,9 +264,14 @@ export default function Home({ _id = null }) {
             borderColor="purple.600"
             onClick={async (event) => {
               const button = event.target
-              button.disabled = true
-              await resetWaitFor()
-              button.disabled = false
+              try {
+                button.disabled = true
+                await resetWaitFor()
+              } catch (error) {
+                console.error(error)
+              } finally {
+                button.disabled = false
+              }
             }}
           >
             Reset Pending Market
