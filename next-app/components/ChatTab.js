@@ -85,6 +85,7 @@ export default function ChatTab({ pid = null }) {
         status: "error",
         duration: 3000,
         isClosable: true,
+        position: "top",
       })
     } finally {
       setIsLoading(false)
@@ -170,8 +171,18 @@ export default function ChatTab({ pid = null }) {
           className="w-full bg-[#1e1e38] text-gray-100 border-[#3a3a6a] focus:border-indigo-400"
         />
         <Button
-          onClick={post}
-          className="w-full bg-indigo-600 hover:bg-indigo-700 transition-colors duration-300 text-gray-100 font-semibold py-2 px-4 rounded-md shadow-md hover:shadow-lg flex items-center justify-center gap-2"
+          onClick={async (event) => {
+            const button = event.target
+            try {
+              button.disabled = true
+              await post()
+            } catch (error) {
+              console.error(error)
+            } finally {
+              button.disabled = false
+            }
+          }}
+          className="w-full bg-indigo-600 hover:bg-indigo-700 transition-colors duration-300 text-gray-100 font-semibold py-2 px-4 rounded-md shadow-md hover:shadow-lg flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-indigo-600"
         >
           <SendHorizontal size={18} />
           Send chat

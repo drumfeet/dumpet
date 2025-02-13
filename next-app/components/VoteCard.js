@@ -25,11 +25,16 @@ const VoteCard = ({
       <button
         onClick={async (event) => {
           const button = event.target
-          button.disabled = true
-          await onVote()
-          button.disabled = false
+          try {
+            button.disabled = true
+            await onVote()
+          } catch (error) {
+            console.error(error)
+          } finally {
+            button.disabled = false
+          }
         }}
-        className={`w-full ${color.bg} ${color.hoverBg} py-4 rounded-lg flex items-center justify-center gap-2 transition-colors`}
+        className={`w-full ${color.bg} ${color.hoverBg} py-4 rounded-lg flex items-center justify-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed`}
       >
         Vote
       </button>

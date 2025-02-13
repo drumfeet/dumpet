@@ -69,7 +69,7 @@ const InfoItem = ({
 
 const ActionButton = ({ text, color, icon: Icon, onClick }) => (
   <button
-    className={`${color} px-4 py-2 rounded-md transition-colors duration-200 flex items-center justify-center gap-2 text-sm min-w-[150px] w-full sm:w-auto flex-1`}
+    className={`${color} px-4 py-2 rounded-md transition-colors duration-200 flex items-center justify-center gap-2 text-sm min-w-[150px] w-full sm:w-auto flex-1 disabled:opacity-50 disabled:cursor-not-allowed`}
     onClick={onClick}
   >
     <Icon size={16} />
@@ -155,9 +155,14 @@ const InfoContent = ({
           icon={XCircle}
           onClick={async (event) => {
             const button = event.target
-            button.disabled = true
-            await cancelVote()
-            button.disabled = false
+            try {
+              button.disabled = true
+              await cancelVote()
+            } catch (error) {
+              console.error(error)
+            } finally {
+              button.disabled = false
+            }
           }}
         />
         <ActionButton

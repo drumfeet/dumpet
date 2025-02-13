@@ -112,7 +112,8 @@ export default function MarketPage({ pid }) {
       updateBalances(_jsonData)
     } catch (error) {
       toast({
-        description: "Error getting market info",
+        title: "Error getting market info",
+        description: `${error}`,
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -164,8 +165,8 @@ export default function MarketPage({ pid }) {
       console.log("userDepositBalance", userDepositBalance)
       console.log("_amount", _amount)
       toast({
-        description: "Transaction completed",
-        status: "success",
+        description: "Transaction submitted",
+        status: "info",
         duration: 2000,
         isClosable: true,
         position: "top",
@@ -208,12 +209,10 @@ export default function MarketPage({ pid }) {
       console.log("_result", _result)
       if (handleMessageResultError(_result)) return
 
+      await getUserBalancesAllVotes()
+      await getUserWalletBalance()
       console.log("userDepositBalance", userDepositBalance)
       console.log("_amount", _amount)
-      const _updatedBalance = userDepositBalance - _amount
-      console.log("_updatedBalance", _updatedBalance)
-      setUserDepositBalance(_updatedBalance)
-
       toast({
         description: "Withdraw success",
         status: "success",
@@ -660,23 +659,33 @@ export default function MarketPage({ pid }) {
                   </NumberInput>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     <button
-                      className="w-full bg-emerald-600/20 px-4 py-2 rounded-md transition-colors hover:bg-emerald-600/30 text-emerald-200"
+                      className="w-full bg-emerald-600/20 px-4 py-2 rounded-md transition-colors hover:bg-emerald-600/30 text-emerald-200 disabled:hover:bg-emerald-600/20 disabled:opacity-50 disabled:cursor-not-allowed"
                       onClick={async (event) => {
                         const button = event.target
-                        button.disabled = true
-                        await deposit()
-                        button.disabled = false
+                        try {
+                          button.disabled = true
+                          await deposit()
+                        } catch (error) {
+                          console.error(error)
+                        } finally {
+                          button.disabled = false
+                        }
                       }}
                     >
                       Deposit
                     </button>
                     <button
-                      className="w-full bg-rose-600/20 px-4 py-2 rounded-md transition-colors hover:bg-rose-600/30 text-rose-200"
+                      className="w-full bg-rose-600/20 px-4 py-2 rounded-md transition-colors hover:bg-rose-600/30 text-rose-200 disabled:hover:bg-rose-600/20 disabled:opacity-50 disabled:cursor-not-allowed"
                       onClick={async (event) => {
                         const button = event.target
-                        button.disabled = true
-                        await withdraw()
-                        button.disabled = false
+                        try {
+                          button.disabled = true
+                          await withdraw()
+                        } catch (error) {
+                          console.error(error)
+                        } finally {
+                          button.disabled = false
+                        }
                       }}
                     >
                       Withdraw

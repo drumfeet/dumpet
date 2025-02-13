@@ -19,9 +19,7 @@ const VoteInput = ({ voteAmount, setVoteAmount }) => (
         type="number"
         value={voteAmount}
         min={0.000000000001}
-        onChange={(e) =>
-          setVoteAmount(e.target.value)
-        }
+        onChange={(e) => setVoteAmount(e.target.value)}
         className="w-full bg-transparent text-center border border-gray-600 rounded-md p-1 text-lg min-w-0 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent hover:border-blue-400 transition-colors"
       />
     </div>
@@ -32,7 +30,7 @@ const ShareButtons = () => {
   const toast = useToast()
 
   const handleTweetShare = () => {
-    const text = `Check out this market on dumpet.fun - `
+    const text = `⚔️ Go duel on https://dumpet.fun powered by @aoTheComputer\n\nIt’s not just talk—drop your tokens and decide the outcome! NFA! 😈🤑💸💀☠️👽💩\n\n🔗 Check out this market - `
     const url = window.location.href
     const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
       text
