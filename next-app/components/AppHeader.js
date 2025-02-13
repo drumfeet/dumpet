@@ -145,20 +145,18 @@ export default function AppHeader() {
                     DINDIN
                   </MenuItem>
                 </Link>
-                <MenuItem
-                  icon={<ExternalLinkIcon color="#ded6e5" boxSize={4} />}
-                  _hover={{ bg: "red.200" }}
-                  onClick={() => {
-                    toast({
-                      description: "Coming soon",
-                      duration: 2000,
-                      isClosable: true,
-                      position: "top",
-                    })
-                  }}
+                <Link
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href="/feedback"
                 >
-                  Token
-                </MenuItem>
+                  <MenuItem
+                    icon={<ExternalLinkIcon color="#ded6e5" boxSize={4} />}
+                    _hover={{ bg: "red.200" }}
+                  >
+                    Feedback
+                  </MenuItem>
+                </Link>
               </MenuGroup>
               <MenuDivider />
               <MenuGroup title="Social">
