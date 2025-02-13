@@ -79,23 +79,19 @@ export default function Home() {
             A 1% fee applies if you cancel your vote before the market
             concludes.
           </Text>
-          <Text as="s">
-            You can claim a one-time airdrop if your wallet did not previously
-            hold a DUMPET token balance.
+          <Text hidden={true}>
+            All market processes are spawned with{" "}
+            <Code>Owner=&quot;&quot;</Code> which means ownership is renounced.
           </Text>
-          <Text>
-            DUMPET token and all market processes are spawned with{" "}
-            <Code>Owner=&quot;&quot;</Code>
-          </Text>
-          <Text>
+          <Text hidden={true}>
             The market process will earn any mined AO rewards from user
             deposits, if applicable.
           </Text>
-          <Text>
+          <Text hidden={true}>
             The market creator will be able to withdraw this from the process
             when the AO mainnet launches.
           </Text>
-          <Text>
+          <Text hidden={true}>
             This feature provides greater economic incentive for market
             creators.
           </Text>
