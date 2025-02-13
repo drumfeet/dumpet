@@ -55,6 +55,8 @@ export default function MarketPage({ pid }) {
   const [userBalanceVoteA, setUserBalanceVoteA] = useState(0)
   const [userBalanceVoteB, setUserBalanceVoteB] = useState(0)
   const [allVotesBalances, setAllVotesBalances] = useState([])
+  const [isDepositing, setIsDepositing] = useState(false)
+  const [isWithdrawing, setIsWithdrawing] = useState(false)
 
   const updateUserBalances = async (jsonData) => {
     setUserDepositBalance(Number(jsonData?.UserDepositBalance))
@@ -659,36 +661,52 @@ export default function MarketPage({ pid }) {
                   </NumberInput>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     <button
+                      disabled={isDepositing}
                       className="w-full bg-emerald-600/20 px-4 py-2 rounded-md transition-colors hover:bg-emerald-600/30 text-emerald-200 disabled:hover:bg-emerald-600/20 disabled:opacity-50 disabled:cursor-not-allowed"
                       onClick={async (event) => {
                         const button = event.target
                         try {
                           button.disabled = true
+                          setIsDepositing(true)
                           await deposit()
                         } catch (error) {
                           console.error(error)
                         } finally {
+                          setIsDepositing(false)
                           button.disabled = false
                         }
                       }}
                     >
-                      Deposit
+                      <div className="flex items-center justify-center gap-2">
+                        {isDepositing ? (
+                          <Spinner size="sm" color="emerald" />
+                        ) : null}
+                        {isDepositing ? "Depositing..." : "Deposit"}
+                      </div>
                     </button>
                     <button
+                      disabled={isWithdrawing}
                       className="w-full bg-rose-600/20 px-4 py-2 rounded-md transition-colors hover:bg-rose-600/30 text-rose-200 disabled:hover:bg-rose-600/20 disabled:opacity-50 disabled:cursor-not-allowed"
                       onClick={async (event) => {
                         const button = event.target
                         try {
                           button.disabled = true
+                          setIsWithdrawing(true)
                           await withdraw()
                         } catch (error) {
                           console.error(error)
                         } finally {
+                          setIsWithdrawing(false)
                           button.disabled = false
                         }
                       }}
                     >
-                      Withdraw
+                      <div className="flex items-center justify-center gap-2">
+                        {isWithdrawing ? (
+                          <Spinner size="sm" color="rose" />
+                        ) : null}
+                        {isWithdrawing ? "Withdrawing..." : "Withdraw"}
+                      </div>
                     </button>
                   </div>
                 </div>
