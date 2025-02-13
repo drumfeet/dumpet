@@ -69,8 +69,19 @@ export const AppContextProvider = ({ children }) => {
   }
 
   const handleMessageResultError = (_result) => {
+    if (_result.error) {
+      toast({
+        description: _result.error,
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+        position: "top",
+      })
+      return true
+    }
+
     const errorTag = _result?.Messages?.[0]?.Tags.find(
-      (tag) => tag.name === "Error"
+      (tag) => tag.name.toLowerCase() === "error"
     )
     console.log("errorTag", errorTag)
     if (errorTag) {
