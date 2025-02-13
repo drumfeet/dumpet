@@ -232,6 +232,34 @@ const VoteContent = ({
     }
   }
 
+  const getTotalBalanceAllVotes = async () => {
+    try {
+      console.log("getTotalBalanceAllVotes() pid", pid)
+      const _result = await dryrun({
+        process: pid,
+        tags: [{ name: "Action", value: "TotalBalanceAllVotes" }],
+      })
+      console.log("getTotalBalanceAllVotes() _result", _result)
+
+      if (_result?.Messages[0]?.Data) {
+        const jsonData = JSON.parse(_result?.Messages[0]?.Data)
+        console.log("getTotalBalanceAllVotes() jsonData", jsonData)
+        setTotalBalanceVoteA(jsonData?.TotalBalanceVoteA)
+        setTotalBalanceVoteB(jsonData?.TotalBalanceVoteB)
+      }
+
+      toast({
+        description: "Total votes updated",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+        position: "top",
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   const chartData =
     totalBalanceVoteA <= 0 && totalBalanceVoteB <= 0
       ? [
@@ -266,6 +294,7 @@ const VoteContent = ({
             totalVotes={totalBalanceVoteA}
             tokenDenomination={tokenDenomination}
             onVote={handleVoteA}
+            onRefresh={getTotalBalanceAllVotes}
             color={{
               border: "border-red-400/20",
               hoverBorder: "hover:border-red-400/40",
@@ -280,6 +309,7 @@ const VoteContent = ({
             totalVotes={totalBalanceVoteB}
             tokenDenomination={tokenDenomination}
             onVote={handleVoteB}
+            onRefresh={getTotalBalanceAllVotes}
             color={{
               border: "border-blue-400/20",
               hoverBorder: "hover:border-blue-400/40",

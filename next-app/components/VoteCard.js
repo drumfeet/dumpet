@@ -7,6 +7,7 @@ const VoteCard = ({
   votes = 0,
   totalVotes = 0,
   onVote,
+  onRefresh,
   color,
   tokenSymbol,
   tokenDenomination,
@@ -40,7 +41,22 @@ const VoteCard = ({
       </button>
       <div className="mt-6 pt-6 border-t border-[#2f2f5a]">
         <p className="text-sm text-gray-300 flex items-center justify-center gap-2">
-          <RefreshCcw size={16} />
+          <button
+            className="p-1 hover:bg-white/5 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            onClick={async (event) => {
+              const button = event.currentTarget
+              try {
+                button.disabled = true
+                await onRefresh()
+              } catch (error) {
+                console.error(error)
+              } finally {
+                button.disabled = false
+              }
+            }}
+          >
+            <RefreshCcw size={16} />
+          </button>
           TOTAL VOTES: {divideByPower(totalVotes, tokenDenomination)}{" "}
           {`$${tokenSymbol}`}
         </p>
