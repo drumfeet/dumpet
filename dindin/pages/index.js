@@ -95,7 +95,7 @@ export default function TeaserPage() {
         />
         <meta
           name="twitter:image"
-          content="https://arweave.net/EPhdFc3HwFgZ0MO49g5Mb1yUHMU4ZDeuVPpgtNYAw7I"
+          content="https://arweave.net/cdWaWLoAhyO-0gZdH97TzqzmMSpHMEoXWbGBBXMED1M"
         />
 
         {/* Open Graph / Facebook Meta Tags */}
@@ -107,7 +107,7 @@ export default function TeaserPage() {
         />
         <meta
           name="og:image"
-          content="https://arweave.net/EPhdFc3HwFgZ0MO49g5Mb1yUHMU4ZDeuVPpgtNYAw7I"
+          content="https://arweave.net/cdWaWLoAhyO-0gZdH97TzqzmMSpHMEoXWbGBBXMED1M"
         />
       </Head>
       <div className="min-h-screen bg-gradient-to-br from-[#FFD700] via-[#FF69B4] to-[#00CED1] flex flex-col justify-between overflow-hidden">
