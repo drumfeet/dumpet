@@ -14,6 +14,12 @@ local function sendErrorMessage(msg, err, target)
 end
 
 Handlers.add("Upsert", Handlers.utils.hasMatchingTag("Action", "Upsert"), function(msg)
+    -- if Sender is not the process itself
+    if msg.Tags.Sender != msg.From then
+        sendErrorMessage(msg, 'Invalid Sender!')
+        return
+    end
+
     local success, err = pcall(function()
         if type(msg.Tags.ProfileId) ~= 'string' or msg.Tags.ProfileId:match("^%s*$") then
             sendErrorMessage(msg, 'ProfileId is required and must be a non-empty string!')
