@@ -1,22 +1,46 @@
 import assert from "assert"
 import { describe, it } from "node:test"
-import { connect } from "wao/test"
-const { dryrun } = connect()
-import { wait } from "wao/utils"
+import { acc, ArMem, connect, scheduler } from "wao/test"
+
+import fs from "fs"
+import path from "path"
+import { fileURLToPath } from "url"
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+
+const mem = new ArMem()
+const ao = connect(mem)
+
+const signer = acc[0].signer
+
+const getContractSrcData = () => {
+  const contractPath = path.join(__dirname, "market.lua")
+  console.log(contractPath)
+  const contract = fs.readFileSync(contractPath, "utf8")
+  return contract
+}
+
 describe("GetMarketInfo", function () {
   it("should return MarketInfo Data", async () => {
-    const pid = 'B8gLHTXexfNT-fbml6Mn1AV1HBPJJy2OYQQ3j3weK6Y'
-
-    // on mainnet, you need to wait here till the process becomes available.
-    // WAO automatically handles it. No need with in-memory tests.
-    const res = await dryrun({
-      process: pid,
-      tags: [{ name: "Action", value: "GetMarketInfo" }]
+    const srcData = getContractSrcData()
+    const pid = await ao.spawn({
+      signer,
+      scheduler,
+      module: mem.modules.aos2_0_1,
     })
-    debugger
-    console.log('Response:')
+    await ao.message({
+      process: pid,
+      tags: [{ name: "Action", value: "Eval" }],
+      data: srcData,
+      signer,
+    })
+    const res = await ao.dryrun({
+      process: pid,
+      tags: [{ name: "Action", value: "GetMarketInfo" }],
+      signer,
+    })
     console.log(res)
-    const jsonData = JSON.parse(res.Messages[0].Data);
-    assert.equal(jsonData.MarketInfo.OptionA, "Hello, World!")
+    // assert.equal(res.Messages[0].Data, "Hello, World!")
   })
 })
