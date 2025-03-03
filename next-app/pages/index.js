@@ -1,6 +1,6 @@
 import Image from "next/image"
 import { Link } from "arnext"
-import { Twitter, Send, Trophy, Users, Clock, VoteIcon } from "lucide-react"
+import { Twitter, Trophy, Users, Clock, VoteIcon } from "lucide-react"
 import Head from "next/head"
 import DiscordIcon from "@/components/icons/DiscordIcon"
 
@@ -85,18 +85,10 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="flex flex-col md:flex-row gap-6 mb-12 justify-center items-center w-full">
-              <Link
-                href="https://dindin.dumpet.fun"
-                rel="noopener noreferrer"
-                className="font-medium w-full md:flex-1 flex items-center justify-center text-lg py-2 px-8 bg-yellow-400 hover:bg-yellow-500 text-black transform hover:scale-110 transition-all duration-300 rounded-full shadow-lg hover:rotate-3"
-              >
-                <span className="mr-4 text-2xl">🦖</span>
-                DINDIN
-              </Link>
+            <div className="mb-12 w-full flex justify-center">
               <Link
                 href="/duel"
-                className="font-medium w-full md:flex-1 flex items-center justify-center text-lg py-2 px-8 bg-purple-500 hover:bg-purple-600 text-white transform hover:scale-110 transition-all duration-300 rounded-full shadow-lg hover:rotate-3"
+                className="font-medium w-full max-w-md flex items-center justify-center text-lg py-3 px-10 bg-purple-500 hover:bg-purple-600 text-white transform hover:scale-110 transition-all duration-300 rounded-full shadow-lg hover:rotate-3"
               >
                 <span className="mr-4 text-2xl">🥊</span>
                 Duel on DUMPET
@@ -148,24 +140,35 @@ export default function LandingPage() {
                 Connect with fellow time-traveling gossipers. Get the juiciest
                 Jurassic juice!
               </p>
-              <div className="flex flex-wrap items-center justify-center gap-4">
+              <div className="flex items-center justify-center gap-8">
                 <Link
-                  className="flex-1 min-w-[200px] flex items-center justify-center rounded-full bg-blue-500 px-6 py-3 text-lg font-medium text-white shadow-lg transition-all hover:bg-blue-600 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
+                  className="p-3 rounded-full bg-[#1DA1F2] text-white shadow-lg transition-all hover:bg-[#1a8cd8] hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1DA1F2]"
                   href="https://x.com/dumpetdotfun"
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label="Follow us on Twitter"
                 >
-                  <Twitter className="mr-2 h-5 w-5" />
-                  Follow Our Footprints
+                  <Twitter className="h-6 w-6" />
                 </Link>
                 <Link
-                  className="flex-1 min-w-[200px] flex items-center justify-center rounded-full bg-green-500 px-6 py-3 text-lg font-medium text-white shadow-lg transition-all hover:bg-green-600 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-400"
+                  className="p-3 rounded-full bg-green-500 text-white shadow-lg transition-all hover:bg-green-600 hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-400"
                   href="/discord"
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label="Join our Discord"
                 >
                   <DiscordIcon strokeColor="#ffffff" size={24} />
-                  <span className="ml-2">Roar on Discord</span>
+                </Link>
+                <Link
+                  className="p-3 rounded-full bg-yellow-400 text-black shadow-lg transition-all hover:bg-yellow-500 hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 flex items-center justify-center"
+                  href="https://dindin.dumpet.fun"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="DINDIN"
+                >
+                  <span className="text-[26px] leading-none translate-y-[1px]">
+                    🦕
+                  </span>
                 </Link>
               </div>
             </div>
