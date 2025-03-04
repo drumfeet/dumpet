@@ -101,6 +101,13 @@ async function checkForNewTweets() {
 client.once("ready", () => {
   console.log(`Logged in as ${client.user.tag}`)
 
+  const channel = client.channels.cache.get(process.env.DISCORD_CHANNEL_ID)
+  if (!channel) {
+    console.error("Invalid Discord Channel ID! Make sure it's correct.")
+  } else {
+    console.log(`Bot will send messages to: #${channel.name}`)
+  }
+
   // Run initial check immediately
   checkForNewTweets()
 
