@@ -1,6 +1,7 @@
 require("dotenv").config()
 const { Client, GatewayIntentBits, EmbedBuilder } = require("discord.js")
 const { TwitterApi } = require("twitter-api-v2")
+const express = require("express")
 
 // Initialize Discord client
 const client = new Client({
@@ -146,4 +147,64 @@ client.once("ready", () => {
   setInterval(checkForNewTweets, 15 * 60 * 1000) // 15 minutes in milliseconds
 
   console.log(`Tweet checks scheduled every 15 minutes`)
+})
+
+// Login to Discord
+client.login(process.env.DISCORD_TOKEN)
+
+// Set up Express server
+const app = express()
+const PORT = process.env.PORT || 3000
+
+app.get("/", (req, res) => {
+  res.send("Twitter-Discord Bot is running!")
+})
+
+app.get("/status", (req, res) => {
+  res.json({
+    status: "online",
+    lastCheck: new Date().toISOString(),
+    discordConnected: client.isReady(),
+    lastTweetId: lastTweetId,
+  })
+})
+
+app.get("/ping", (req, res) => {
+  res.status(200).send("OK")
+  console.log("Ping received to keep bot alive: " + new Date().toISOString())
+})
+
+// Start Express server
+const server = app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Web server running at http://0.0.0.0:${PORT}`)
+  console.log(
+    `For Replit dev environment, access at: https://${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co`
+  )
+})
+
+process.on("unhandledRejection", (error) => {
+  console.error("Unhandled promise rejection:", error)
+})
+
+// Add graceful shutdown
+process.on("SIGINT", () => {
+  console.log("Gracefully shutting down...")
+  server.close(() => {
+    console.log("Server closed")
+    process.exit(0)
+  })
+})
+
+client.on("error", (error) => {
+  console.error("Discord client error:", error)
+})
+
+client.on("messageCreate", async (message) => {
+  if (
+    message.content === "!restart" &&
+    message.author.id === "YOUR_DISCORD_ID"
+  ) {
+    await message.channel.send("Restarting bot...")
+    process.exit(1) // Replit will automatically restart the process
+  }
 })
