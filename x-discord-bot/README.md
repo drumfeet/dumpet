@@ -1,4 +1,4 @@
-# Discord Bot Setup Guide
+# Twitter Discord Bot Setup Guide
 
 ## Step 1: Create a Discord Bot
 
@@ -37,28 +37,31 @@
    npm init -y
    npm install discord.js twitter-api-v2 dotenv
    ```
-3. Create a `.env` file and add your credentials:
+
+3. Get Discord Channel ID
+   #### 🛠️ Enable Developer Mode
+   - Open Discord
+   - Go to User Settings (⚙️ gear icon next to your username)
+   - Scroll down to Advanced
+   - Enable Developer Mode
+
+   
+   #### 🔍 Find the Channel ID
+   - Right-click on the channel where you want to post tweets
+   - Click "Copy Channel ID"
+   - Paste it into your `.env` file
+   
+4. Create a `.env` file and add your credentials:
    ```env
+   DISCORD_CHANNEL_ID=your_discord_channel_id
    DISCORD_TOKEN=your_discord_bot_token
+   TWITTER_USERNAME=your_twitter_username
+   TWITTER_USER_ID=your_twitter_user_id
    TWITTER_API_KEY=your_twitter_api_key
    TWITTER_API_SECRET=your_twitter_api_secret
    TWITTER_ACCESS_TOKEN=your_twitter_access_token
    TWITTER_ACCESS_SECRET=your_twitter_access_secret
-   DISCORD_CHANNEL_ID=your_discord_channel_id
    ```
-
-## Step 4: Get Discord Channel ID
-
-### 🛠️ Enable Developer Mode
-1. Open Discord
-2. Go to User Settings (⚙️ gear icon next to your username)
-3. Scroll down to Advanced
-4. Enable Developer Mode
-
-### 🔍 Find the Channel ID
-1. Right-click on the channel where you want to post tweets
-2. Click "Copy Channel ID"
-3. Paste it into your `.env` file
 
 ## Step 5: Run Your Bot
 
@@ -71,3 +74,4 @@ node index.js
 - Keep your `.env` file secure and never share your tokens
 - Make sure to add `.env` to your `.gitignore` file
 - The bot requires Node.js version 16.0.0 or higher
+- https://railway.com is a great place to host your bot for free
