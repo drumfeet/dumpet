@@ -1,13 +1,13 @@
 {
-  "name": "discord-bot",
+  "name": "x-discord-bot",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "drumfeet",
+  "license": "",
   "type": "commonjs",
   "description": "",
   "dependencies": {
