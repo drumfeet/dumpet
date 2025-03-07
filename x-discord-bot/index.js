@@ -36,6 +36,7 @@ const discordClient = new Client({
   intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
 })
 
+// Initialize Twitter client with User Auth (OAuth 1.0a)
 const twitterClient = new TwitterApi({
   appKey: process.env.TWITTER_API_KEY,
   appSecret: process.env.TWITTER_API_SECRET,
@@ -130,6 +131,13 @@ async function checkForNewTweets() {
         `Rate limit reset at ${formatUTCTime(new Date())}, retrying...`
       )
       return checkForNewTweets()
+    } else if (error.code === 403) {
+      console.error("Twitter API Authentication Error:", {
+        message: error.message,
+        code: error.code,
+        data: error.data, // This might contain more details
+        timestamp: formatUTCTime(new Date()),
+      })
     }
     console.error("Error:", {
       message: error.message,
